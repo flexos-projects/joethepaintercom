@@ -9,11 +9,13 @@ export default {
       colors: {
         primary: {
           DEFAULT: 'var(--color-primary)', // #0047AB
-          light: '#005AC2', // Adjusted for contrast from original #0047AB
-          dark: '#003B8D',  // Adjusted for contrast from original #0047AB
+          hover: '#003B8D',  // From 06-design.md: Buttons -> Primary -> Hover
+          active: '#002A6B', // From 06-design.md: Buttons -> Primary -> Active
         },
         secondary: {
           DEFAULT: 'var(--color-secondary)', // #6B7280
+          hover: '#5A616E', // From 06-design.md: Buttons -> Secondary -> Hover
+          active: '#4D535E', // From 06-design.md: Buttons -> Secondary -> Active
         },
         accent: {
           DEFAULT: 'var(--color-accent)', // #E5B80B
@@ -96,7 +98,7 @@ export default {
         'md': 'var(--shadow-md)',
         'lg': 'var(--shadow-lg)',
         'xl': 'var(--shadow-xl)',
-        'outline': '0 0 0 3px rgba(0, 71, 171, 0.2)', // Custom focus outline using primary color
+        'outline': '0 0 0 2px rgba(0, 71, 171, 0.2)', // From 06-design.md: Interaction: Form Field Focus
       },
 
       // --- Transitions ---
@@ -111,7 +113,7 @@ export default {
         'default': 'var(--easing-default)',
         'in': 'var(--easing-in)',
         'out': 'var(--easing-out)',
-        'in-out': 'var(--easing-in-out)',
+        'in-out': 'var(--easing-in-out)', // This is the 'default' in tokens.json
         'bounce': 'var(--easing-bounce)',
       },
       transitionDuration: {
@@ -147,5 +149,9 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography'),
+    require('@tailwindcss/aspect-ratio'),
+  ],
 };
