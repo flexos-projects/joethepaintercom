@@ -1,0 +1,215 @@
+---
+// Layout
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+// Components
+import Hero from '@components/sections/Hero.astro';
+import Section from '@components/sections/Section.astro';
+import CTABanner from '@components/sections/CTABanner.astro';
+import ProjectCard from '@components/cards/ProjectCard.astro';
+import TestimonialCard from '@components/cards/TestimonialCard.astro';
+import ServiceCard from '@components/cards/ServiceCard.astro';
+import Button from '@components/ui/Button.astro';
+
+// Content Collections
+import { getCollection } from 'astro:content';
+
+// Page metadata
+const meta = {
+  title: 'Encinitas Painting & Handyman Services | Joe the Painter',
+  description: 'High-quality painting and dependable handyman repairs in Encinitas, CA. Joe the Painter ensures meticulous results for your coastal home. Book your free consultation!',
+  ogImage: '/images/og/encinitas.jpg', // Placeholder, ensure this asset exists
+};
+
+// Fetching data from content collections
+// NOTE: These collections are assumed to exist and be populated by P1 tasks (TASK-026, TASK-027).
+// If not, these pages will render with empty lists for projects and testimonials.
+const allServices = await getCollection('services');
+const paintingServices = allServices.filter(service => service.data.category === 'Painting');
+const handyServices = allServices.filter(service => service.data.category === 'Handyman');
+
+const allProjects = await getCollection('projects');
+const encinitasProjects = allProjects.filter(project =>
+  project.data.location.toLowerCase().includes('encinitas') && project.data.published
+);
+
+const allTestimonials = await getCollection('testimonials');
+const encinitasTestimonials = allTestimonials.filter(testimonial =>
+  testimonial.data.location.toLowerCase().includes('encinitas') && testimonial.data.published
+);
+
+// Fallback/dummy data if collections are empty or not ready
+const dummyProjects = [
+  {
+    id: 'encinitas-coastal-home-exterior',
+    slug: 'encinitas-coastal-home-exterior',
+    title: 'Encinitas Coastal Home Exterior',
+    projectDate: new Date('2023-11-05'),
+    location: 'Encinitas, CA',
+    shortDescription: 'Full exterior repaint for a charming beach house, focusing on weather protection.',
+    challenge: 'Faded paint and minor stucco cracks due to coastal weather exposure.',
+    solution: 'Thorough pressure washing, stucco repair, and application of premium, elastomeric exterior paint for durability.',
+    result: 'A vibrant, protected exterior that withstands the elements and enhances curb appeal.',
+    servicesPerformed: ['exterior-painting', 'stucco-repair'],
+    afterImages: [
+      { src: '/images/projects/encinitas-exterior-after-1.webp', alt: 'Freshly painted Encinitas beach house exterior' },
+      { src: '/images/projects/encinitas-exterior-after-2.webp', alt: 'Close-up of durable exterior paint finish' },
+    ],
+    featuredImage: {
+      src: '/images/projects/encinitas-exterior-featured.webp',
+      alt: 'Charming Encinitas home with new exterior paint',
+    },
+    published: true,
+  },
+];
+
+const dummyTestimonials = [
+  {
+    id: 'encinitas-client-1',
+    clientName: 'David & Lisa M.',
+    location: 'Encinitas, CA',
+    quote: 'Joe did an amazing job on our Leucadia home. The exterior paint is beautiful and he even fixed some fascia. Truly the best painter in Encinitas!',
+    published: true,
+  },
+  {
+    id: 'encinitas-client-2',
+    clientName: 'Patricia R.',
+    location: 'Encinitas, CA',
+    quote: 'For our Cardiff-by-the-Sea rental, Joe handled everything from drywall patches to a full interior paint. Efficient, professional, and excellent communication.',
+    published: true,
+  },
+];
+---
+
+<BaseLayout {...meta}>
+  <Hero
+    headline="Encinitas Craftsmanship, Coastal Perfection."
+    subheadline="Bringing over two decades of licensed expertise to Encinitas homes and businesses, ensuring lasting beauty and dependable solutions."
+    ctaText="Schedule Your Encinitas Consultation"
+    ctaHref="/contact"
+    image={{
+      src: "/images/heroes/encinitas-hero.webp", // Placeholder, ensure this asset exists
+      alt: "Charming coastal home with fresh paint in Encinitas, California"
+    }}
+    licenseNumber="CA Lic. #802167"
+  />
+
+  <Section
+    id="local-expertise"
+    title="Your Local Expert for Encinitas Home & Business Care"
+    subtitle="Joe the Painter provides meticulous painting and reliable handyman services, understanding the unique needs of Encinitas' coastal lifestyle."
+    background="light"
+    centered
+  >
+    <p class="font-body text-lg text-text-muted max-w-3xl mx-auto mb-8">
+      Encinitas' relaxed, vibrant communities, from the surf culture of Leucadia to the charm of Cardiff-by-the-Sea, deserve a professional who respects their unique character. Joe understands the importance of durable, beautiful finishes that complement your home's aesthetic while standing up to the coastal climate. Whether it's a vibrant interior refresh or robust exterior protection, we're dedicated to preserving the beauty and integrity of your Encinitas property.
+    </p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="text-center">
+        <div class="text-primary mb-4 text-5xl">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7m0 9.5a2.5 2.5 0 0 1 0-5a2.5 2.5 0 0 1 0 5"/></svg>
+        </div>
+        <h3 class="font-heading text-xl font-semibold mb-2 text-text">Coastal Climate Solutions</h3>
+        <p class="font-body text-text-muted">Expert advice and materials for lasting results in a marine environment.</p>
+      </div>
+      <div class="text-center">
+        <div class="text-primary mb-4 text-5xl">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m14 18l-6-6l6-6l1.4 1.4L10.8 12l4.6 4.6L14 18Z" transform="rotate(90 12 12)"/><path fill="currentColor" d="M22 12c0 5.52-4.48 10-10 10S2 17.52 2 12S6.48 2 12 2s10 4.48 10 10m-2 0c0-4.42-3.58-8-8-8S4 7.58 4 12s3.58 8 8 8s8-3.58 8-8"/></svg>
+        </div>
+        <h3 class="font-heading text-xl font-semibold mb-2 text-text">Preserving Character</h3>
+        <p class="font-body text-text-muted">Meticulous work that respects and enhances Encinitas' unique charm.</p>
+      </div>
+      <div class="text-center">
+        <div class="text-primary mb-4 text-5xl">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M22 12c0 5.52-4.48 10-10 10S2 17.52 2 12S6.48 2 12 2s10 4.48 10 10m-2 0c0-4.42-3.58-8-8-8S4 7.58 4 12s3.58 8 8 8s8-3.58 8-8m-7-5h2v6h-2V7m0 8h2v2h-2v-2"/></svg>
+        </div>
+        <h3 class="font-heading text-xl font-semibold mb-2 text-text">Reliable & Transparent</h3>
+        <p class="font-body text-text-muted">Clear communication and honest estimates for every project.</p>
+      </div>
+    </div>
+  </Section>
+
+  <Section
+    id="encinitas-services"
+    title="Comprehensive Services for Encinitas Homes & Businesses"
+    subtitle="Joe the Painter offers tailored painting and handyman solutions to meet the specific demands of your Encinitas property."
+    centered
+  >
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {paintingServices.map(service => (
+        <ServiceCard
+          title={service.data.title}
+          description={service.data.shortDescription}
+          href={`/services/${service.slug}`}
+          image={service.data.featuredImage}
+        />
+      ))}
+      {handyServices.map(service => (
+        <ServiceCard
+          title={service.data.title}
+          description={service.data.shortDescription}
+          href={`/services/${service.slug}`}
+          image={service.data.featuredImage}
+        />
+      ))}
+    </div>
+  </Section>
+
+  {encinitasProjects.length > 0 || dummyProjects.length > 0 ? (
+    <Section
+      id="encinitas-projects"
+      title="Featured Projects in Encinitas"
+      subtitle="Discover how Joe the Painter has transformed properties in Leucadia, Cardiff-by-the-Sea, and throughout Encinitas."
+      background="light"
+      centered
+    >
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {(encinitasProjects.length > 0 ? encinitasProjects : dummyProjects).slice(0, 3).map(project => (
+          <ProjectCard
+            title={project.data.title}
+            location={project.data.location}
+            shortDescription={project.data.shortDescription}
+            image={project.data.featuredImage}
+            href={`/projects/${project.slug}`}
+          />
+        ))}
+      </div>
+      <div class="mt-12 text-center">
+        <Button href="/our-work" variant="outline" size="lg">View All Our Work</Button>
+      </div>
+    </Section>
+  ) : null}
+
+  {encinitasTestimonials.length > 0 || dummyTestimonials.length > 0 ? (
+    <Section
+      id="encinitas-testimonials"
+      title="What Our Encinitas Clients Say"
+      subtitle="Hear from satisfied homeowners and businesses across Encinitas."
+      centered
+    >
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        {(encinitasTestimonials.length > 0 ? encinitasTestimonials : dummyTestimonials).slice(0, 2).map(testimonial => (
+          <TestimonialCard
+            clientName={testimonial.data.clientName}
+            location={testimonial.data.location}
+            quote={testimonial.data.quote}
+          />
+        ))}
+      </div>
+      <div class="mt-12 text-center">
+        <Button href="/testimonials" variant="outline" size="lg">Read All Testimonials</Button>
+      </div>
+    </Section>
+  ) : null}
+
+  <CTABanner
+    headline="Ready for Your Encinitas Property's Transformation?"
+    description="Contact Joe today for a free, no-obligation consultation on your next painting or handyman project."
+    ctaText="Book Your Free Encinitas Consultation"
+    ctaHref="/contact"
+  />
+</BaseLayout>
+
+<style>
+  /* Page-specific styles only if needed, otherwise use Tailwind utilities */
+</style>

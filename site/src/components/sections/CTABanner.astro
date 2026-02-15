@@ -6,27 +6,33 @@ interface Props {
   description: string;
   ctaText: string;
   ctaHref: string;
-  background?: 'primary' | 'secondary' | 'dark';
+  /** The background color variant for the banner. */
+  background?: 'primary' | 'dark';
 }
 
-const { headline, description, ctaText, ctaHref, background = 'primary' } = Astro.props;
+const {
+  headline,
+  description,
+  ctaText,
+  ctaHref,
+  background = 'primary',
+} = Astro.props;
 
-const bgClasses = {
-  primary: 'bg-primary text-surface',
-  secondary: 'bg-secondary text-surface',
-  dark: 'bg-text text-surface',
+const backgroundClasses = {
+  primary: 'bg-primary text-white',
+  dark: 'bg-neutral-800 text-white',
 };
 ---
 
-<section class={`py-spacing-16 md:py-spacing-20 ${bgClasses[background]}`}>
-  <div class="container mx-auto px-spacing-4 max-w-layout-max text-center">
-    <h2 class="font-typography-heading text-typography-4xl md:text-typography-5xl font-typography-bold mb-spacing-4">
+<section class:list={['py-16 md:py-20 text-center', backgroundClasses[background]]}>
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+    <h2 class="font-heading text-4xl lg:text-5xl font-bold mb-4 leading-tight">
       {headline}
     </h2>
-    <p class="text-typography-lg leading-typography-relaxed max-w-4xl mx-auto mb-spacing-8 text-surface-light">
+    <p class="font-body text-lg lg:text-xl text-neutral-100 mb-8 max-w-2xl mx-auto">
       {description}
     </p>
-    <Button href={ctaHref} variant="accent" size="lg">
+    <Button href={ctaHref} variant="secondary" size="lg" class="inline-flex">
       {ctaText}
     </Button>
   </div>

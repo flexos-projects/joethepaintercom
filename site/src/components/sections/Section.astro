@@ -1,36 +1,61 @@
 ---
-interface Props {
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'section'> {
+  /** The unique ID for the section, used for navigation or styling. */
   id?: string;
+  /** The main heading for the section. */
   title?: string;
-  description?: string;
-  background?: 'light' | 'dark' | 'none';
+  /** A supporting subtitle for the section. */
+  subtitle?: string;
+  /** The background color variant for the section. */
+  background?: 'white' | 'light' | 'dark';
+  /** Whether the content within the section should be horizontally centered. */
   centered?: boolean;
 }
 
-const { id, title, description, background = 'none', centered = false } = Astro.props;
+const {
+  id,
+  title,
+  subtitle,
+  background = 'white',
+  centered = false,
+  ...attrs
+} = Astro.props;
 
-const sectionClasses = {
-  light: 'bg-background text-text',
-  dark: 'bg-text text-surface',
-  none: 'bg-surface text-text',
+const backgroundClasses = {
+  white: 'bg-surface',
+  light: 'bg-background',
+  dark: 'bg-neutral-800 text-white',
 };
 
-const titleClasses = centered ? 'text-center' : '';
-const descriptionClasses = centered ? 'text-center max-w-3xl mx-auto' : '';
+const titleClasses = background === 'dark' ? 'text-white' : 'text-text';
+const subtitleClasses = background === 'dark' ? 'text-neutral-300' : 'text-text-muted';
+const textContainerClasses = centered ? 'text-center' : '';
 ---
 
-<section id={id} class={`py-spacing-24 md:py-spacing-32 ${sectionClasses[background]}`}>
-  <div class="container mx-auto px-spacing-4 max-w-layout-max">
-    {title && (
-      <h2 class={`font-typography-heading text-typography-4xl font-typography-bold mb-spacing-8 ${titleClasses}`}>
-        {title}
-      </h2>
-    )}
-    {description && (
-      <p class={`text-typography-lg leading-typography-relaxed text-textMuted mb-spacing-12 ${descriptionClasses}`}>
-        {description}
-      </p>
-    )}
+<section
+  id={id}
+  class:list={[
+    'py-16 md:py-24',
+    backgroundClasses[background],
+    attrs.class,
+  ]}
+  {...attrs}
+>
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div class:list={['mb-12 md:mb-16', textContainerClasses]}>
+      {title && (
+        <h2 class:list={['font-heading text-4xl lg:text-5xl font-bold mb-4', titleClasses]}>
+          {title}
+        </h2>
+      )}
+      {subtitle && (
+        <p class:list={['font-body text-lg lg:text-xl max-w-3xl mx-auto', subtitleClasses]}>
+          {subtitle}
+        </p>
+      )}
+    </div>
     <slot />
   </div>
 </section>

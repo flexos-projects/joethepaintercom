@@ -1,0 +1,215 @@
+---
+// Layout
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+// Components
+import Hero from '@components/sections/Hero.astro';
+import Section from '@components/sections/Section.astro';
+import CTABanner from '@components/sections/CTABanner.astro';
+import ProjectCard from '@components/cards/ProjectCard.astro';
+import TestimonialCard from '@components/cards/TestimonialCard.astro';
+import ServiceCard from '@components/cards/ServiceCard.astro';
+import Button from '@components/ui/Button.astro';
+
+// Content Collections
+import { getCollection } from 'astro:content';
+
+// Page metadata
+const meta = {
+  title: 'Vista\'s Expert Painter & Handyman | Joe the Painter',
+  description: 'Professional painting and reliable handyman services in Vista, CA. Joe the Painter delivers exceptional quality and personal commitment to every project. Free estimates available!',
+  ogImage: '/images/og/vista.jpg', // Placeholder, ensure this asset exists
+};
+
+// Fetching data from content collections
+// NOTE: These collections are assumed to exist and be populated by P1 tasks (TASK-026, TASK-027).
+// If not, these pages will render with empty lists for projects and testimonials.
+const allServices = await getCollection('services');
+const paintingServices = allServices.filter(service => service.data.category === 'Painting');
+const handyServices = allServices.filter(service => service.data.category === 'Handyman');
+
+const allProjects = await getCollection('projects');
+const vistaProjects = allProjects.filter(project =>
+  project.data.location.toLowerCase().includes('vista') && project.data.published
+);
+
+const allTestimonials = await getCollection('testimonials');
+const vistaTestimonials = allTestimonials.filter(testimonial =>
+  testimonial.data.location.toLowerCase().includes('vista') && testimonial.data.published
+);
+
+// Fallback/dummy data if collections are empty or not ready
+const dummyProjects = [
+  {
+    id: 'vista-commercial-office-refresh',
+    slug: 'vista-commercial-office-refresh',
+    title: 'Vista Commercial Office Refresh',
+    projectDate: new Date('2024-03-10'),
+    location: 'Vista, CA',
+    shortDescription: 'Interior painting and minor repairs for a small business office space.',
+    challenge: 'Dated interior paint and some scuffs needed a quick, professional update.',
+    solution: 'Efficient interior painting with durable commercial-grade paint and seamless drywall patching.',
+    result: 'A clean, professional, and inviting office environment with minimal business disruption.',
+    servicesPerformed: ['interior-painting', 'drywall-repair'],
+    afterImages: [
+      { src: '/images/projects/vista-office-after-1.webp', alt: 'Freshly painted commercial office in Vista' },
+      { src: '/images/projects/vista-office-after-2.webp', alt: 'Clean desk area after office painting' },
+    ],
+    featuredImage: {
+      src: '/images/projects/vista-office-featured.webp',
+      alt: 'Modern commercial office interior in Vista after painting',
+    },
+    published: true,
+  },
+];
+
+const dummyTestimonials = [
+  {
+    id: 'vista-client-1',
+    clientName: 'Robert L.',
+    location: 'Vista, CA',
+    quote: 'Joe painted our entire commercial space in Vista. He was fast, clean, and the quality is outstanding. Highly recommend for any business in the area!',
+    published: true,
+  },
+  {
+    id: 'vista-client-2',
+    clientName: 'Jessica P.',
+    location: 'Vista, CA',
+    quote: 'We needed our rental property in Vista prepped and painted. Joe handled all the repairs and painting beautifully. He made the process incredibly easy.',
+    published: true,
+  },
+];
+---
+
+<BaseLayout {...meta}>
+  <Hero
+    headline="Vista Properties, Built to Last, Painted to Perfection."
+    subheadline="Over 20 years of trusted painting and handyman solutions for Vista homes and businesses, ensuring meticulous care and lasting results."
+    ctaText="Request Your Free Vista Estimate"
+    ctaHref="/contact"
+    image={{
+      src: "/images/heroes/vista-hero.webp", // Placeholder, ensure this asset exists
+      alt: "Beautifully painted residential home exterior in Vista, California"
+    }}
+    licenseNumber="CA Lic. #802167"
+  />
+
+  <Section
+    id="local-expertise"
+    title="Your Trusted Partner for Property Care in Vista"
+    subtitle="Joe the Painter provides expert painting and reliable handyman services, understanding the diverse needs of Vista's residential and commercial properties."
+    background="light"
+    centered
+  >
+    <p class="font-body text-lg text-text-muted max-w-3xl mx-auto mb-8">
+      Vista's vibrant community and varied property types, from charming residential homes to bustling small businesses, benefit from a craftsman who delivers both beauty and durability. Joe the Painter is committed to preserving and enhancing your investment in Vista. We tackle everything from refreshing interiors and protecting exteriors to handling essential repairs, ensuring meticulous attention to detail and lasting quality that stands the test of time.
+    </p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="text-center">
+        <div class="text-primary mb-4 text-5xl">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7m0 9.5a2.5 2.5 0 0 1 0-5a2.5 2.5 0 0 1 0 5"/></svg>
+        </div>
+        <h3 class="font-heading text-xl font-semibold mb-2 text-text">Community Focused</h3>
+        <p class="font-body text-text-muted">Dedicated service for Vista's diverse residential and commercial areas.</p>
+      </div>
+      <div class="text-center">
+        <div class="text-primary mb-4 text-5xl">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m14 18l-6-6l6-6l1.4 1.4L10.8 12l4.6 4.6L14 18Z" transform="rotate(90 12 12)"/><path fill="currentColor" d="M22 12c0 5.52-4.48 10-10 10S2 17.52 2 12S6.48 2 12 2s10 4.48 10 10m-2 0c0-4.42-3.58-8-8-8S4 7.58 4 12s3.58 8 8 8s8-3.58 8-8"/></svg>
+        </div>
+        <h3 class="font-heading text-xl font-semibold mb-2 text-text">Durable Solutions</h3>
+        <p class="font-body text-text-muted">High-quality materials and techniques for lasting results in Vista.</p>
+      </div>
+      <div class="text-center">
+        <div class="text-primary mb-4 text-5xl">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M22 12c0 5.52-4.48 10-10 10S2 17.52 2 12S6.48 2 12 2s10 4.48 10 10m-2 0c0-4.42-3.58-8-8-8S4 7.58 4 12s3.58 8 8 8s8-3.58 8-8m-7-5h2v6h-2V7m0 8h2v2h-2v-2"/></svg>
+        </div>
+        <h3 class="font-heading text-xl font-semibold mb-2 text-text">Personal Commitment</h3>
+        <p class="font-body text-text-muted">Joe's personal oversight ensures superior craftsmanship every time.</p>
+      </div>
+    </div>
+  </Section>
+
+  <Section
+    id="vista-services"
+    title="Tailored Services for Vista Properties"
+    subtitle="Joe the Painter offers comprehensive painting and handyman solutions for homes and businesses throughout Vista."
+    centered
+  >
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {paintingServices.map(service => (
+        <ServiceCard
+          title={service.data.title}
+          description={service.data.shortDescription}
+          href={`/services/${service.slug}`}
+          image={service.data.featuredImage}
+        />
+      ))}
+      {handyServices.map(service => (
+        <ServiceCard
+          title={service.data.title}
+          description={service.data.shortDescription}
+          href={`/services/${service.slug}`}
+          image={service.data.featuredImage}
+        />
+      ))}
+    </div>
+  </Section>
+
+  {vistaProjects.length > 0 || dummyProjects.length > 0 ? (
+    <Section
+      id="vista-projects"
+      title="Recent Projects in Vista"
+      subtitle="Explore transformations Joe the Painter has completed for homes and businesses in Vista."
+      background="light"
+      centered
+    >
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {(vistaProjects.length > 0 ? vistaProjects : dummyProjects).slice(0, 3).map(project => (
+          <ProjectCard
+            title={project.data.title}
+            location={project.data.location}
+            shortDescription={project.data.shortDescription}
+            image={project.data.featuredImage}
+            href={`/projects/${project.slug}`}
+          />
+        ))}
+      </div>
+      <div class="mt-12 text-center">
+        <Button href="/our-work" variant="outline" size="lg">View All Our Work</Button>
+      </div>
+    </Section>
+  ) : null}
+
+  {vistaTestimonials.length > 0 || dummyTestimonials.length > 0 ? (
+    <Section
+      id="vista-testimonials"
+      title="What Our Vista Clients Say"
+      subtitle="Hear from satisfied homeowners and businesses who trust Joe the Painter in Vista."
+      centered
+    >
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        {(vistaTestimonials.length > 0 ? vistaTestimonials : dummyTestimonials).slice(0, 2).map(testimonial => (
+          <TestimonialCard
+            clientName={testimonial.data.clientName}
+            location={testimonial.data.location}
+            quote={testimonial.data.quote}
+          />
+        ))}
+      </div>
+      <div class="mt-12 text-center">
+        <Button href="/testimonials" variant="outline" size="lg">Read All Testimonials</Button>
+      </div>
+    </Section>
+  ) : null}
+
+  <CTABanner
+    headline="Ready to Enhance Your Vista Property?"
+    description="Contact Joe today for a free, no-obligation consultation on your next painting or handyman project."
+    ctaText="Book Your Free Vista Consultation"
+    ctaHref="/contact"
+  />
+</BaseLayout>
+
+<style>
+  /* Page-specific styles only if needed, otherwise use Tailwind utilities */
+</style>
