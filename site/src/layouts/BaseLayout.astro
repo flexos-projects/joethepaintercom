@@ -1,7 +1,5 @@
 ---
-import '../styles/global.css'; // Import global styles which includes tokens.css
-import { Astro } from 'astro';
-
+import { Astro } from 'astro'; // Ensure Astro is imported if used
 interface Props {
   title: string;
   description: string;
@@ -11,50 +9,108 @@ interface Props {
 
 const { title, description, keywords, ogImage } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-
-const recaptchaSiteKey = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY;
-const isProduction = import.meta.env.PROD;
 ---
+
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="index, follow" />
-    <link rel="canonical" href={canonicalURL} />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href={canonicalURL} />
 
-    <title>{title} | Joe the Painter: Your San Diego Craftsman Since 2001</title>
-    <meta name="description" content={description} />
-    {keywords && <meta name="keywords" content={keywords} />}
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  {keywords && <meta name="keywords" content={keywords} />}
 
-    <!-- Open Graph / Social Media Tags -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content={canonicalURL} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:image" content={ogImage || 'https://www.joethepainter.com/images/social-share-default.jpg'} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+  <!-- Open Graph / Social Media Tags -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonicalURL} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={ogImage || 'https://www.joethepainter.com/images/social-share-default.jpg'} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
 
-    <!-- Twitter Card Tags -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content={canonicalURL} />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImage || 'https://www.joethepainter.com/images/social-share-default.jpg'} />
-    <meta name="twitter:creator" content="@JoeThePainterSD" />
+  <!-- Twitter Card Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content={canonicalURL} />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImage || 'https://www.joethepainter.com/images/social-share-default.jpg'} />
+  <meta name="twitter:creator" content="@JoeThePainterSD" />
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <!-- reCAPTCHA v3 Script -->
-    {isProduction && recaptchaSiteKey && (
-      <script is:inline src={`https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`}></script>
-    )}
-  </head>
-  <body>
-    <slot />
-  </body>
+  <!-- Font Preloads (replace with actual font paths once available) -->
+  <link rel="preload" href="/fonts/Lora-Bold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin>
+
+  <!-- Global Styles -->
+  <style is:global>
+    @font-face {
+      font-family: 'Lora';
+      src: url('/fonts/Lora-Bold.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Inter';
+      src: url('/fonts/Inter-Regular.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Inter';
+      src: url('/fonts/Inter-Medium.woff2') format('woff2');
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Inter';
+      src: url('/fonts/Inter-SemiBold.woff2') format('woff2');
+      font-weight: 600;
+      font-style: normal;
+      font-display: swap;
+    }
+  </style>
+  <style>
+    /* Ensure body has min-h-screen for sticky footer layouts */
+    html, body {
+      height: 100%;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+    main {
+      flex: 1; /* Allow main content to grow and push footer down */
+    }
+  </style>
+
+  <!-- reCAPTCHA v3 Script - Loads only in production -->
+  <script is:inline>
+    if (import.meta.env.PROD && import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY) {
+      const script = document.createElement('script');
+      script.src = `https://www.google.com/recaptcha/api.js?render=${import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY}`;
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+
+      script.onload = () => {
+        window.grecaptcha.ready(function() {
+          // reCAPTCHA is ready. Forms will execute specific actions to get a token.
+          // The reCAPTCHA badge is displayed automatically by Google's script.
+        });
+      };
+    }
+  </script>
+</head>
+<body class="font-body text-text bg-background antialiased">
+  <slot />
+</body>
 </html>

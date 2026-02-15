@@ -1,82 +1,198 @@
 ---
-import Label from './ui/Label.astro';
 import Input from './ui/Input.astro';
-import Textarea from './ui/Textarea.astro';
+import Label from './ui/Label.astro';
 import Button from './ui/Button.astro';
+import type { HTMLAttributes } from 'astro/types';
 
-interface Props {
-  id?: string;
-  formspreeEndpoint?: string; // Optional override, otherwise uses env var
-  onSuccess?: string; // URL to redirect on success
+interface Props extends HTMLAttributes<'form'> {
+  formId?: string;
+  ctaText?: string;
 }
 
-const { id = 'contact-form', formspreeEndpoint, onSuccess = '/thank-you-contact' } = Astro.props;
-
-// Use environment variable for Formspree endpoint, or provide a default if not set for dev
-const endpoint = formspreeEndpoint || import.meta.env.FORMSPREE_ENDPOINT_URL || 'https://formspree.io/f/yourformid';
-const recaptchaSiteKey = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY;
+const { formId = 'contact-form', ctaText = 'Send My Message', ...attrs } = Astro.props;
 ---
 
-<form id={id} method="POST" action={endpoint} class="space-y-spacing-4 bg-surface p-spacing-6 rounded-lg shadow-md">
-  <input type="hidden" name="g-recaptcha-response" id={`${id}-recaptcha-response`} />
-
+<form id={formId} class="space-y-6" {...attrs}>
   <div>
-    <Label for={`${id}-name`} required>Your Name</Label>
-    <Input id={`${id}-name`} name="name" type="text" placeholder="Jane Doe" required autocomplete="name" />
+    <Label for="yourName">Your Name</Label>
+    <Input
+      id="yourName"
+      name="yourName"
+      type="text"
+      placeholder="Jane Doe"
+      required
+      minLength={2}
+    />
+    <p id="yourName-error" class="hidden text-error text-sm mt-1"></p>
+  </div>
+  <div>
+    <Label for="yourEmail">Your Email</Label>
+    <Input
+      id="yourEmail"
+      name="yourEmail"
+      type="email"
+      placeholder="jane.doe@example.com"
+      required
+    />
+    <p id="yourEmail-error" class="hidden text-error text-sm mt-1"></p>
+  </div>
+  <div>
+    <Label for="subject">Subject</Label>
+    <Input
+      id="subject"
+      name="subject"
+      type="text"
+      placeholder="Question about painting"
+      required
+      minLength={5}
+    />
+    <p id="subject-error" class="hidden text-error text-sm mt-1"></p>
+  </div>
+  <div>
+    <Label for="yourMessage">Your Message</Label>
+    <textarea
+      id="yourMessage"
+      name="yourMessage"
+      rows={5}
+      placeholder="I have a question about..."
+      required
+      minLength={10}
+      maxLength={1000}
+      class="w-full px-4 py-3 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-surface text-text text-base transition-colors duration-200"
+      aria-describedby="yourMessage-error"
+    ></textarea>
+    <p id="yourMessage-error" class="hidden text-error text-sm mt-1"></p>
   </div>
 
-  <div>
-    <Label for={`${id}-email`} required>Your Email</Label>
-    <Input id={`${id}-email`} name="email" type="email" placeholder="jane.doe@example.com" required autocomplete="email" />
-  </div>
-
-  <div>
-    <Label for={`${id}-phone`}>Your Phone (Optional)</Label>
-    <Input id={`${id}-phone`} name="phone" type="tel" placeholder="(760) 555-1234" autocomplete="tel" />
-  </div>
-
-  <div>
-    <Label for={`${id}-subject`} required>Subject</Label>
-    <Input id={`${id}-subject`} name="subject" type="text" placeholder="Inquiry about painting services" required />
-  </div>
-
-  <div>
-    <Label for={`${id}-message`} required>Your Message</Label>
-    <Textarea id={`${id}-message`} name="message" rows={5} placeholder="Ask anything you'd like!" required />
-  </div>
+  <!-- Hidden reCAPTCHA field -->
+  <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response-contact" />
 
   <Button type="submit" variant="primary" size="lg" class="w-full">
-    Send My Message
+    {ctaText}
   </Button>
+  <p id="form-submission-error-contact" class="hidden text-error text-sm text-center mt-4" role="alert"></p>
 </form>
 
-<script is:inline define:vars={{ formId: id, recaptchaSiteKey: recaptchaSiteKey, onSuccessUrl: onSuccess }}>
-  const form = document.getElementById(formId);
-  const recaptchaResponseInput = document.getElementById(`${formId}-recaptcha-response`);
+<script is:inline>
+  const formContact = document.getElementById('contact-form');
+  const submitButtonContact = formContact?.querySelector('button[type="submit"]');
+  const recaptchaInputContact = document.getElementById('g-recaptcha-response-contact');
+  const formSubmissionErrorContact = document.getElementById('form-submission-error-contact');
 
-  if (form && recaptchaResponseInput && recaptchaSiteKey) {
-    form.addEventListener('submit', function (event) {
-      event.preventDefault(); // Prevent default form submission
+  // Basic client-side validation display
+  const validateField = (input) => {
+    const errorElement = document.getElementById(`${input.id}-error`);
+    if (!errorElement) return true;
 
-      if (typeof grecaptcha !== 'undefined' && grecaptcha.ready) {
-        grecaptcha.ready(function() {
-          grecaptcha.execute(recaptchaSiteKey, { action: 'submit_contact' }).then(function(token) {
-            recaptchaResponseInput.value = token;
-            form.submit(); // Submit the form after getting the token
-          }).catch(function(error) {
-            console.error('reCAPTCHA execution failed:', error);
-            // Fallback: submit form without recaptcha token if it fails
-            form.submit();
-          });
-        });
-      } else {
-        console.warn('reCAPTCHA script not fully loaded or ready. Submitting form without token.');
-        form.submit(); // Fallback: submit form without recaptcha token
+    if (input.checkValidity()) {
+      errorElement.classList.add('hidden');
+      input.classList.remove('border-error');
+      return true;
+    } else {
+      errorElement.textContent = input.validationMessage || `Please enter a valid ${input.id.replace(/([A-Z])/g, ' $1').toLowerCase()}.`;
+      errorElement.classList.remove('hidden');
+      input.classList.add('border-error');
+      return false;
+    }
+  };
+
+  formContact?.addEventListener('input', (event) => {
+    validateField(event.target);
+  });
+
+  formContact?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    formSubmissionErrorContact.classList.add('hidden'); // Hide previous errors
+
+    let formIsValid = true;
+    const formFields = formContact.querySelectorAll('input[required], textarea[required]');
+    formFields.forEach(field => {
+      if (!validateField(field)) {
+        formIsValid = false;
       }
     });
-  } else {
-    // This warning should only appear if PUBLIC_RECAPTCHA_SITE_KEY is not set (e.g., in development)
-    // or if the DOM elements are missing.
-    console.warn('reCAPTCHA integration skipped: form, recaptcha input, or site key missing. Ensure PUBLIC_RECAPTCHA_SITE_KEY is set in your .env file for production.');
-  }
+
+    if (!formIsValid) {
+      formSubmissionErrorContact.textContent = 'Please correct the highlighted fields.';
+      formSubmissionErrorContact.classList.remove('hidden');
+      return;
+    }
+
+    if (submitButtonContact) {
+      submitButtonContact.disabled = true;
+      submitButtonContact.textContent = 'Sending...';
+      submitButtonContact.classList.add('opacity-70', 'cursor-not-allowed');
+    }
+
+    // reCAPTCHA integration
+    if (import.meta.env.PROD && typeof grecaptcha !== 'undefined' && grecaptcha.ready) {
+      try {
+        const token = await grecaptcha.execute(import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY, { action: 'submit_contact' });
+        if (recaptchaInputContact) {
+          recaptchaInputContact.value = token;
+        } else {
+          throw new Error('reCAPTCHA input field not found.');
+        }
+      } catch (error) {
+        console.error('reCAPTCHA execution failed:', error);
+        formSubmissionErrorContact.textContent = 'Failed to verify reCAPTCHA. Please try again.';
+        formSubmissionErrorContact.classList.remove('hidden');
+        if (submitButtonContact) {
+          submitButtonContact.disabled = false;
+          submitButtonContact.textContent = 'Send My Message';
+          submitButtonContact.classList.remove('opacity-70', 'cursor-not-allowed');
+        }
+        return;
+      }
+    } else if (import.meta.env.PROD) {
+      // In production, if grecaptcha is not available, prevent submission
+      console.error('reCAPTCHA script not loaded. Cannot submit form.');
+      formSubmissionErrorContact.textContent = 'reCAPTCHA verification failed to load. Please refresh the page and try again.';
+      formSubmissionErrorContact.classList.remove('hidden');
+      if (submitButtonContact) {
+        submitButtonContact.disabled = false;
+        submitButtonContact.textContent = 'Send My Message';
+        submitButtonContact.classList.remove('opacity-70', 'cursor-not-allowed');
+      }
+      return;
+    }
+
+    // Prepare form data for fetch (assuming backend endpoint from TASK-024)
+    const formData = new FormData(formContact);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      const response = await fetch('/api/submit-form', { // Assumed backend endpoint from TASK-024
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        // Display success message and clear form
+        formSubmissionErrorContact.classList.remove('text-error');
+        formSubmissionErrorContact.classList.add('text-success');
+        formSubmissionErrorContact.textContent = 'Thank You! Your message has been sent to Joe. He aims to respond to all inquiries within 2 business days.';
+        formSubmissionErrorContact.classList.remove('hidden');
+        formContact.reset(); // Clear form fields
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Form submission failed.');
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+      formSubmissionErrorContact.classList.remove('text-success');
+      formSubmissionErrorContact.classList.add('text-error');
+      formSubmissionErrorContact.textContent = error.message || 'There was an issue sending your message. Please try again or call Joe directly.';
+      formSubmissionErrorContact.classList.remove('hidden');
+    } finally {
+      if (submitButtonContact) {
+        submitButtonContact.disabled = false;
+        submitButtonContact.textContent = 'Send My Message';
+        submitButtonContact.classList.remove('opacity-70', 'cursor-not-allowed');
+      }
+    }
+  });
 </script>

@@ -1,14 +1,18 @@
 ---
-interface Props {
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'input'> {
   id: string;
   name: string;
-  type?: 'text' | 'email' | 'tel' | 'password' | 'url' | 'number';
+  type?: 'text' | 'email' | 'password' | 'tel' | 'url' | 'number' | 'date';
   placeholder?: string;
-  value?: string;
   required?: boolean;
-  autocomplete?: string;
-  class?: string;
-  error?: string; // For displaying validation errors
+  minLength?: number;
+  maxLength?: number;
+  pattern?: string;
+  title?: string;
+  value?: string;
+  disabled?: boolean;
 }
 
 const {
@@ -16,32 +20,30 @@ const {
   name,
   type = 'text',
   placeholder,
-  value,
   required = false,
-  autocomplete,
-  class: className,
-  error,
+  minLength,
+  maxLength,
+  pattern,
+  title,
+  value,
+  disabled = false,
+  ...attrs
 } = Astro.props;
 ---
+
 <input
   id={id}
   name={name}
   type={type}
   placeholder={placeholder}
-  value={value}
   required={required}
-  autocomplete={autocomplete}
-  class:list={[
-    "w-full px-spacing-3 py-spacing-2 border rounded-md text-text bg-surface",
-    "border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-normal",
-    error ? "border-error focus:ring-error" : "", // Use ring-error for consistency
-    className
-  ]}
-  aria-invalid={error ? "true" : "false"}
-  aria-describedby={error ? `${id}-error` : undefined}
+  minlength={minLength}
+  maxlength={maxLength}
+  pattern={pattern}
+  title={title}
+  value={value}
+  disabled={disabled}
+  class="w-full px-4 py-3 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-surface text-text text-base transition-colors duration-200 disabled:bg-background disabled:cursor-not-allowed disabled:text-textSubtle"
+  aria-describedby={`${id}-error`}
+  {...attrs}
 />
-{error && (
-  <p id={`${id}-error`} class="text-error text-xs mt-spacing-1" role="alert">
-    {error}
-  </p>
-)}
