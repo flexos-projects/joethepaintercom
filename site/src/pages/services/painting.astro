@@ -1,0 +1,60 @@
+---
+/**
+ * Painting Services Page
+ * URL: /services/painting
+ */
+
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Hero from '@components/sections/Hero.astro';
+import ServiceDetailSection from '@components/sections/ServiceDetailSection.astro';
+import CTABanner from '@components/sections/CTABanner.astro';
+
+// Fetch all painting services
+const paintingServices = (await getCollection('services', ({ data }) => data.category === 'Painting' && data.published))
+  .sort((a, b) => a.data.title.localeCompare(b.data.title)); // Sort alphabetically for consistent order
+
+// Define page metadata
+const pageMeta = {
+  title: "Professional Painting Services | Joe the Painter San Diego",
+  description: "Explore Joe the Painter's meticulous interior, exterior, cabinet, and commercial painting services in San Diego County. Quality craftsmanship guaranteed. Book your free consultation!",
+  ogImage: "/images/og/painting-services.jpg", // Placeholder OG image
+};
+
+// Hero content for the main Painting Services page
+const heroContent = {
+  headline: "Meticulous Painting Services for Your San Diego Home & Business",
+  subheadline: "From vibrant interiors to durable exteriors, Joe the Painter delivers exceptional craftsmanship and lasting beauty. Discover our comprehensive painting solutions.",
+  ctaText: "Book Your Free Consultation",
+  ctaHref: "/consultation",
+  image: {
+    src: "/images/services/painting-main-hero.webp", // Generic painting hero image
+    alt: "A painter meticulously working on a wall, showcasing attention to detail.",
+  },
+  licenseNumber: "CA Lic. #802167",
+};
+---
+
+<BaseLayout {...pageMeta}>
+  <Hero
+    headline={heroContent.headline}
+    subheadline={heroContent.subheadline}
+    ctaText={heroContent.ctaText}
+    ctaHref={heroContent.ctaHref}
+    image={heroContent.image}
+    licenseNumber={heroContent.licenseNumber}
+  />
+
+  <main>
+    {paintingServices.map((service, index) => (
+      <ServiceDetailSection service={service.data} index={index} />
+    ))}
+
+    <CTABanner
+      headline="Ready for a Flawless Finish?"
+      description="Let Joe the Painter bring your vision to life with unparalleled craftsmanship and personal service. Schedule your free consultation today."
+      ctaText="Request Your Free Painting Estimate"
+      ctaHref="/consultation"
+    />
+  </main>
+</BaseLayout>

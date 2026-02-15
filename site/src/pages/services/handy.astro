@@ -1,0 +1,66 @@
+---
+/**
+ * Handy Services Page
+ * URL: /services/handy
+ */
+
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Hero from '@components/sections/Hero.astro';
+import ServiceDetailSection from '@components/sections/ServiceDetailSection.astro';
+import CTABanner from '@components/sections/CTABanner.astro';
+
+// Fetch the Handy Services content
+const handyService = await getCollection('services', ({ id }) => id === 'handy-services');
+
+// Define page metadata
+const pageMeta = {
+  title: "Reliable Handy Services | Joe the Painter San Diego",
+  description: "Joe the Painter offers comprehensive handyman services for home and business in San Diego. From repairs to maintenance, get quality craftsmanship you can trust. Book your free consultation!",
+  ogImage: "/images/og/handy-services.jpg", // Placeholder OG image
+};
+
+// Hero content for the main Handy Services page
+const heroContent = {
+  headline: "Reliable Handy Services: Your Trusted Partner for Home & Business Maintenance",
+  subheadline: "Beyond exceptional painting, Joe the Painter offers a wide range of essential handyman services, ensuring your property stays in perfect condition. Get expert repairs and efficient solutions.",
+  ctaText: "Discuss Your Handy Project",
+  ctaHref: "/consultation",
+  image: {
+    src: "/images/services/handy-main-hero.webp", // Generic handyman hero image
+    alt: "A man fixing a broken fence, showcasing general handyman work.",
+  },
+  licenseNumber: "CA Lic. #802167",
+};
+---
+
+<BaseLayout {...pageMeta}>
+  <Hero
+    headline={heroContent.headline}
+    subheadline={heroContent.subheadline}
+    ctaText={heroContent.ctaText}
+    ctaHref={heroContent.ctaHref}
+    image={heroContent.image}
+    licenseNumber={heroContent.licenseNumber}
+  />
+
+  <main>
+    {handyService.length > 0 ? (
+      <ServiceDetailSection service={handyService[0].data} index={0} />
+    ) : (
+      <section class="container mx-auto px-4 py-16 md:py-24 text-center">
+        <h2 class="font-heading text-4xl font-bold text-text-dark mb-4">Handy Services Coming Soon!</h2>
+        <p class="text-lg text-text-muted max-w-prose mx-auto">
+          We're currently preparing detailed information about our comprehensive handyman offerings. Please check back soon or contact Joe directly to discuss your project needs.
+        </p>
+      </section>
+    )}
+
+    <CTABanner
+      headline="Need a Hand with Your Home or Business?"
+      description="From minor repairs to essential maintenance, Joe the Painter provides reliable solutions with the same commitment to quality as his painting services. Let's get it done right."
+      ctaText="Schedule Your Free Handyman Consultation"
+      ctaHref="/consultation"
+    />
+  </main>
+</BaseLayout>
