@@ -1,0 +1,22 @@
+{
+  "category": "Handy Services",
+  "questions": [
+    {
+      "question": "What types of handy services do you offer?",
+      "answer": "Joe offers a broad range of services, including **drywall repair**, minor carpentry, fence repair, pressure washing, deck staining, fixture installation (lights, fans, shelving), and general property maintenance. If you have a specific need not listed, please don't hesitate to ask during your consultation!"
+    },
+    {
+      "question": "Can you combine handy services with a painting project?",
+      "answer": "Absolutely! This is one of Joe's unique strengths. We can seamlessly integrate necessary repairs (like drywall patching or wood rot replacement) *before* painting, ensuring a perfect, lasting finish without the hassle of coordinating multiple contractors. This 'fix-it-first, then-paint-it-perfect' approach saves you time and stress."
+    },
+    {
+      "question": "How do you charge for handyman services?",
+      "answer": "For most handyman tasks, we provide a clear, upfront estimate after assessing the scope of work during your free consultation. For smaller, less predictable tasks, we may offer an hourly rate, always transparently communicated before any work begins. There are no hidden fees."
+    },
+    {
+      "question": "Do you handle emergency repairs?",
+      "answer": "While Joe the Painter primarily schedules work by appointment, we understand that urgent situations can arise. Please contact us directly, and we will do our best to accommodate emergency repair needs based on availability."
+    }
+  ]
+}
+---

@@ -1,0 +1,88 @@
+---
+/**
+ * FAQ Page
+ * Displays a comprehensive list of Frequently Asked Questions,
+ * categorized by General Business, Painting, and Handy Services.
+ * Utilizes the Accordion component for an interactive Q&A experience.
+ */
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Accordion from '@/components/ui/Accordion.astro';
+import { getCollection } from 'astro:content';
+import { markdownToHtml } from '@/utils/markdown'; // Utility to convert markdown answers to HTML
+
+// Fetch FAQ content from the 'faqs' content collection
+const allFaqs = await getCollection('faqs');
+
+// Categorize FAQs
+const generalFaqs = allFaqs.filter(faq => faq.data.category === 'General Business').flatMap(collection => collection.data.questions);
+const paintingFaqs = allFaqs.filter(faq => faq.data.category === 'Painting').flatMap(collection => collection.data.questions);
+const handyFaqs = allFaqs.filter(faq => faq.data.category === 'Handy Services').flatMap(collection => collection.data.questions);
+
+// Page SEO metadata
+const pageTitle = "Frequently Asked Questions | Joe the Painter: Your San Diego Craftsman Since 2001";
+const pageDescription = "Find answers to common questions about Joe the Painter's reliable painting and handyman services, process, and business practices in San Diego County.";
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <section class="max-w-4xl mx-auto px-4 py-16 md:py-24">
+    <h1 class="text-4xl md:text-5xl font-heading font-bold text-neutral-800 text-center mb-12">
+      Frequently Asked Questions
+    </h1>
+
+    <!-- General Business FAQs Section -->
+    <div class="mb-16">
+      <h2 class="text-3xl md:text-4xl font-heading font-bold text-neutral-800 mb-8">
+        General Business FAQs
+      </h2>
+      {generalFaqs.length > 0 ? (
+        generalFaqs.map((faq, index) => (
+          <Accordion
+            question={faq.question}
+            answerHtml={markdownToHtml(faq.answer)}
+            questionId={`general-faq-${index}`}
+          />
+        ))
+      ) : (
+        <p class="text-neutral-500">No general FAQs available at this time. Please check back later!</p>
+      )}
+    </div>
+
+    <!-- Painting Services FAQs Section -->
+    <div class="mb-16">
+      <h2 class="text-3xl md:text-4xl font-heading font-bold text-neutral-800 mb-8">
+        Painting Services FAQs
+      </h2>
+      {paintingFaqs.length > 0 ? (
+        paintingFaqs.map((faq, index) => (
+          <Accordion
+            question={faq.question}
+            answerHtml={markdownToHtml(faq.answer)}
+            questionId={`painting-faq-${index}`}
+          />
+        ))
+      ) : (
+        <p class="text-neutral-500">No painting services FAQs available at this time. Please check back later!</p>
+      )}
+    </div>
+
+    <!-- Handy Services FAQs Section -->
+    <div>
+      <h2 class="text-3xl md:text-4xl font-heading font-bold text-neutral-800 mb-8">
+        Handy Services FAQs
+      </h2>
+      {handyFaqs.length > 0 ? (
+        handyFaqs.map((faq, index) => (
+          <Accordion
+            question={faq.question}
+            answerHtml={markdownToHtml(faq.answer)}
+            questionId={`handy-faq-${index}`}
+          />
+        ))
+      ) : (
+        <p class="text-neutral-500">No handy services FAQs available at this time. Please check back later!</p>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+---

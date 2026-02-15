@@ -1,0 +1,130 @@
+---
+/**
+ * Handy Services Page
+ * Displays detailed information about Joe's handyman services,
+ * including descriptions, benefits, and relevant FAQs.
+ */
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Accordion from '@/components/ui/Accordion.astro';
+import Button from '@/components/ui/Button.astro';
+import { getCollection } from 'astro:content';
+import { markdownToHtml } from '@/utils/markdown'; // Utility to convert markdown answers to HTML
+import { Image } from 'astro:assets'; // For optimized images
+
+// Fetch the handyman service data from the content collection
+const handyService = (await getCollection('services', ({ id }) => id === 'handy-services'))[0];
+
+if (!handyService) {
+  // Handle case where service data is not found (e.g., redirect to 404 or services index)
+  return Astro.redirect('/404');
+}
+
+// Page SEO metadata
+const pageTitle = handyService.data.seo.title;
+const pageDescription = handyService.data.seo.description;
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <section class="max-w-6xl mx-auto px-4 py-16 md:py-24">
+    <header class="text-center mb-16">
+      <h1 class="text-4xl md:text-5xl font-heading font-bold text-neutral-800 mb-6">
+        {handyService.data.title}
+      </h1>
+      <p class="text-lg md:text-xl text-neutral-500 max-w-3xl mx-auto">
+        {handyService.data.shortDescription}
+      </p>
+    </header>
+
+    <div class="grid md:grid-cols-2 gap-12 items-center mb-16">
+      <div class="relative rounded-lg overflow-hidden shadow-md md:order-2">
+        <Image
+          src={handyService.data.featuredImage.src}
+          alt={handyService.data.featuredImage.alt}
+          widths={[400, 800, 1200]}
+          sizes="(max-width: 768px) 100vw, 50vw"
+          loading="eager"
+          quality={80}
+          class="w-full h-auto object-cover"
+        />
+        {handyService.data.featuredImage.caption && (
+          <figcaption class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-3 text-sm">
+            {handyService.data.featuredImage.caption}
+          </figcaption>
+        )}
+      </div>
+      <div class="prose prose-lg max-w-none text-neutral-800 md:order-1">
+        <Fragment set:html={markdownToHtml(handyService.data.longDescription)} />
+      </div>
+    </div>
+
+    <!-- Benefits Section -->
+    {handyService.data.benefits && handyService.data.benefits.length > 0 && (
+      <div class="mb-16">
+        <h2 class="text-3xl md:text-4xl font-heading font-bold text-neutral-800 text-center mb-8">
+          Why Choose Joe for Your Handy Projects?
+        </h2>
+        <ul class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 text-neutral-700">
+          {handyService.data.benefits.map((benefit) => (
+            <li class="flex items-start gap-3 bg-neutral-50 p-6 rounded-lg shadow-sm">
+              <svg class="w-6 h-6 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span class="text-lg">{benefit}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    <!-- Process Steps Section -->
+    {handyService.data.processSteps && handyService.data.processSteps.length > 0 && (
+      <div class="mb-16">
+        <h2 class="text-3xl md:text-4xl font-heading font-bold text-neutral-800 text-center mb-8">
+          Our Reliable Handy Services Process
+        </h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {handyService.data.processSteps.map((step, index) => (
+            <div class="flex flex-col items-center text-center p-4 rounded-lg bg-white shadow-sm border border-neutral-200">
+              <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mb-4">
+                {index + 1}
+              </div>
+              <h3 class="text-xl font-heading font-semibold text-neutral-800 mb-2">{step.title}</h3>
+              <p class="text-neutral-500">{step.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Service-Specific FAQs Section -->
+    {handyService.data.faqs && handyService.data.faqs.length > 0 && (
+      <div class="mt-16">
+        <h2 class="text-3xl md:text-4xl font-heading font-bold text-neutral-800 mb-8">
+          Handy Services FAQs
+        </h2>
+        {handyService.data.faqs.map((faq, index) => (
+          <Accordion
+            question={faq.question}
+            answerHtml={markdownToHtml(faq.answer)}
+            questionId={`handy-service-faq-${index}`}
+          />
+        ))}
+      </div>
+    )}
+
+    <!-- Call to Action -->
+    <div class="text-center mt-16 pt-12 border-t border-neutral-200">
+      <h2 class="text-3xl md:text-4xl font-heading font-bold text-neutral-800 mb-6">
+        Need a Hand with Your Home or Business?
+      </h2>
+      <p class="text-lg text-neutral-500 max-w-2xl mx-auto mb-8">
+        Let Joe take care of your to-do list with expertise and reliability.
+      </p>
+      <Button variant="primary" size="lg" href="/consultation">
+        {handyService.data.ctaText}
+      </Button>
+    </div>
+  </section>
+</BaseLayout>
+---

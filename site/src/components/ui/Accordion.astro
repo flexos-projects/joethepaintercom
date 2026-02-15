@@ -1,69 +1,84 @@
 ---
+/**
+ * Accordion
+ * Displays a collapsible section for a question and answer pair.
+ * Utilizes native <details> and <summary> elements for accessibility.
+ */
+
+// Type imports
 import type { HTMLAttributes } from 'astro/types';
 
-interface FAQItem {
+// Props interface with JSDoc comments
+interface Props extends HTMLAttributes<'details'> {
+  /** The question displayed in the summary. */
   question: string;
-  answer: string; // This field is expected to contain RichText (HTML string) as per 04-content-schema.md
+  /** The HTML content for the answer. This should be pre-rendered markdown or raw HTML. */
+  answerHtml: string;
+  /** Optional ID for the question span, useful for accessibility linking. */
+  questionId?: string;
 }
 
-interface Props extends HTMLAttributes<'div'> {
-  items: FAQItem[];
-  id?: string;
-}
-
-const { items, id = 'accordion-default', ...attrs } = Astro.props;
+// Destructure with defaults
+const {
+  question,
+  answerHtml,
+  questionId,
+  class: className,
+  ...attrs
+} = Astro.props;
 ---
 
-<div {...attrs} class="w-full space-y-4" id={id}>
-  {items.map((item, index) => (
-    <details class="group bg-surface rounded-lg shadow-md overflow-hidden" role="group">
-      <summary
-        class="flex justify-between items-center p-5 cursor-pointer list-none font-body text-lg font-medium text-text-dark hover:bg-neutral-50 transition-colors duration-200 ease-in-out"
-        aria-expanded="false"
-        aria-controls={`${id}-content-${index}`}
-        tabindex="0"
-      >
-        <span>{item.question}</span>
-        <svg
-          class="w-6 h-6 transform transition-transform duration-200 ease-in-out group-open:rotate-180 text-primary-blue"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-        </svg>
-      </summary>
-      <div id={`${id}-content-${index}`} role="region" class="px-5 pb-5 text-text-muted text-base">
-        <div class="prose prose-sm max-w-none" set:html={item.answer} />
-      </div>
-    </details>
-  ))}
-</div>
+<details
+  class:list={[
+    'accordion group',
+    'bg-white border border-neutral-200 rounded-lg mb-4 overflow-hidden',
+    'transition-shadow duration-300 ease-in-out', // For hover effect
+    className,
+  ]}
+  {...attrs}
+>
+  <summary
+    class="accordion-summary flex items-center justify-between cursor-pointer py-4 px-6
+           font-heading text-lg md:text-xl font-semibold text-neutral-800 leading-tight
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:rounded-lg"
+  >
+    <span id={questionId}>{question}</span>
+    <svg
+      class="w-6 h-6 text-primary transition-transform duration-300 ease-in-out group-open:rotate-180"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+    </svg>
+  </summary>
+  <div
+    class="accordion-content px-6 pb-4
+           text-neutral-500 leading-relaxed
+           prose prose-sm max-w-none"
+  >
+    <Fragment set:html={answerHtml} />
+  </div>
+</details>
 
-<script is:inline>
-  document.addEventListener('DOMContentLoaded', () => {
-    const detailsElements = document.querySelectorAll('details');
+<style>
+  /* Hover state for the entire accordion item */
+  .accordion:hover {
+    box-shadow: var(--tw-shadow-md); /* Apply shadow-md on hover */
+  }
 
-    detailsElements.forEach(details => {
-      details.addEventListener('toggle', () => {
-        const summary = details.querySelector('summary');
-        if (summary) {
-          summary.setAttribute('aria-expanded', details.open.toString());
-        }
-      });
+  /* Focus ring for summary, ensuring it's contained */
+  .accordion-summary:focus-visible {
+    outline: none; /* Remove default outline */
+    box-shadow: 0 0 0 2px var(--tw-ring-offset-color), 0 0 0 4px var(--tw-ring-color);
+    border-radius: var(--tw-border-radius-lg); /* Match parent border-radius */
+  }
 
-      // Handle keyboard navigation for summary elements
-      const summary = details.querySelector('summary');
-      if (summary) {
-        summary.addEventListener('keydown', (event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault(); // Prevent default scroll behavior for spacebar
-            details.open = !details.open;
-            summary.setAttribute('aria-expanded', details.open.toString());
-          }
-        });
-      }
-    });
-  });
-</script>
+  /* Reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    .accordion, .accordion svg {
+      transition: none !important;
+    }
+  }
+</style>
