@@ -1,0 +1,459 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+// Mock data for content collections, mimicking what `getCollection` would return.
+// In a real scenario, these would come from `const services = await getCollection('service');` etc.
+
+interface ServiceMock {
+  id: string;
+  title: string;
+  shortDescription: string;
+  category: 'Painting' | 'Handyman';
+  featuredImage: { src: string; alt: string; };
+  slug: string;
+}
+
+interface ProjectMock {
+  id: string;
+  title: string;
+  location: string;
+  shortDescription: string;
+  featuredImage: { src: string; alt: string; };
+  slug: string;
+  afterImages: { src: string; alt: string; }[];
+}
+
+interface TestimonialMock {
+  id: string;
+  clientName: string;
+  location: string;
+  quote: string;
+}
+
+const services: ServiceMock[] = [
+  {
+    id: 'interior-painting',
+    title: 'Precision Interior Painting',
+    shortDescription: 'Transform your living spaces with a fresh, flawless interior paint job, meticulously applied.',
+    category: 'Painting',
+    featuredImage: {
+      src: '/images/services/interior-painting-hero.webp',
+      alt: 'Beautifully painted modern living room with natural light'
+    },
+    slug: 'interior-painting'
+  },
+  {
+    id: 'exterior-painting',
+    title: 'Durable Exterior Painting',
+    shortDescription: 'Protect and enhance your home\'s curb appeal with high-quality, weather-resistant exterior painting.',
+    category: 'Painting',
+    featuredImage: {
+      src: '/images/services/exterior-painting-hero.webp',
+      alt: 'Modern house with a fresh exterior paint job and manicured lawn'
+    },
+    slug: 'exterior-painting'
+  },
+  {
+    id: 'handy-services',
+    title: 'Reliable Handy Services',
+    shortDescription: 'From minor repairs to essential maintenance, Joe offers a wide range of reliable handy services.',
+    category: 'Handyman',
+    featuredImage: {
+      src: '/images/services/handy-services-hero.webp',
+      alt: 'Man fixing a broken fence, showing general handyman work'
+    },
+    slug: 'handy-services'
+  },
+];
+
+const projects: ProjectMock[] = [
+  {
+    id: 'encinitas-coastal-home-exterior',
+    title: 'Encinitas Coastal Home Exterior Refresh',
+    location: 'Encinitas, CA',
+    shortDescription: 'A complete exterior repaint and minor stucco repair for a coastal residence, enhancing durability and curb appeal.',
+    featuredImage: {
+      src: '/images/projects/encinitas-exterior-after.webp',
+      alt: 'Freshly painted white and blue coastal home exterior in Encinitas'
+    },
+    afterImages: [{ src: '/images/projects/encinitas-exterior-after.webp', alt: 'Freshly painted white and blue coastal home exterior in Encinitas' }],
+    slug: 'encinitas-coastal-home-exterior'
+  },
+  {
+    id: 'carlsbad-coastal-condo-refresh',
+    title: 'Carlsbad Coastal Condo Interior Update',
+    location: 'Carlsbad, CA',
+    shortDescription: 'Modern interior painting with cabinet refinishing, bringing a bright, contemporary feel to a beachfront condo.',
+    featuredImage: {
+      src: '/images/projects/carlsbad-condo-after.webp',
+      alt: 'Bright, modern living room interior with new paint and refinished cabinets in Carlsbad condo'
+    },
+    afterImages: [{ src: '/images/projects/carlsbad-condo-after.webp', alt: 'Bright, modern living room interior with new paint and refinished cabinets in Carlsbad condo' }],
+    slug: 'carlsbad-coastal-condo-refresh'
+  },
+  {
+    id: 'vista-commercial-office-repairs',
+    title: 'Vista Commercial Office Handyman & Paint',
+    location: 'Vista, CA',
+    shortDescription: 'Comprehensive drywall repair, fixture installation, and fresh paint for a small business office, minimizing disruption.',
+    featuredImage: {
+      src: '/images/projects/vista-office-after.webp',
+      alt: 'Clean, professional small business office interior after repairs and painting in Vista'
+    },
+    afterImages: [{ src: '/images/projects/vista-office-after.webp', alt: 'Clean, professional small business office interior after repairs and painting in Vista' }],
+    slug: 'vista-commercial-office-repairs'
+  },
+];
+
+const testimonials: TestimonialMock[] = [
+  {
+    id: 't1',
+    clientName: 'Sarah K.',
+    location: 'Homeowner, Carlsbad',
+    quote: 'Joe transformed our home! Meticulous, professional, and a pleasure to work with. The attention to detail was exceptional, and the results speak for themselves.'
+  },
+  {
+    id: 't2',
+    clientName: 'Mark D.',
+    location: 'Small Business Owner, Encinitas',
+    quote: 'Outstanding painting and fixed our drywall perfectly. Joe is a true craftsman who cares about his work and his clients. Highly recommend his dual services.'
+  },
+  {
+    id: 't3',
+    clientName: 'Emily R.',
+    location: 'Homeowner, San Marcos',
+    quote: 'We\'ve used Joe multiple times for both painting and various repairs. He\'s reliable, honest, and his work is always top-notch. Our go-to for anything home-related!'
+  }
+];
+
+
+const pageTitle = "Joe the Painter: Your Home, My Craft. Done Right Since 2001.";
+const pageDescription = "Licensed San Diego County painter & handyman. Meticulous craftsmanship, personal service, and reliable repairs since 2001. Get your free consultation!";
+
+// Hero Section Content
+const heroHeadline = "Your Home, My Craft. Done Right Since 2001.";
+const heroTagline = "Meticulous Painting & Reliable Handy Services in San Diego County.";
+const heroCtaText = "Request Your Free Consultation";
+const joeLicense = "CA Lic. #802167";
+const cslbLink = "https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=802167";
+const heroImageSrc = '/images/joe-hero.webp'; // Placeholder asset path
+const heroImageAlt = "Joe the Painter, a friendly and experienced craftsman, smiling in front of a freshly painted wall";
+
+// About Joe Section Content
+const aboutHeadline = "Meet Joe, Your Trusted Craftsman";
+const aboutDescription = "For over two decades, Joe has dedicated himself to perfecting his craft, building a reputation for integrity, personal service, and superior craftsmanship across San Diego County. As a sole proprietor, Joe personally oversees every project, ensuring unparalleled quality and a meticulous finish. He's not just a contractor; he's your neighbor committed to enhancing your home or business.";
+const aboutCtaText = "Learn More About Joe";
+const aboutImageSrc = '/images/joe-profile-homepage.webp'; // Placeholder asset path
+const aboutImageAlt = "Joe the Painter, a skilled craftsman, working on a painting project";
+
+// Services Overview Content
+const servicesOverviewHeadline = "Comprehensive Solutions for Your Property";
+const servicesOverviewDescription = "From a fresh coat of paint to essential home repairs, Joe the Painter offers a seamless, single-source solution. Experience the convenience of working with one trusted expert for all your property enhancement needs.";
+
+// Project Portfolio Overview Content
+const projectsOverviewHeadline = "Our Work: Transformations You Can Trust";
+const projectsOverviewDescription = "See the meticulous craftsmanship and lasting quality Joe brings to every project. We believe the best way to understand our dedication is through the results we deliver.";
+const projectsCtaText = "View All Projects";
+
+// Testimonials Section Content
+const testimonialsHeadline = "What Our Clients Say";
+const testimonialsCtaText = "Read All Testimonials";
+
+// Final CTA Block Content
+const finalCtaHeadline = "Ready to Transform Your Space?";
+const finalCtaSubheadline = "Experience the Joe the Painter difference. Get your free consultation today.";
+const finalCtaText = "Book Your Free Consultation";
+
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <main>
+    <!-- Hero Section -->
+    <section class="relative bg-neutral-50 py-16 md:py-24 lg:py-32 overflow-hidden">
+      <div class="container mx-auto px-4 grid md:grid-cols-2 gap-8 lg:gap-16 items-center">
+        <div class="relative z-10 text-center md:text-left">
+          <h1 class="font-heading text-neutral-900 text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+            {heroHeadline}
+          </h1>
+          <p class="font-body text-neutral-700 text-lg md:text-xl mb-8 max-w-xl md:mx-0 mx-auto">
+            {heroTagline}
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+            <a href="/consultation" class="inline-flex items-center justify-center px-8 py-4 bg-primary-DEFAULT text-white font-semibold text-lg rounded-lg shadow-md hover:bg-primary-dark focus:outline-none focus:ring-4 focus:ring-primary-light transition-all duration-300">
+              {heroCtaText}
+            </a>
+            <a
+              href={cslbLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center justify-center px-6 py-3 bg-neutral-200 text-neutral-700 font-medium text-base rounded-lg hover:bg-neutral-300 focus:outline-none focus:ring-4 focus:ring-neutral-400 transition-colors duration-200"
+              aria-label={`Verify Joe the Painter's CA License ${joeLicense} on CSLB website`}
+            >
+              {joeLicense} <span class="sr-only">(Verify License)</span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 ml-2">
+                <path fill-rule="evenodd" d="M4.25 5.5a.75.75 0 00-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 00.75-.75v-4a.75.75 0 011.5 0v4A2.25 2.25 0 0112.75 17h-8.5A2.25 2.25 0 012 14.75v-8.5A2.25 2.25 0 014.25 4h5a.75.75 0 010 1.5h-5z" clip-rule="evenodd" />
+                <path fill-rule="evenodd" d="M15.36 2.64a.75.75 0 01.03 1.05l-7.888 7.889a.75.75 0 11-1.06-1.06l7.888-7.889a.75.75 0 011.03-.02z" clip-rule="evenodd" />
+                <path fill-rule="evenodd" d="M19.5 5.5a.75.75 0 00-1.5 0v2.75h-2.75a.75.75 0 000 1.5h2.75v2.75a.75.75 0 001.5 0v-2.75h2.75a.75.75 0 000-1.5h-2.75V5.5z" clip-rule="evenodd" />
+              </svg>
+            </a>
+          </div>
+        </div>
+        <div class="relative flex justify-center md:justify-end">
+          <Image
+            src={heroImageSrc}
+            alt={heroImageAlt}
+            width={700}
+            height={700}
+            loading="eager"
+            class="w-full max-w-md md:max-w-none lg:max-w-xl rounded-lg shadow-xl object-cover"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- About Joe Section (Condensed) -->
+    <section class="bg-white py-16 md:py-24">
+      <div class="container mx-auto px-4 grid md:grid-cols-2 gap-8 lg:gap-16 items-center">
+        <div class="relative flex justify-center md:justify-start order-2 md:order-1">
+          <Image
+            src={aboutImageSrc}
+            alt={aboutImageAlt}
+            width={600}
+            height={400}
+            loading="lazy"
+            class="w-full max-w-sm md:max-w-none lg:max-w-md rounded-lg shadow-lg object-cover"
+          />
+        </div>
+        <div class="text-center md:text-left order-1 md:order-2">
+          <h2 class="font-heading text-neutral-900 text-3xl md:text-4xl font-bold mb-6">
+            {aboutHeadline}
+          </h2>
+          <p class="font-body text-neutral-700 text-lg mb-8">
+            {aboutDescription}
+          </p>
+          <a href="/about" class="inline-flex items-center justify-center px-8 py-3 bg-accent-DEFAULT text-white font-semibold text-base rounded-lg shadow-md hover:bg-accent-dark focus:outline-none focus:ring-4 focus:ring-accent-light transition-all duration-300">
+            {aboutCtaText}
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services Overview Section -->
+    <section class="bg-neutral-50 py-16 md:py-24">
+      <div class="container mx-auto px-4 text-center">
+        <h2 class="font-heading text-neutral-900 text-3xl md:text-4xl font-bold mb-6">
+          {servicesOverviewHeadline}
+        </h2>
+        <p class="font-body text-neutral-700 text-lg mb-12 max-w-2xl mx-auto">
+          {servicesOverviewDescription}
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {services.map((service) => (
+            <a href={`/services/${service.slug}`} class="group bg-white rounded-lg shadow-md overflow-hidden flex flex-col items-center text-center hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300">
+              <Image
+                src={service.featuredImage.src}
+                alt={service.featuredImage.alt}
+                width={400}
+                height={250}
+                loading="lazy"
+                class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div class="p-6 flex-1 flex flex-col justify-between">
+                <h3 class="font-heading text-neutral-900 text-xl font-semibold mb-3">
+                  {service.title}
+                </h3>
+                <p class="font-body text-neutral-600 text-base mb-4">
+                  {service.shortDescription}
+                </p>
+                <span class="inline-flex items-center justify-center text-primary-DEFAULT font-medium hover:text-primary-dark transition-colors duration-200 mt-auto">
+                  Explore Services
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 ml-1">
+                    <path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.68L10.22 6.22a.75.75 0 011.06-1.06l4.5 4.5a.75.75 0 010 1.06l-4.5 4.5a.75.75 0 01-1.06-1.06l4.21-4.22H3.75A.75.75 0 013 10z" clip-rule="evenodd" />
+                  </svg>
+                </span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Project Portfolio Overview Section -->
+    <section class="bg-white py-16 md:py-24">
+      <div class="container mx-auto px-4 text-center">
+        <h2 class="font-heading text-neutral-900 text-3xl md:text-4xl font-bold mb-6">
+          {projectsOverviewHeadline}
+        </h2>
+        <p class="font-body text-neutral-700 text-lg mb-12 max-w-2xl mx-auto">
+          {projectsOverviewDescription}
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {projects.slice(0, 3).map((project) => ( // Display top 3 projects
+            <a href={`/projects/${project.slug}`} class="group bg-white rounded-lg shadow-md overflow-hidden flex flex-col hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300">
+              <Image
+                src={project.featuredImage.src}
+                alt={project.featuredImage.alt}
+                width={400}
+                height={250}
+                loading="lazy"
+                class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div class="p-6 flex-1 flex flex-col justify-between text-left">
+                <div>
+                  <h3 class="font-heading text-neutral-900 text-xl font-semibold mb-2">
+                    {project.title}
+                  </h3>
+                  <p class="font-body text-neutral-600 text-sm mb-4">
+                    {project.location}
+                  </p>
+                  <p class="font-body text-neutral-700 text-base">
+                    {project.shortDescription}
+                  </p>
+                </div>
+                <span class="inline-flex items-center text-primary-DEFAULT font-medium hover:text-primary-dark transition-colors duration-200 mt-4">
+                  View Project
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 ml-1">
+                    <path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.68L10.22 6.22a.75.75 0 011.06-1.06l4.5 4.5a.75.75 0 010 1.06l-4.5 4.5a.75.75 0 01-1.06-1.06l4.21-4.22H3.75A.75.75 0 013 10z" clip-rule="evenodd" />
+                  </svg>
+                </span>
+              </div>
+            </a>
+          ))}
+        </div>
+        <div class="mt-12">
+          <a href="/our-work" class="inline-flex items-center justify-center px-8 py-4 bg-primary-DEFAULT text-white font-semibold text-lg rounded-lg shadow-md hover:bg-primary-dark focus:outline-none focus:ring-4 focus:ring-primary-light transition-all duration-300">
+            {projectsCtaText}
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="bg-neutral-50 py-16 md:py-24">
+      <div class="container mx-auto px-4 text-center">
+        <h2 class="font-heading text-neutral-900 text-3xl md:text-4xl font-bold mb-12">
+          {testimonialsHeadline}
+        </h2>
+        <div class="relative max-w-4xl mx-auto">
+          <div class="overflow-hidden">
+            <div class="flex transition-transform duration-500 ease-in-out" id="testimonial-carousel">
+              {testimonials.map((testimonial) => (
+                <div class="w-full flex-shrink-0 p-4">
+                  <blockquote class="bg-white rounded-lg shadow-md p-8 text-center flex flex-col h-full justify-between">
+                    <p class="font-body text-neutral-800 text-xl italic mb-6">
+                      "{testimonial.quote}"
+                    </p>
+                    <cite class="font-semibold text-neutral-900 text-lg not-italic">
+                      {testimonial.clientName}
+                      <span class="block text-neutral-600 text-base font-normal mt-1">
+                        {testimonial.location}
+                      </span>
+                    </cite>
+                  </blockquote>
+                </div>
+              ))}
+            </div>
+          </div>
+          <button id="carousel-prev" class="absolute top-1/2 left-0 -translate-y-1/2 bg-white rounded-full p-3 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-neutral-300 transition-all duration-200 z-10" aria-label="Previous testimonial">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-neutral-700">
+              <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
+            </svg>
+          </button>
+          <button id="carousel-next" class="absolute top-1/2 right-0 -translate-y-1/2 bg-white rounded-full p-3 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-neutral-300 transition-all duration-200 z-10" aria-label="Next testimonial">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-neutral-700">
+              <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+        <div class="mt-12">
+          <a href="/testimonials" class="inline-flex items-center justify-center px-8 py-4 bg-primary-DEFAULT text-white font-semibold text-lg rounded-lg shadow-md hover:bg-primary-dark focus:outline-none focus:ring-4 focus:ring-primary-light transition-all duration-300">
+            {testimonialsCtaText}
+          </a>
+        </div>
+      </div>
+    </section>
+    <script is:inline>
+      document.addEventListener('DOMContentLoaded', () => {
+        const carousel = document.getElementById('testimonial-carousel');
+        const prevBtn = document.getElementById('carousel-prev');
+        const nextBtn = document.getElementById('carousel-next');
+        let currentIndex = 0;
+        const items = Array.from(carousel?.children || []);
+        const totalItems = items.length;
+
+        if (totalItems === 0 || !carousel) {
+          prevBtn?.remove();
+          nextBtn?.remove();
+          return;
+        }
+
+        // Function to get item width, accounting for margins/padding
+        const getItemWidth = () => {
+          if (items.length > 0) {
+            const item = items[0];
+            const style = window.getComputedStyle(item);
+            const width = item.offsetWidth;
+            const margin = parseFloat(style.marginLeft) + parseFloat(style.marginRight);
+            return width + margin;
+          }
+          return 0;
+        };
+
+        const updateCarousel = () => {
+          const currentItemWidth = getItemWidth();
+          carousel.style.transform = `translateX(-${currentIndex * currentItemWidth}px)`;
+        };
+
+        // Initial update and resize observer
+        updateCarousel(); // Initial positioning
+        window.addEventListener('resize', updateCarousel); // Update on resize
+
+        prevBtn?.addEventListener('click', () => {
+          currentIndex = (currentIndex > 0) ? currentIndex - 1 : totalItems - 1;
+          updateCarousel();
+          clearInterval(autoPlayInterval); // Reset autoplay on manual interaction
+          autoPlayInterval = setInterval(autoAdvance, 5000);
+        });
+
+        nextBtn?.addEventListener('click', () => {
+          currentIndex = (currentIndex < totalItems - 1) ? currentIndex + 1 : 0;
+          updateCarousel();
+          clearInterval(autoPlayInterval); // Reset autoplay on manual interaction
+          autoPlayInterval = setInterval(autoAdvance, 5000);
+        });
+
+        // Auto-play
+        const autoAdvance = () => {
+          currentIndex = (currentIndex < totalItems - 1) ? currentIndex + 1 : 0;
+          updateCarousel();
+        };
+
+        let autoPlayInterval = setInterval(autoAdvance, 5000); // Change slide every 5 seconds
+
+        // Pause on hover
+        carousel?.parentElement?.addEventListener('mouseenter', () => clearInterval(autoPlayInterval));
+        carousel?.parentElement?.addEventListener('mouseleave', () => {
+          autoPlayInterval = setInterval(autoAdvance, 5000);
+        });
+      });
+    </script>
+
+
+    <!-- Final CTA Block -->
+    <section class="bg-primary-DEFAULT py-16 md:py-24 text-center">
+      <div class="container mx-auto px-4">
+        <h2 class="font-heading text-white text-3xl md:text-4xl font-bold mb-6">
+          {finalCtaHeadline}
+        </h2>
+        <p class="font-body text-primary-50 text-lg md:text-xl mb-12 max-w-2xl mx-auto">
+          {finalCtaSubheadline}
+        </p>
+        <a href="/consultation" class="inline-flex items-center justify-center px-8 py-4 bg-accent-DEFAULT text-white font-semibold text-lg rounded-lg shadow-md hover:bg-accent-dark focus:outline-none focus:ring-4 focus:ring-accent-light transition-all duration-300">
+          {finalCtaText}
+        </a>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
