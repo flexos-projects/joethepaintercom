@@ -1,16 +1,13 @@
----
-// This is required for Astro Content Collections to work.
-// Even if collections are empty, this file must exist and export `collections`.
----
 import { defineCollection, z } from 'astro:content';
 
+// Define the schema for the Service collection
 const serviceCollection = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string(),
     slug: z.string(),
     shortDescription: z.string().max(200),
-    longDescription: z.string(), // Using string for RichText, can be parsed later
+    longDescription: z.string().min(200), // RichText is represented as string in Markdown
     category: z.enum(['Painting', 'Handyman']),
     serviceTypes: z.array(z.string()).min(1).max(5),
     benefits: z.array(z.string()).min(3).max(8),
@@ -31,7 +28,7 @@ const serviceCollection = defineCollection({
     })).optional(),
     faqs: z.array(z.object({
       question: z.string(),
-      answer: z.string(), // Using string for RichText
+      answer: z.string(), // RichText is represented as string in Markdown
     })).optional(),
     relatedProjects: z.array(z.string()).optional(), // Array of Project slugs
     ctaText: z.string().max(80),
@@ -44,19 +41,20 @@ const serviceCollection = defineCollection({
   }),
 });
 
+// Define the schema for the Project collection
 const projectCollection = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string(),
     slug: z.string(),
-    projectDate: z.coerce.date(),
+    projectDate: z.coerce.date(), // YYYY-MM-DD format
     clientName: z.string().optional(),
     location: z.string(),
     shortDescription: z.string(),
-    challenge: z.string(), // Using string for RichText
-    solution: z.string(), // Using string for RichText
-    result: z.string(), // Using string for RichText
-    servicesPerformed: z.array(z.string()), // Array of Service IDs or slugs
+    challenge: z.string(), // RichText is represented as string in Markdown
+    solution: z.string(), // RichText is represented as string in Markdown
+    result: z.string(), // RichText is represented as string in Markdown
+    servicesPerformed: z.array(z.string()), // Array of Service slugs
     beforeImages: z.array(z.object({
       src: z.string(),
       alt: z.string(),
@@ -80,22 +78,25 @@ const projectCollection = defineCollection({
   }),
 });
 
+// Define the schema for the Testimonial collection
 const testimonialCollection = defineCollection({
-  type: 'data', // Using data for simpler JSON objects, could be 'content' for Markdown
+  type: 'content',
   schema: z.object({
     clientName: z.string(),
     location: z.string(),
     quote: z.string(),
-    projectType: z.string().optional(),
-    rating: z.number().min(1).max(5).optional(), // Star rating
+    projectType: z.string().optional(), // e.g., "Exterior Painting", "Drywall Repair"
+    rating: z.number().min(1).max(5).optional(), // 5-star rating
     date: z.coerce.date().optional(),
     featured: z.boolean().default(false), // For homepage carousel
     published: z.boolean().default(false),
   }),
 });
 
+
 export const collections = {
   services: serviceCollection,
   projects: projectCollection,
   testimonials: testimonialCollection,
 };
+---
