@@ -54,7 +54,7 @@ const { formId = 'contact-form', ctaText = 'Send My Message', ...attrs } = Astro
       id="yourMessage"
       name="yourMessage"
       rows={5}
-      placeholder="I have a question about..."
+      placeholder="Ask your question here."
       required
       minLength={10}
       maxLength={1000}
@@ -89,7 +89,23 @@ const { formId = 'contact-form', ctaText = 'Send My Message', ...attrs } = Astro
       input.classList.remove('border-error');
       return true;
     } else {
-      errorElement.textContent = input.validationMessage || `Please enter a valid ${input.id.replace(/([A-Z])/g, ' $1').toLowerCase()}.`;
+      // Provide a more user-friendly message for common validation errors
+      let message = input.validationMessage;
+      if (input.type === 'email' && input.value !== '' && !input.validity.valid) {
+        message = 'Please enter a valid email address.';
+      } else if (input.validity.valueMissing) {
+        message = 'This field is required.';
+      } else if (input.validity.tooShort) {
+        message = `Please lengthen this text to ${input.minLength} characters or more (you are currently using ${input.value.length} characters).`;
+      } else if (input.id === 'subject' && input.validity.tooShort) {
+        message = 'Subject must be at least 5 characters.';
+      } else if (input.id === 'yourMessage' && input.validity.tooShort) {
+        message = 'Message must be at least 10 characters.';
+      } else if (input.id === 'yourName' && input.validity.tooShort) {
+        message = 'Name must be at least 2 characters.';
+      }
+
+      errorElement.textContent = message;
       errorElement.classList.remove('hidden');
       input.classList.add('border-error');
       return false;
@@ -97,8 +113,13 @@ const { formId = 'contact-form', ctaText = 'Send My Message', ...attrs } = Astro
   };
 
   formContact?.addEventListener('input', (event) => {
-    validateField(event.target);
+    validateField(event.target as HTMLInputElement | HTMLTextAreaElement); // Explicitly cast event.target
   });
+  
+  formContact?.addEventListener('blur', (event) => { // Add blur event for immediate feedback
+    validateField(event.target as HTMLInputElement | HTMLTextAreaElement);
+  }, true); // Use capture phase to ensure it runs before other blur handlers
+
 
   formContact?.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -107,7 +128,8 @@ const { formId = 'contact-form', ctaText = 'Send My Message', ...attrs } = Astro
     let formIsValid = true;
     const formFields = formContact.querySelectorAll('input[required], textarea[required]');
     formFields.forEach(field => {
-      if (!validateField(field)) {
+      // Validate all fields on submit, not just on input
+      if (!validateField(field as HTMLInputElement | HTMLTextAreaElement)) {
         formIsValid = false;
       }
     });
@@ -115,6 +137,11 @@ const { formId = 'contact-form', ctaText = 'Send My Message', ...attrs } = Astro
     if (!formIsValid) {
       formSubmissionErrorContact.textContent = 'Please correct the highlighted fields.';
       formSubmissionErrorContact.classList.remove('hidden');
+      // Find the first invalid field and focus it for accessibility
+      const firstInvalidField = formContact.querySelector(':invalid');
+      if (firstInvalidField) {
+        (firstInvalidField as HTMLElement).focus();
+      }
       return;
     }
 
@@ -139,7 +166,7 @@ const { formId = 'contact-form', ctaText = 'Send My Message', ...attrs } = Astro
         formSubmissionErrorContact.classList.remove('hidden');
         if (submitButtonContact) {
           submitButtonContact.disabled = false;
-          submitButtonContact.textContent = 'Send My Message';
+          submitButtonContact.textContent = ctaText; // Revert to original CTA text
           submitButtonContact.classList.remove('opacity-70', 'cursor-not-allowed');
         }
         return;
@@ -151,7 +178,7 @@ const { formId = 'contact-form', ctaText = 'Send My Message', ...attrs } = Astro
       formSubmissionErrorContact.classList.remove('hidden');
       if (submitButtonContact) {
         submitButtonContact.disabled = false;
-        submitButtonContact.textContent = 'Send My Message';
+        submitButtonContact.textContent = ctaText; // Revert to original CTA text
         submitButtonContact.classList.remove('opacity-70', 'cursor-not-allowed');
       }
       return;
@@ -177,6 +204,14 @@ const { formId = 'contact-form', ctaText = 'Send My Message', ...attrs } = Astro
         formSubmissionErrorContact.textContent = 'Thank You! Your message has been sent to Joe. He aims to respond to all inquiries within 2 business days.';
         formSubmissionErrorContact.classList.remove('hidden');
         formContact.reset(); // Clear form fields
+        // Clear validation messages and borders after successful submission
+        formFields.forEach(field => {
+          const errorElement = document.getElementById(`${field.id}-error`);
+          if (errorElement) {
+            errorElement.classList.add('hidden');
+          }
+          field.classList.remove('border-error');
+        });
       } else {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Form submission failed.');
@@ -190,7 +225,7 @@ const { formId = 'contact-form', ctaText = 'Send My Message', ...attrs } = Astro
     } finally {
       if (submitButtonContact) {
         submitButtonContact.disabled = false;
-        submitButtonContact.textContent = 'Send My Message';
+        submitButtonContact.textContent = ctaText; // Revert to original CTA text
         submitButtonContact.classList.remove('opacity-70', 'cursor-not-allowed');
       }
     }

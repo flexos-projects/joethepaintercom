@@ -15,13 +15,35 @@ const {
   ...attrs
 } = Astro.props;
 
-const baseClasses = 'inline-flex items-center justify-center font-semibold text-center text-decoration-none cursor-pointer border transition duration-150 ease-in-out rounded-md';
+const baseClasses = 'inline-flex items-center justify-center font-semibold text-center text-decoration-none border transition duration-150 ease-in-out rounded-md';
 
-const variantClasses = {
-  primary: `bg-primary text-surface border-primary hover:bg-[#003B8D] hover:border-[#003B8D] active:bg-[#002A6B] active:border-[#002A6B] ${disabled ? 'bg-textSubtle border-textSubtle text-surface cursor-not-allowed' : ''}`,
-  secondary: `bg-secondary text-surface border-secondary hover:bg-[#5A616E] hover:border-[#5A616E] active:bg-[#4D535E] active:border-[#4D535E] ${disabled ? 'bg-textSubtle border-textSubtle text-surface cursor-not-allowed' : ''}`,
-  outline: `bg-transparent text-primary border-primary hover:bg-primary hover:text-surface ${disabled ? 'text-textSubtle border-textSubtle cursor-not-allowed' : ''}`,
-  ghost: `bg-transparent text-primary border-transparent hover:bg-primary/[0.05] active:bg-primary/[0.1] ${disabled ? 'text-textSubtle cursor-not-allowed' : ''}`,
+const getVariantClasses = (variant: Props['variant'], isDisabled: boolean) => {
+  if (isDisabled) {
+    switch (variant) {
+      case 'primary':
+      case 'secondary':
+        return 'bg-textSubtle border-textSubtle text-surface';
+      case 'outline':
+        return 'bg-transparent text-textSubtle border-textSubtle';
+      case 'ghost':
+        return 'bg-transparent text-textSubtle border-transparent';
+      default:
+        return '';
+    }
+  } else {
+    switch (variant) {
+      case 'primary':
+        return 'bg-primary text-surface border-primary hover:bg-[#003B8D] hover:border-[#003B8D] hover:shadow-sm active:bg-[#002A6B] active:border-[#002A6B] active:transform active:translate-y-px';
+      case 'secondary':
+        return 'bg-secondary text-surface border-secondary hover:bg-[#5A616E] hover:border-[#5A616E] hover:shadow-sm active:bg-[#4D535E] active:border-[#4D535E] active:transform active:translate-y-px';
+      case 'outline':
+        return 'bg-transparent text-primary border-primary hover:bg-primary hover:text-surface hover:shadow-sm active:bg-[#002A6B] active:border-[#002A6B] active:text-surface active:transform active:translate-y-px';
+      case 'ghost':
+        return 'bg-transparent text-primary border-transparent hover:bg-primary/[0.05] active:bg-primary/[0.1] active:transform active:translate-y-px';
+      default:
+        return '';
+    }
+  }
 };
 
 const sizeClasses = {
@@ -29,16 +51,18 @@ const sizeClasses = {
   md: 'px-4 py-3 text-base',
   lg: 'px-6 py-4 text-lg',
 };
+
+const finalClasses = [
+  baseClasses,
+  getVariantClasses(variant, disabled),
+  sizeClasses[size],
+  className,
+  disabled ? 'cursor-not-allowed' : 'cursor-pointer',
+];
 ---
 
 <button
-  class:list={[
-    baseClasses,
-    variantClasses[variant],
-    sizeClasses[size],
-    className,
-    disabled ? 'opacity-70 cursor-not-allowed' : '',
-  ]}
+  class:list={finalClasses}
   disabled={disabled}
   {...attrs}
 >

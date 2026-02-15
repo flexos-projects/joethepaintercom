@@ -248,12 +248,12 @@ const { formId = 'consultation-form', ctaText = 'Request My Free Consultation', 
       return;
     }
 
-    // Prepare form data for fetch (assuming backend endpoint from TASK-024)
+    // Prepare form data for fetch
     const formData = new FormData(formConsultation);
     const data = Object.fromEntries(formData.entries());
 
     try {
-      const response = await fetch('/api/submit-form', { // Assumed backend endpoint from TASK-024
+      const response = await fetch('/api/submit-form', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -262,15 +262,14 @@ const { formId = 'consultation-form', ctaText = 'Request My Free Consultation', 
       });
 
       if (response.ok) {
-        // Redirect to a thank you page or display success message
-        window.location.href = '/thank-you'; // Example redirect
+        window.location.href = '/thank-you';
       } else {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Form submission failed.');
+        throw new Error(errorData.message || 'Oops! Something went wrong on our end. Please try again or call Joe directly at (760) 580-8173.');
       }
     } catch (error) {
       console.error('Form submission error:', error);
-      formSubmissionErrorConsultation.textContent = error.message || 'There was an issue submitting your request. Please try again or call Joe directly.';
+      formSubmissionErrorConsultation.textContent = error.message || 'There was an issue submitting your request. Please try again or call Joe directly at (760) 580-8173.';
       formSubmissionErrorConsultation.classList.remove('hidden');
     } finally {
       if (submitButtonConsultation) {
