@@ -1,386 +1,222 @@
 ---
-import Label from './ui/Label.astro';
-import Input from './ui/Input.astro';
-import Button from './ui/Button.astro';
+/**
+ * ConsultationForm.astro
+ *
+ * A reusable form component for users to request a free consultation.
+ * Captures essential project details and contact preferences.
+ * Includes placeholders for reCAPTCHA and submission handling.
+ */
 
-// Ensure FORMSPREE_ENDPOINT_URL is defined in your .env file
-// Example: PUBLIC_FORMSPREE_ENDPOINT_URL="https://formspree.io/f/yourformid"
-const FORMSPREE_ENDPOINT_URL = Astro.env.PUBLIC_FORMSPREE_ENDPOINT_URL;
+import type { HTMLAttributes } from 'astro/types';
 
-// Type definition for form fields for client-side validation logic
-interface FieldConfig {
-  id: string;
-  name: string;
-  type: 'text' | 'email' | 'tel' | 'select' | 'textarea' | 'radio';
-  minLength?: number;
-  maxLength?: number;
-  pattern?: string; // For regex validation, e.g., phone numbers
-  groupName?: string; // For radio groups
+interface Props extends HTMLAttributes<'form'> {
+  /** Indicates if the form is currently submitting, disables the submit button. */
+  loading?: boolean;
+  /** Optional message to display if there's a general form error. */
+  errorMessage?: string;
+  /** Optional message to display on successful submission. */
+  successMessage?: string;
 }
 
-// Define the fields for validation
-const fields: FieldConfig[] = [
-  { id: 'fullName', name: 'Full Name', type: 'text', minLength: 2 },
-  { id: 'email', name: 'Email Address', type: 'email' },
-  { id: 'phone', name: 'Phone Number', type: 'tel', pattern: '^\\(?(\\d{3})\\)?[-.\\s]?(\\d{3})[-.\\s]?(\\d{4})$' },
-  { id: 'projectType', name: 'Project Type', type: 'select' },
-  { id: 'serviceLocation', name: 'Service Location', type: 'text', minLength: 3 },
-  { id: 'projectDetails', name: 'Project Details', type: 'textarea', minLength: 10, maxLength: 500 },
-  { id: 'preferredContact', name: 'Preferred Contact Method', type: 'radio', groupName: 'preferredContact' },
+const {
+  loading = false,
+  errorMessage,
+  successMessage,
+  class: className,
+  ...attrs
+} = Astro.props;
+
+// Hardcoded service types for the dropdown
+const serviceTypes = [
+  { value: '', label: 'Select a service type' },
+  { value: 'painting', label: 'Painting Services' },
+  { value: 'handy', label: 'Handy Services' },
+  { value: 'both', label: 'Both Painting & Handy Services' },
 ];
+
+// Hardcoded preferred contact methods for radio buttons
+const contactMethods = [
+  { value: 'phone', label: 'Phone Call' },
+  { value: 'email', label: 'Email' },
+];
+
+// Tailwind classes mapping to design tokens for form elements
+const labelClasses = 'block text-sm font-medium text-text-dark mb-1';
+const inputClasses =
+  'w-full px-4 py-3 border border-border rounded-md text-base text-text-dark bg-surface placeholder:text-text-muted ' +
+  'focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-150 ease-in-out';
+const radioGroupClasses = 'flex flex-col sm:flex-row sm:gap-6 gap-2';
+const radioInputClasses =
+  'h-4 w-4 text-primary border-border focus:ring-primary focus:ring-2 transition-all duration-150 ease-in-out';
+const radioLabelClasses = 'ml-2 text-base text-text-dark';
+const buttonBaseClasses =
+  'inline-flex items-center justify-center text-center text-lg font-semibold border border-primary rounded-md ' +
+  'transition-all duration-150 ease-in-out px-6 py-4 w-full';
+const buttonPrimaryClasses =
+  'bg-primary text-white hover:bg-[#003B8D] active:bg-[#002A6B] active:translate-y-px ' +
+  'hover:shadow-sm focus:ring-2 focus:ring-primary/50';
+const buttonDisabledClasses = 'bg-text-subtle border-text-subtle text-surface cursor-not-allowed shadow-none';
 ---
 
 <form
-  id="consultation-form"
   method="POST"
-  action={FORMSPREE_ENDPOINT_URL}
-  class="space-y-6"
-  name="Free Consultation Request for Joe the Painter"
-  data-netlify="true"
-  netlify-honeypot="bot-field"
+  action="/api/submit-consultation" {/* Placeholder for backend endpoint */}
+  class:list={['space-y-6', className]}
+  {...attrs}
 >
-  <!-- Honeypot field for spam prevention -->
-  <p class="hidden">
-    <label>
-      Don’t fill this out if you’re human: <input name="bot-field" />
-    </label>
-  </p>
+  {errorMessage && (
+    <div role="alert" class="bg-error/10 border-l-4 border-error text-error p-4 rounded-md">
+      <p class="font-medium">Error:</p>
+      <p>{errorMessage}</p>
+    </div>
+  )}
+  {successMessage && (
+    <div role="alert" class="bg-success/10 border-l-4 border-success text-success p-4 rounded-md">
+      <p class="font-medium">Success!</p>
+      <p>{successMessage}</p>
+    </div>
+  )}
 
-  <!-- Full Name -->
+  {/* Full Name */}
   <div>
-    <Label for="fullName" text="Full Name" required />
-    <Input
+    <label for="fullName" class={labelClasses}>Full Name <span class="text-error">*</span></label>
+    <input
+      type="text"
       id="fullName"
       name="fullName"
-      type="text"
       placeholder="John Doe"
+      class={inputClasses}
       required
-      autocomplete="name"
+      aria-required="true"
     />
-    <p id="fullName-error" class="text-error text-xs mt-1 hidden" aria-live="polite"></p>
   </div>
 
-  <!-- Email Address -->
+  {/* Email Address */}
   <div>
-    <Label for="email" text="Email Address" required />
-    <Input
-      id="email"
-      name="email"
+    <label for="emailAddress" class={labelClasses}>Email Address <span class="text-error">*</span></label>
+    <input
       type="email"
+      id="emailAddress"
+      name="emailAddress"
       placeholder="john.doe@example.com"
+      class={inputClasses}
       required
-      autocomplete="email"
+      aria-required="true"
     />
-    <p id="email-error" class="text-error text-xs mt-1 hidden" aria-live="polite"></p>
   </div>
 
-  <!-- Phone Number -->
+  {/* Phone Number */}
   <div>
-    <Label for="phone" text="Phone Number" required />
-    <Input
-      id="phone"
-      name="phone"
+    <label for="phoneNumber" class={labelClasses}>Phone Number <span class="text-error">*</span></label>
+    <input
       type="tel"
+      id="phoneNumber"
+      name="phoneNumber"
       placeholder="(760) 555-1234"
+      class={inputClasses}
       required
-      autocomplete="tel"
+      aria-required="true"
     />
-    <p id="phone-error" class="text-error text-xs mt-1 hidden" aria-live="polite"></p>
   </div>
 
-  <!-- Project Type -->
+  {/* Service Type (Dropdown) */}
   <div>
-    <Label for="projectType" text="Project Type" required />
+    <label for="serviceType" class={labelClasses}>Project Type <span class="text-error">*</span></label>
     <div class="relative">
       <select
-        id="projectType"
-        name="projectType"
+        id="serviceType"
+        name="serviceType"
+        class={inputClasses + ' appearance-none pr-10'}
         required
-        class="block w-full px-3 py-2 border border-border rounded-md text-text-dark bg-surface placeholder:text-text-muted appearance-none pr-8 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
         aria-required="true"
-        aria-invalid="false"
       >
-        <option value="" disabled selected>What kind of project are you considering?</option>
-        <option value="Painting Services">Painting Services</option>
-        <option value="Handy Services">Handy Services</option>
-        <option value="Both Painting & Handy Services">Both Painting & Handy Services</option>
+        {serviceTypes.map((type) => (
+          <option value={type.value} disabled={type.value === ''} selected={type.value === ''}>
+            {type.label}
+          </option>
+        ))}
       </select>
-      <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text-muted">
-        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-          <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-        </svg>
-      </div>
-    </div>
-    <p id="projectType-error" class="text-error text-xs mt-1 hidden" aria-live="polite"></p>
-  </div>
-
-  <!-- Service Location -->
-  <div>
-    <Label for="serviceLocation" text="Service Location" required />
-    <Input
-      id="serviceLocation"
-      name="serviceLocation"
-      type="text"
-      placeholder="Carlsbad, CA"
-      required
-      autocomplete="address-level2"
-    />
-    <p id="serviceLocation-error" class="text-error text-xs mt-1 hidden" aria-live="polite"></p>
-  </div>
-
-  <!-- Project Details -->
-  <div>
-    <Label for="projectDetails" text="Project Details" required />
-    <textarea
-      id="projectDetails"
-      name="projectDetails"
-      rows="4"
-      placeholder="Tell Joe about your project (e.g., 'Exterior house paint, 3 bedrooms')."
-      required
-      class="w-full px-3 py-2 border border-border rounded-md text-text-dark bg-surface placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
-      aria-required="true"
-      aria-invalid="false"
-    ></textarea>
-    <p id="projectDetails-error" class="text-error text-xs mt-1 hidden" aria-live="polite"></p>
-  </div>
-
-  <!-- Preferred Contact -->
-  <div>
-    <Label for="preferredContact" text="Preferred Contact Method" required />
-    <div class="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0 mt-2">
-      <div class="flex items-center">
-        <input
-          id="contactPhone"
-          name="preferredContact"
-          type="radio"
-          value="Phone Call"
-          class="h-4 w-4 text-primary border-border focus:ring-primary cursor-pointer"
-          required
-          aria-required="true"
-          aria-invalid="false"
+      <svg
+        class="pointer-events-none absolute inset-y-0 right-3 flex items-center h-full w-5 text-text-muted"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+          clip-rule="evenodd"
         />
-        <label for="contactPhone" class="ml-2 text-base text-text-dark cursor-pointer">Phone Call</label>
-      </div>
-      <div class="flex items-center">
-        <input
-          id="contactEmail"
-          name="preferredContact"
-          type="radio"
-          value="Email"
-          class="h-4 w-4 text-primary border-border focus:ring-primary cursor-pointer"
-          required
-          aria-required="true"
-          aria-invalid="false"
-        />
-        <label for="contactEmail" class="ml-2 text-base text-text-dark cursor-pointer">Email</label>
-      </div>
-    </div>
-    <p id="preferredContact-error" class="text-error text-xs mt-1 hidden" aria-live="polite"></p>
-  </div>
-
-  <!-- How Did You Hear About Joe? (Optional) -->
-  <div>
-    <Label for="howDidYouHear" text="How Did You Hear About Joe?" />
-    <Input
-      id="howDidYouHear"
-      name="howDidYouHear"
-      type="text"
-      placeholder="e.g., Google, Friend's referral, Yelp"
-      autocomplete="off"
-    />
-  </div>
-
-  <Button type="submit" variant="primary" size="lg" class="w-full">
-    Request My Free Consultation
-  </Button>
-
-  <p id="form-submission-message" class="text-center text-sm mt-4 hidden" aria-live="polite"></p>
-</form>
-
-<script is:inline>
-  const form = document.getElementById('consultation-form');
-  const submitButton = form.querySelector('button[type="submit"]');
-  const formSubmissionMessage = document.getElementById('form-submission-message');
-
-  const fieldsConfig: FieldConfig[] = [
-    { id: 'fullName', name: 'Full Name', type: 'text', minLength: 2 },
-    { id: 'email', name: 'Email Address', type: 'email' },
-    { id: 'phone', name: 'Phone Number', type: 'tel', pattern: '^\\(?(\\d{3})\\)?[-.\\s]?(\\d{3})[-.\\s]?(\\d{4})$' },
-    { id: 'projectType', name: 'Project Type', type: 'select' },
-    { id: 'serviceLocation', name: 'Service Location', type: 'text', minLength: 3 },
-    { id: 'projectDetails', name: 'Project Details', type: 'textarea', minLength: 10, maxLength: 500 },
-    { id: 'preferredContact', name: 'Preferred Contact Method', type: 'radio', groupName: 'preferredContact' },
-  ];
-
-  function validateField(fieldElement: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement, fieldConfig: FieldConfig): boolean {
-    const errorElement = document.getElementById(`${fieldConfig.id}-error`);
-    if (!errorElement) return true; // Skip if no error element for this field
-
-    let isValid = true;
-    let errorMessage = '';
-    let targetElementForAria = fieldElement; // Default target for aria-invalid/describedby
-
-    if (fieldElement.hasAttribute('required') && !fieldElement.value.trim()) {
-      isValid = false;
-      errorMessage = `${fieldConfig.name} is required.`;
-    } else if (fieldConfig.type === 'email' && fieldElement.value && !/\S+@\S+\.\S+/.test(fieldElement.value)) {
-      isValid = false;
-      errorMessage = 'Please enter a valid email address.';
-    } else if (fieldConfig.type === 'tel' && fieldElement.value && fieldConfig.pattern && !new RegExp(fieldConfig.pattern).test(fieldElement.value)) {
-      isValid = false;
-      errorMessage = 'Please enter a valid phone number (e.g., (760) 555-1234).';
-    } else if (fieldConfig.type === 'text' || fieldConfig.type === 'textarea') {
-      if (fieldConfig.minLength && fieldElement.value.length < fieldConfig.minLength) {
-        isValid = false;
-        errorMessage = `${fieldConfig.name} must be at least ${fieldConfig.minLength} characters.`;
-      }
-      if (fieldConfig.maxLength && fieldElement.value.length > fieldConfig.maxLength) {
-        isValid = false;
-        errorMessage = `${fieldConfig.name} cannot exceed ${fieldConfig.maxLength} characters.`;
-      }
-    } else if (fieldConfig.type === 'radio' && fieldConfig.groupName) {
-      const radioGroup = form.querySelectorAll<HTMLInputElement>(`input[name="${fieldConfig.groupName}"]`);
-      const isRadioChecked = Array.from(radioGroup).some(radio => radio.checked);
-      if (fieldElement.hasAttribute('required') && !isRadioChecked) {
-        isValid = false;
-        errorMessage = `${fieldConfig.name} is required.`;
-      }
-      targetElementForAria = radioGroup[0] || fieldElement; // Apply aria to the first radio in the group
-    } else if (fieldConfig.type === 'select' && fieldElement.value === '') {
-       isValid = false;
-       errorMessage = `${fieldConfig.name} is required.`;
-    }
-
-    // Apply visual styling and ARIA attributes
-    if (isValid) {
-      fieldElement.classList.remove('border-error');
-      fieldElement.classList.add('border-border');
-      errorElement.classList.add('hidden');
-      targetElementForAria.setAttribute('aria-invalid', 'false');
-      targetElementForAria.removeAttribute('aria-describedby');
-    } else {
-      fieldElement.classList.remove('border-border');
-      fieldElement.classList.add('border-error');
-      errorElement.textContent = errorMessage;
-      errorElement.classList.remove('hidden');
-      targetElementForAria.setAttribute('aria-invalid', 'true');
-      targetElementForAria.setAttribute('aria-describedby', `${fieldConfig.id}-error`);
-    }
-    return isValid;
-  }
-
-  // Attach validation to input events (blur, change for radios/selects)
-  fieldsConfig.forEach(fieldConfig => {
-    const fieldElement = document.getElementById(fieldConfig.id);
-    if (fieldElement) {
-      if (fieldConfig.type === 'radio' && fieldConfig.groupName) {
-        const radioGroup = form.querySelectorAll<HTMLInputElement>(`input[name="${fieldConfig.groupName}"]`);
-        radioGroup.forEach(radio => radio.addEventListener('change', () => validateField(radio, fieldConfig)));
-      } else {
-        fieldElement.addEventListener('blur', () => validateField(fieldElement as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement, fieldConfig));
-        if (fieldConfig.type === 'select') {
-          fieldElement.addEventListener('change', () => validateField(fieldElement as HTMLSelectElement, fieldConfig));
-        }
-      }
-    }
-  });
-
-
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault(); // Prevent default form submission for client-side validation
-
-    let isFormValid = true;
-    fieldsConfig.forEach(fieldConfig => {
-      const fieldElement = document.getElementById(fieldConfig.id);
-      if (fieldElement) {
-        if (!validateField(fieldElement as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement, fieldConfig)) {
-          isFormValid = false;
-        }
-      }
-    });
-
-    if (!isFormValid) {
-      formSubmissionMessage.textContent = 'Please correct the errors in the form.';
-      formSubmissionMessage.classList.remove('hidden');
-      formSubmissionMessage.classList.remove('text-success');
-      formSubmissionMessage.classList.add('text-error');
-      // Find the first invalid field and focus it for better UX
-      const firstInvalidField = form.querySelector('[aria-invalid="true"]') as HTMLElement;
-      if (firstInvalidField) {
-        firstInvalidField.focus();
-      }
-      return;
-    }
-
-    submitButton.disabled = true;
-    submitButton.innerHTML = `
-      <svg class="animate-spin h-5 w-5 mr-3 text-white inline-block" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
       </svg>
-      Sending Request...
-    `;
-    formSubmissionMessage.classList.add('hidden'); // Hide previous messages
+    </div>
+  </div>
 
-    try {
-      const formData = new FormData(form);
-      const response = await fetch(form.action, {
-        method: form.method,
-        body: formData,
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
+  {/* Project Description (Textarea) */}
+  <div>
+    <label for="projectDescription" class={labelClasses}>Project Details <span class="text-error">*</span></label>
+    <textarea
+      id="projectDescription"
+      name="projectDescription"
+      rows={5}
+      placeholder="Tell Joe about your project (e.g., 'Exterior house paint, 3 bedrooms, needs some drywall repair')."
+      class={inputClasses}
+      required
+      aria-required="true"
+    ></textarea>
+  </div>
 
-      if (response.ok) {
-        form.reset(); // Clear form fields after successful submission
-        // Hide all error messages and reset styles
-        fieldsConfig.forEach(fieldConfig => {
-          const fieldElement = document.getElementById(fieldConfig.id);
-          const errorElement = document.getElementById(`${fieldConfig.id}-error`);
-          if (fieldElement) {
-            fieldElement.classList.remove('border-error');
-            fieldElement.classList.add('border-border');
-            if (fieldConfig.type === 'radio' && fieldConfig.groupName) {
-                const radioGroup = form.querySelectorAll<HTMLInputElement>(`input[name="${fieldConfig.groupName}"]`);
-                radioGroup.forEach(radio => {
-                    radio.setAttribute('aria-invalid', 'false');
-                    radio.removeAttribute('aria-describedby');
-                });
-            } else {
-                (fieldElement as HTMLElement).setAttribute('aria-invalid', 'false');
-                (fieldElement as HTMLElement).removeAttribute('aria-describedby');
-            }
-          }
-          if (errorElement) {
-            errorElement.classList.add('hidden');
-          }
-        });
+  {/* Preferred Contact Method (Radio) */}
+  <fieldset>
+    <legend class={labelClasses + ' mb-2'}>Preferred Contact Method <span class="text-error">*</span></legend>
+    <div role="radiogroup" aria-required="true" class={radioGroupClasses}>
+      {contactMethods.map((method) => (
+        <div class="flex items-center">
+          <input
+            type="radio"
+            id={`contact-${method.value}`}
+            name="preferredContact"
+            value={method.value}
+            class={radioInputClasses}
+            required
+          />
+          <label for={`contact-${method.value}`} class={radioLabelClasses}>
+            {method.label}
+          </label>
+        </div>
+      ))}
+    </div>
+  </fieldset>
 
-        formSubmissionMessage.textContent = 'Thank You! Your Free Consultation Request Has Been Received.';
-        formSubmissionMessage.classList.remove('hidden');
-        formSubmissionMessage.classList.remove('text-error');
-        formSubmissionMessage.classList.add('text-success');
-        
-        // As per 05-flows, success state should redirect to /thank-you page.
-        // This is typically handled by Formspree's redirect feature or a parent component.
-        // For this component, we display the message on the form itself.
-      } else {
-        const errorData = await response.json();
-        formSubmissionMessage.textContent = errorData.errors ? errorData.errors.map((e: { message: string }) => e.message).join(', ') : 'Oops! Something went wrong on our end. Please try again or call Joe directly at (760) 580-8173.';
-        formSubmissionMessage.classList.remove('hidden');
-        formSubmissionMessage.classList.remove('text-success');
-        formSubmissionMessage.classList.add('text-error');
-      }
-    } catch (error) {
-      console.error('Form submission error:', error);
-      formSubmissionMessage.textContent = 'Oops! Something went wrong on our end. Please try again or call Joe directly at (760) 580-8173.';
-      formSubmissionMessage.classList.remove('hidden');
-      formSubmissionMessage.classList.remove('text-success');
-      formSubmissionMessage.classList.add('text-error');
-    } finally {
-      submitButton.disabled = false;
-      submitButton.innerHTML = 'Request My Free Consultation';
-    }
-  });
-</script>
+  {/* reCAPTCHA Placeholder */}
+  <div class="text-sm text-text-muted">
+    This site is protected by reCAPTCHA and the Google
+    <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Privacy Policy</a> and
+    <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Terms of Service</a> apply.
+    {/* Actual reCAPTCHA widget will be integrated here in a later task */}
+    <div class="mt-2" aria-label="reCAPTCHA verification area">
+      {/* Placeholder for reCAPTCHA widget */}
+    </div>
+  </div>
+
+  {/* Submit Button */}
+  <button
+    type="submit"
+    class:list={[buttonBaseClasses, buttonPrimaryClasses, { [buttonDisabledClasses]: loading }]}
+    disabled={loading}
+    aria-label={loading ? 'Submitting request' : 'Request My Free Consultation'}
+  >
+    {loading ? (
+      <span class="flex items-center gap-2">
+        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Sending Request...
+      </span>
+    ) : (
+      'Request My Free Consultation'
+    )}
+  </button>
+</form>
+---
