@@ -1,3 +1,4 @@
+```javascript
 /** @type {import('tailwindcss').Config} */
 import defaultTheme from 'tailwindcss/defaultTheme';
 
@@ -5,119 +6,129 @@ export default {
   content: ['./src/**/*.{astro,html,js,jsx,md,mdx,ts,tsx}'],
   theme: {
     extend: {
-      // --- Colors (from 06-design.md and tokens.json) ---
+      // --- Colors ---
       colors: {
+        // Semantic colors referencing CSS variables defined in src/styles/tokens.css
         primary: {
-          DEFAULT: '#0047AB', // Primary Blue
-          light: '#005AC1',   // Adjusted for hover/light accent
-          dark: '#00337A',    // Adjusted for active/dark accent
+          DEFAULT: 'var(--color-primary-blue)',
+          light: 'var(--color-primary-blue-light)', // Derived for hover states
+          dark: 'var(--color-primary-blue-dark)',   // Derived for active states
         },
-        secondary: '#6B7280', // Secondary Gray
+        // 'Secondary Gray' from design spec is mapped to Tailwind's neutral.500 or text-muted
         accent: {
-          DEFAULT: '#E5B80B', // Accent Gold
-          light: '#FFD700',   // Brighter variant
-          dark: '#B38B00',    // Deeper variant
+          DEFAULT: 'var(--color-accent-gold)',
+          light: 'var(--color-accent-gold-light)', // Derived for hover states
+          dark: 'var(--color-accent-gold-dark)',   // Derived for active states
         },
-        background: '#F9FAFB', // Background White
-        surface: '#FFFFFF',    // Surface Light
-        text: '#1F2937',       // Text Dark
-        textMuted: '#6B7280',  // Text Muted
-        textSubtle: '#9CA3AF', // Text Subtle
-        border: '#E5E7EB',     // Border Light
-        error: '#EF4444',      // Error
-        success: '#10B981',    // Success
-        warning: '#F59E0B',    // Warning
-        info: '#3B82F6',       // Info
+        neutral: {
+          50: 'var(--color-background-white)',
+          100: 'var(--color-surface-light)',
+          200: 'var(--color-border-light)',
+          300: 'var(--color-text-subtle)',
+          400: 'var(--color-text-muted)',
+          500: 'var(--color-secondary-gray)', // Direct mapping for Secondary Gray
+          600: 'var(--color-text)',
+          700: 'var(--color-text)',
+          800: 'var(--color-text)',
+          900: 'var(--color-text)',
+        },
+        white: 'var(--color-surface-light)', // Surface Light
+        black: '#000000', // Pure black for specific high-contrast needs, not general text
+        
+        // Semantic feedback colors
+        success: 'var(--color-success)',
+        warning: 'var(--color-warning)',
+        error: 'var(--color-error)',
+        info: 'var(--color-info)',
       },
 
-      // --- Typography (from 06-design.md) ---
+      // --- Typography ---
       fontFamily: {
-        heading: ['Lora', ...defaultTheme.fontFamily.serif],
-        body: ['Inter', ...defaultTheme.fontFamily.sans],
-        mono: ['Space Mono', ...defaultTheme.fontFamily.mono],
+        heading: ['Lora', 'Georgia', 'serif'], // Elegant serif for headings
+        body: ['Inter', 'system-ui', 'sans-serif'], // Modern sans-serif for body
+        mono: ['Space Mono', 'monospace'], // For code snippets or specific data displays
       },
       fontSize: {
-        'xs': ['0.75rem', { lineHeight: '1.5' }],
-        'sm': ['0.875rem', { lineHeight: '1.5' }],
-        'base': ['1rem', { lineHeight: '1.6' }],
-        'lg': ['1.125rem', { lineHeight: '1.6' }],
-        'xl': ['1.25rem', { lineHeight: '1.4' }],
-        '2xl': ['1.5rem', { lineHeight: '1.3' }],
-        '3xl': ['1.875rem', { lineHeight: '1.3' }],
-        '4xl': ['2.25rem', { lineHeight: '1.2' }],
-        '5xl': ['3rem', { lineHeight: '1.1' }],
-        '6xl': ['3.75rem', { lineHeight: '1.1' }],
+        'xs': ['var(--font-size-xs)', { lineHeight: 'var(--line-height-xs)' }],
+        'sm': ['var(--font-size-sm)', { lineHeight: 'var(--line-height-sm)' }],
+        'base': ['var(--font-size-base)', { lineHeight: 'var(--line-height-base)' }],
+        'lg': ['var(--font-size-lg)', { lineHeight: 'var(--line-height-lg)' }],
+        'xl': ['var(--font-size-xl)', { lineHeight: 'var(--line-height-xl)' }],
+        '2xl': ['var(--font-size-2xl)', { lineHeight: 'var(--line-height-2xl)' }],
+        '3xl': ['var(--font-size-3xl)', { lineHeight: 'var(--line-height-3xl)' }],
+        '4xl': ['var(--font-size-4xl)', { lineHeight: 'var(--line-height-4xl)' }],
+        '5xl': ['var(--font-size-5xl)', { lineHeight: 'var(--line-height-5xl)' }],
+        '6xl': ['var(--font-size-6xl)', { lineHeight: 'var(--line-height-6xl)' }],
       },
       fontWeight: {
-        normal: '400',
-        medium: '500',
-        semibold: '600',
-        bold: '700',
+        normal: 'var(--font-weight-normal)',
+        medium: 'var(--font-weight-medium)',
+        semibold: 'var(--font-weight-semibold)',
+        bold: 'var(--font-weight-bold)',
       },
 
-      // --- Spacing (from 06-design.md) ---
+      // --- Spacing (based on 4px grid) ---
       spacing: {
-        'px': '1px',
-        '0.5': '0.125rem', // 2px
-        '1': '0.25rem',    // 4px
-        '2': '0.5rem',     // 8px
-        '3': '0.75rem',    // 12px
-        '4': '1rem',       // 16px
-        '5': '1.25rem',    // 20px
-        '6': '1.5rem',     // 24px
-        '8': '2rem',       // 32px
-        '10': '2.5rem',    // 40px
-        '12': '3rem',      // 48px
-        '16': '4rem',      // 64px
-        '20': '5rem',      // 80px
-        '24': '6rem',      // 96px
+        'px': 'var(--spacing-px)',
+        '0.5': 'var(--spacing-0-5)',
+        '1': 'var(--spacing-1)',
+        '2': 'var(--spacing-2)',
+        '3': 'var(--spacing-3)',
+        '4': 'var(--spacing-4)',
+        '5': 'var(--spacing-5)',
+        '6': 'var(--spacing-6)',
+        '8': 'var(--spacing-8)',
+        '10': 'var(--spacing-10)',
+        '12': 'var(--spacing-12)',
+        '16': 'var(--spacing-16)',
+        '20': 'var(--spacing-20)',
+        '24': 'var(--spacing-24)',
       },
 
-      // --- Border Radius (from 06-design.md) ---
+      // --- Border Radius ---
       borderRadius: {
-        'none': '0',
-        'sm': '0.125rem', // 2px
-        'md': '0.375rem', // 6px
-        'lg': '0.5rem',   // 8px
-        'xl': '0.75rem',  // 12px
-        '2xl': '1rem',    // 16px
-        'full': '9999px',
+        'none': 'var(--border-radius-none)',
+        'sm': 'var(--border-radius-sm)',
+        'md': 'var(--border-radius-md)',
+        'lg': 'var(--border-radius-lg)',
+        'xl': 'var(--border-radius-xl)',
+        '2xl': 'var(--border-radius-2xl)',
+        'full': 'var(--border-radius-full)',
       },
 
-      // --- Shadows (from 06-design.md) ---
+      // --- Shadows ---
       boxShadow: {
-        'sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-        'md': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-        'lg': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
-        'xl': '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+        'sm': 'var(--shadow-sm)',
+        'md': 'var(--shadow-md)',
+        'lg': 'var(--shadow-lg)',
+        'xl': 'var(--shadow-xl)',
       },
 
-      // --- Transitions (from 06-design.md) ---
-      transitionDuration: {
-        'fast': '150ms',
-        'normal': '300ms',
-        'slow': '500ms',
+      // --- Transitions ---
+      transitionProperty: {
+        'height': 'height',
+        'spacing': 'margin, padding',
+        'colors': 'color, background-color, border-color, text-decoration-color', // Include default Tailwind colors
+        'opacity': 'opacity',
+        'transform': 'transform',
+        'shadow': 'box-shadow',
+        'all': 'all', // Ensure 'transition-all' works as expected
       },
       transitionTimingFunction: {
-        'default': 'cubic-bezier(0.4, 0, 0.2, 1)',
-        'in': 'cubic-bezier(0.4, 0, 1, 1)',
-        'out': 'cubic-bezier(0, 0, 0.2, 1)',
-        'bounce': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+        'DEFAULT': 'var(--ease-default)',
+        'in': 'var(--ease-in)',
+        'out': 'var(--ease-out)',
+        'in-out': 'var(--ease-in-out)', // This will be the default for transition-all
+        'bounce': 'var(--ease-bounce)',
       },
-
-      // --- Breakpoints (from 06-design.md) ---
-      screens: {
-        'sm': '640px',
-        'md': '768px',
-        'lg': '1024px',
-        'xl': '1280px',
-        '2xl': '1536px',
+      transitionDuration: {
+        'DEFAULT': 'var(--duration-normal)',
+        'fast': 'var(--duration-fast)',
+        'normal': 'var(--duration-normal)',
+        'slow': 'var(--duration-slow)',
       },
     },
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/typography'),
-    require('@tailwindcss/aspect-ratio'),
-  ],
+  plugins: [],
 };
+```
