@@ -1,7 +1,7 @@
 {
   "projectId": "joethepaintercom-kibm3",
   "status": "running",
-  "phase": "spec",
+  "phase": "build",
   "progress": {},
   "caches": {},
   "outputs": {
@@ -25,6 +25,9 @@
       "joethepaintercom-kibm3/specs/tokens.json",
       "joethepaintercom-kibm3/specs/tokens.css",
       "joethepaintercom-kibm3/specs/tailwind-tokens.js"
+    ],
+    "buildFiles": [
+      "joethepaintercom-kibm3/site/public/.gitkeep"
     ]
   },
   "errors": [],
