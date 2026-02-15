@@ -1,0 +1,102 @@
+---
+/**
+ * ProjectCard Component
+ * Displays an individual portfolio project with an image, title, location, and brief description.
+ * It's designed to be a clickable card linking to the full project details.
+ */
+
+// Type imports
+import type { HTMLAttributes } from 'astro/types';
+import { Image } from 'astro:assets';
+
+// Props interface with JSDoc comments
+interface Props extends HTMLAttributes<'a'> {
+  /** The URL for the project's 'After' image. */
+  imageSrc: ImageMetadata | string;
+  /** The alt text for the project's 'After' image, crucial for accessibility. */
+  imageAlt: string;
+  /** The primary title of the project. */
+  title: string;
+  /** The location where the project was completed (e.g., "Encinitas, CA"). */
+  location: string;
+  /** A brief, concise description or summary of the project. */
+  description: string;
+  /** The URL to the full project detail page. */
+  href: string;
+  /** Additional CSS classes to apply to the card container. */
+  class?: string;
+}
+
+// Destructure props with defaults
+const {
+  imageSrc,
+  imageAlt,
+  title,
+  location,
+  description,
+  href,
+  class: className,
+  ...attrs
+} = Astro.props;
+
+// Determine image dimensions for Astro Image component.
+// Using a common aspect ratio (16:9) for consistency, actual display size
+// will be controlled by Tailwind classes (w-full h-48 object-cover).
+const defaultImageWidth = 640;
+const defaultImageHeight = 360; // For a 16:9 aspect ratio
+---
+
+<a
+  href={href}
+  class:list={[
+    "project-card group block bg-surface rounded-lg shadow-md overflow-hidden",
+    "transition-all duration-normal ease-in-out",
+    "hover:shadow-lg hover:-translate-y-1",
+    "motion-reduce:transition-none",
+    className
+  ]}
+  aria-label={`View project details for ${title} in ${location}`}
+  {...attrs}
+>
+  <figure class="relative w-full h-48">
+    <Image
+      src={imageSrc}
+      alt={imageAlt}
+      width={defaultImageWidth}
+      height={defaultImageHeight}
+      loading="lazy"
+      decoding="async"
+      class="w-full h-full object-cover transition-transform duration-normal ease-in-out group-hover:scale-105"
+      widths={[320, 640, 960]}
+      sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+    />
+    <figcaption class="sr-only">Project: {title}, Location: {location}</figcaption>
+  </figure>
+
+  <div class="p-6">
+    <h3 class="font-heading text-xl font-semibold text-text mb-2 leading-tight">
+      {title}
+    </h3>
+    <p class="text-sm text-textMuted mb-4 leading-normal">
+      {location}
+    </p>
+    <p class="text-textMuted text-base leading-relaxed">
+      {description}
+    </p>
+  </div>
+</a>
+
+<style>
+  .project-card {
+    /* Base styles already handled by Tailwind classes in the component */
+    /* Ensure no extra styles here that conflict or duplicate Tailwind */
+  }
+
+  /*
+   * The group-hover:scale-105 on the image provides a subtle zoom effect.
+   * The hover:-translate-y-1 and hover:shadow-lg on the card itself
+   * provide a lift and shadow effect.
+   *
+   * All transitions are handled by Tailwind's utility classes and design tokens.
+   */
+</style>
