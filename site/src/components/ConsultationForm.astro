@@ -4,7 +4,7 @@
  *
  * A reusable component for capturing client inquiries and consultation requests.
  * Features various input types, a service selection dropdown, preferred contact
- * method radio buttons, and a placeholder for reCAPTCHA integration.
+ * method radio buttons, and a reCAPTCHA disclosure as required by specs.
  * Ensures accessibility and adheres to the brand's design system.
  */
 
@@ -19,13 +19,8 @@ interface Props extends HTMLAttributes<'form'> {
 // Destructure props, allowing for class pass-through
 const { class: className, ...attrs } = Astro.props;
 
-// Placeholder for form submission handler.
-// Actual backend integration will be handled in TASK-024.
-const handleSubmit = (event: Event) => {
-  event.preventDefault();
-  console.log('Consultation form submitted (placeholder)');
-  // In TASK-024, this will send data to a backend endpoint and handle UI feedback.
-};
+// Formspree endpoint from environment variable, with a fallback for local dev/testing
+const FORMSPREE_ENDPOINT = import.meta.env.PUBLIC_FORMSPREE_ENDPOINT_URL || 'https://formspree.io/f/joethepaintercom-kibm3';
 ---
 
 <form
@@ -40,7 +35,8 @@ const handleSubmit = (event: Event) => {
     className,
   ]}
   aria-labelledby="form-title"
-  @submit={handleSubmit}
+  method="POST"
+  action={FORMSPREE_ENDPOINT}
   {...attrs}
 >
   <h2 id="form-title" class="font-heading text-3xl font-semibold text-text mb-4">
@@ -94,6 +90,23 @@ const handleSubmit = (event: Event) => {
       placeholder="(760) 555-1234"
       required
       autocomplete="tel"
+      class="block w-full border border-border rounded-md p-3 text-base text-text bg-surface placeholder-textMuted
+             focus:outline-none focus:ring-2 focus:ring-primary/[.2] focus:border-primary
+             transition-all duration-150 ease-in-out
+             motion-reduce:transition-none"
+    />
+  </div>
+
+  <!-- Service Location Field -->
+  <div>
+    <label for="serviceLocation" class="block text-sm font-medium text-text mb-1">Service Location</label>
+    <input
+      type="text"
+      id="serviceLocation"
+      name="serviceLocation"
+      placeholder="e.g., Carlsbad, Encinitas, 92009"
+      required
+      autocomplete="address-level2"
       class="block w-full border border-border rounded-md p-3 text-base text-text bg-surface placeholder-textMuted
              focus:outline-none focus:ring-2 focus:ring-primary/[.2] focus:border-primary
              transition-all duration-150 ease-in-out
@@ -175,9 +188,24 @@ const handleSubmit = (event: Event) => {
     </div>
   </fieldset>
 
-  <!-- reCAPTCHA Placeholder -->
-  <div class="recaptcha-placeholder text-sm text-textMuted">
-    <!-- reCAPTCHA integration will be added in TASK-025 -->
+  <!-- How Did You Hear About Joe? (Optional) -->
+  <div>
+    <label for="howHear" class="block text-sm font-medium text-text mb-1">How Did You Hear About Joe?</label>
+    <input
+      type="text"
+      id="howHear"
+      name="howHear"
+      placeholder="e.g., Google, Friend's referral, Yelp"
+      autocomplete="off"
+      class="block w-full border border-border rounded-md p-3 text-base text-text bg-surface placeholder-textMuted
+             focus:outline-none focus:ring-2 focus:ring-primary/[.2] focus:border-primary
+             transition-all duration-150 ease-in-out
+             motion-reduce:transition-none"
+    />
+  </div>
+
+  <!-- reCAPTCHA Disclosure -->
+  <div class="recaptcha-disclosure text-sm text-textMuted">
     <p>This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy" class="text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-primary/[.2] focus:border-primary transition-all duration-150 ease-in-out motion-reduce:transition-none" target="_blank" rel="noopener noreferrer">Privacy Policy</a> and <a href="https://policies.google.com/terms" class="text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-primary/[.2] focus:border-primary transition-all duration-150 ease-in-out motion-reduce:transition-none" target="_blank" rel="noopener noreferrer">Terms of Service</a> apply.</p>
   </div>
 
@@ -195,4 +223,72 @@ const handleSubmit = (event: Event) => {
     Request My Free Consultation
   </button>
 </form>
----
+
+<script is:inline>
+  const form = document.querySelector('.consultation-form');
+  const submitButton = form?.querySelector('button[type="submit"]');
+  const originalButtonText = submitButton?.textContent;
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    if (!submitButton || !originalButtonText) return;
+
+    // Basic client-side validation
+    const requiredInputs = form.querySelectorAll('[required]');
+    let allValid = true;
+    requiredInputs.forEach(input => {
+      if (!input.checkValidity()) {
+        allValid = false;
+        input.classList.add('border-error'); // Add error styling
+      } else {
+        input.classList.remove('border-error');
+      }
+    });
+
+    if (!allValid) {
+      form.querySelector(':invalid')?.focus();
+      return;
+    }
+
+    submitButton.disabled = true;
+    submitButton.innerHTML = `
+      <span class="flex items-center justify-center gap-2">
+        <svg class="animate-spin h-5 w-5 text-surface" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Sending Request...
+      </span>
+    `;
+
+    const formData = new FormData(form);
+    const formspreeEndpoint = form.action; // Get action from form attribute
+
+    try {
+      const response = await fetch(formspreeEndpoint, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        // As per 05-flows.md, redirect to /thank-you page
+        window.location.href = '/thank-you';
+      } else {
+        const data = await response.json();
+        const errorMessage = data.errors ? data.errors.map(e => e.message).join(', ') : 'Form submission failed. Please try again.';
+        alert(errorMessage);
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+      alert('A network error occurred. Please try again later.');
+      submitButton.disabled = false;
+      submitButton.textContent = originalButtonText;
+    }
+  });
+</script>
