@@ -1,100 +1,225 @@
-```astro
 ---
-import type { HTMLAttributes } from 'astro/types';
-import Button from './ui/Button.astro';
-import Input from './ui/Input.astro';
+// src/components/ContactForm.astro
 import Label from './ui/Label.astro';
+import Input from './ui/Input.astro';
+import Textarea from './ui/Textarea.astro';
+import Button from './ui/Button.astro';
 
-interface Props extends HTMLAttributes<'form'> {
-  // Any specific props for the contact form, e.g., form action URL
-  action: string;
-}
+// Environment variable for Formspree endpoint
+const FORMSPREE_ENDPOINT_URL = import.meta.env.PUBLIC_FORMSPREE_CONTACT_FORM_ID
+  ? `https://formspree.io/f/${import.meta.env.PUBLIC_FORMSPREE_CONTACT_FORM_ID}`
+  : 'https://formspree.io/f/YOUR_FORMSPREE_CONTACT_FORM_ID'; // Placeholder for development, MUST be replaced in production
 
-const { action, ...attrs } = Astro.props;
 ---
 
-<form
-  action={action}
-  method="POST"
-  class="space-y-6"
-  netlify-honeypot="bot-field"
-  data-netlify="true"
-  name="contact"
-  {...attrs}
->
-  <input type="hidden" name="form-name" value="contact" />
-  <p class="hidden">
-    <label>
-      Don’t fill this out if you’re human: <input name="bot-field" />
-    </label>
-  </p>
+<div class="max-w-xl mx-auto">
+  <form id="contact-form" class="space-y-6 bg-surface p-8 rounded-lg shadow-md" method="POST" action={FORMSPREE_ENDPOINT_URL}>
+    <div class="space-y-2">
+      <Label for="name">Your Name</Label>
+      <Input
+        id="name"
+        name="name"
+        type="text"
+        placeholder="John Doe"
+        required
+        minlength="2"
+        aria-required="true"
+        autocomplete="name"
+      />
+      <p id="name-error" class="text-error text-xs mt-1 hidden" aria-live="polite"></p>
+    </div>
 
-  <div>
-    <Label for="contact-name">Your Name <span class="text-error">*</span></Label>
-    <Input
-      id="contact-name"
-      type="text"
-      name="name"
-      autocomplete="name"
-      placeholder="John Doe"
-      required
-      class="w-full"
-    />
+    <div class="space-y-2">
+      <Label for="email">Your Email</Label>
+      <Input
+        id="email"
+        name="email"
+        type="email"
+        placeholder="john.doe@example.com"
+        required
+        aria-required="true"
+        autocomplete="email"
+      />
+      <p id="email-error" class="text-error text-xs mt-1 hidden" aria-live="polite"></p>
+    </div>
+
+    <div class="space-y-2">
+      <Label for="message">Your Message</Label>
+      <Textarea
+        id="message"
+        name="message"
+        placeholder="I'd like to inquire about..."
+        required
+        minlength="10"
+        maxlength="1000"
+        rows="6"
+        aria-required="true"
+      />
+      <p id="message-error" class="text-error text-xs mt-1 hidden" aria-live="polite"></p>
+    </div>
+
+    <Button type="submit" variant="primary" size="lg" class="w-full" id="contact-submit-btn">
+      Send My Message
+    </Button>
+
+    <p id="form-error-general" class="bg-error/[0.1] border-l-4 border-error text-error text-base p-4 rounded-md hidden" aria-live="polite" role="alert">
+      Oops! Something went wrong on our end. Please try again or call Joe directly at <a href="tel:+17605808173" class="underline font-medium">(760) 580-8173</a>.
+    </p>
+  </form>
+
+  <div id="form-success-container" class="bg-success/[0.1] border-l-4 border-success text-success text-base p-8 rounded-lg shadow-md text-center hidden animate-fade-in">
+    <div class="text-5xl mb-4" aria-hidden="true">✓</div>
+    <h2 class="text-2xl font-semibold mb-2">Thank You! Your message has been sent to Joe.</h2>
+    <p class="text-lg">He aims to respond to all inquiries within 2 business days.</p>
+    <a href="/" class="inline-block mt-6 px-6 py-3 bg-primary text-white rounded-md hover:bg-primary-dark transition-colors">Return to Homepage</a>
   </div>
+</div>
 
-  <div>
-    <Label for="contact-email">Your Email <span class="text-error">*</span></Label>
-    <Input
-      id="contact-email"
-      type="email"
-      name="email"
-      autocomplete="email"
-      placeholder="john.doe@example.com"
-      required
-      class="w-full"
-    />
-  </div>
+<script is:inline>
+  const contactForm = document.getElementById('contact-form');
+  const contactSubmitBtn = document.getElementById('contact-submit-btn');
+  const formSuccessContainer = document.getElementById('form-success-container');
+  const generalErrorMessage = document.getElementById('form-error-general');
 
-  <div>
-    <Label for="contact-phone">Phone Number (Optional)</Label>
-    <Input
-      id="contact-phone"
-      type="tel"
-      name="phone"
-      autocomplete="tel"
-      placeholder="(760) 123-4567"
-      class="w-full"
-    />
-  </div>
+  const fieldsConfig = [
+    { id: 'name', minLength: 2, errorMsg: 'Please enter your name (at least 2 characters).' },
+    { id: 'email', type: 'email', errorMsg: 'Please enter a valid email address.' },
+    { id: 'message', minLength: 10, maxLength: 1000, errorMsg: 'Please enter your message (10-1000 characters).' }
+  ];
 
-  <div>
-    <Label for="contact-subject">Subject <span class="text-error">*</span></Label>
-    <Input
-      id="contact-subject"
-      type="text"
-      name="subject"
-      placeholder="Inquiry about exterior painting"
-      required
-      class="w-full"
-    />
-  </div>
+  const getFieldElements = (id) => {
+    const input = document.getElementById(id);
+    const errorMsgElement = document.getElementById(`${id}-error`);
+    return { input, errorMsgElement };
+  };
 
-  <div>
-    <Label for="contact-message">Your Message <span class="text-error">*</span></Label>
-    <textarea
-      id="contact-message"
-      name="message"
-      rows="5"
-      placeholder="Tell Joe about your project or question..."
-      required
-      class="w-full px-4 py-3 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
-      aria-describedby="message-help"
-    ></textarea>
-    <p id="message-help" class="text-text-muted text-sm mt-1">Please provide as much detail as possible.</p>
-  </div>
+  const validateField = (fieldId) => {
+    const { input, errorMsgElement } = getFieldElements(fieldId);
+    if (!input || !errorMsgElement) return true; // Should not happen if IDs are correct
 
-  <Button type="submit" variant="primary" size="lg" class="w-full">
-    Send My Message
-  </Button>
-</form>
-```
+    let isValid = true;
+    let errorMessage = '';
+
+    // Reset error state
+    input.classList.remove('border-error');
+    errorMsgElement.classList.add('hidden');
+    input.setAttribute('aria-invalid', 'false');
+
+    const config = fieldsConfig.find(f => f.id === fieldId);
+    const value = input.value.trim();
+
+    if (input.required && !value) {
+      isValid = false;
+      errorMessage = config.errorMsg;
+    } else if (config.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      isValid = false;
+      errorMessage = config.errorMsg;
+    } else if (config.minLength && value.length < config.minLength) {
+      isValid = false;
+      errorMessage = config.errorMsg;
+    } else if (config.maxLength && value.length > config.maxLength) {
+      isValid = false;
+      errorMessage = config.errorMsg;
+    }
+
+    if (!isValid) {
+      input.classList.add('border-error');
+      errorMsgElement.textContent = errorMessage;
+      errorMsgElement.classList.remove('hidden');
+      input.setAttribute('aria-invalid', 'true');
+    }
+    return isValid;
+  };
+
+  const validateForm = () => {
+    let isFormValid = true;
+    fieldsConfig.forEach(field => {
+      if (!validateField(field.id)) {
+        isFormValid = false;
+      }
+    });
+    return isFormValid;
+  };
+
+  contactForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    generalErrorMessage.classList.add('hidden');
+    formSuccessContainer.classList.add('hidden');
+
+    if (!validateForm()) {
+      const firstInvalid = contactForm.querySelector('[aria-invalid="true"]');
+      if (firstInvalid) {
+        firstInvalid.focus();
+      }
+      return;
+    }
+
+    contactSubmitBtn.disabled = true;
+    contactSubmitBtn.innerHTML = `
+      <svg class="animate-spin h-5 w-5 mr-3 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2v4m0 12v4m8.485-2.485l-2.828-2.828M5.828 18.172L3 15.344M2.485 12H6m12 0h3.515M3.929 5.828l2.828 2.828M18.172 18.172l2.828 2.828"/>
+      </svg>
+      Sending Message...
+    `;
+    contactSubmitBtn.classList.add('pointer-events-none');
+
+    try {
+      const formData = new FormData(contactForm);
+      const response = await fetch(contactForm.action, {
+        method: contactForm.method,
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        contactForm.classList.add('hidden'); // Hide the form
+        formSuccessContainer.classList.remove('hidden'); // Show success message
+        contactForm.reset(); // Clear form fields
+        // Clear all field-specific error messages
+        fieldsConfig.forEach(field => {
+          const { input, errorMsgElement } = getFieldElements(field.id);
+          if (input) input.classList.remove('border-error');
+          if (errorMsgElement) errorMsgElement.classList.add('hidden');
+        });
+      } else {
+        const data = await response.json();
+        if (data && data.errors) {
+          data.errors.forEach(error => {
+            const { input, errorMsgElement } = getFieldElements(error.field);
+            if (input && errorMsgElement) {
+              input.classList.add('border-error');
+              errorMsgElement.textContent = error.message;
+              errorMsgElement.classList.remove('hidden');
+              input.setAttribute('aria-invalid', 'true');
+            }
+          });
+        } else {
+          generalErrorMessage.classList.remove('hidden');
+        }
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+      generalErrorMessage.classList.remove('hidden');
+    } finally {
+      contactSubmitBtn.disabled = false;
+      contactSubmitBtn.innerHTML = 'Send My Message';
+      contactSubmitBtn.classList.remove('pointer-events-none');
+    }
+  });
+
+  // Real-time validation on blur for better UX
+  fieldsConfig.forEach(field => {
+    const { input } = getFieldElements(field.id);
+    if (input) {
+      input.addEventListener('blur', () => validateField(field.id));
+      // Optional: Re-validate on input for immediate feedback after initial error
+      input.addEventListener('input', () => {
+        if (input.classList.contains('border-error')) {
+          validateField(field.id);
+        }
+      });
+    }
+  });
+</script>
