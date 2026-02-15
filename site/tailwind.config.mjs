@@ -5,143 +5,145 @@ export default {
   content: ['./src/**/*.{astro,html,js,jsx,md,mdx,ts,tsx}'],
   theme: {
     extend: {
-      // --- Colors (from 06-design.md) ---
+      // --- Colors ---
       colors: {
-        'primary-blue': {
-          DEFAULT: '#0047AB', // Primary Blue
-          hover: '#003B8D',   // Derived from Button component styles
-          active: '#002A6B',  // Derived from Button component styles
+        primary: {
+          DEFAULT: 'var(--color-primary)', // #0047AB
+          light: '#005AC2', // Adjusted for contrast from original #0047AB
+          dark: '#003B8D',  // Adjusted for contrast from original #0047AB
         },
-        'secondary-gray': {
-          DEFAULT: '#6B7280', // Secondary Gray
-          hover: '#5A616E',   // Derived from Button component styles
-          active: '#4D535E',  // Derived from Button component styles
+        secondary: {
+          DEFAULT: 'var(--color-secondary)', // #6B7280
         },
-        'accent-gold': {
-          DEFAULT: '#E5B80B', // Accent Gold
-          light: '#FFD700',   // From 07-technical.md (as a variant)
-          dark: '#B38B00',    // From 07-technical.md (as a variant)
+        accent: {
+          DEFAULT: 'var(--color-accent)', // #E5B80B
         },
-        'background-white': '#F9FAFB', // Background White
-        'surface-light': '#FFFFFF',    // Surface Light
-        'text-dark': '#1F2937',       // Text Dark
-        'text-muted': '#6B7280',      // Text Muted
-        'text-subtle': '#9CA3AF',     // Text Subtle
-        'border-light': '#E5E7EB',    // Border Light
+        background: 'var(--color-background)', // #F9FAFB
+        surface: 'var(--color-surface)',     // #FFFFFF
+        text: 'var(--color-text)',         // #1F2937
+        textMuted: 'var(--color-text-muted)',  // #6B7280
+        textSubtle: 'var(--color-text-subtle)', // #9CA3AF
+        border: 'var(--color-border)',       // #E5E7EB
 
-        // Semantic Colors (from 06-design.md)
-        'success': '#10B981',
-        'warning': '#F59E0B',
-        'error': '#EF4444',
-        'info': '#3B82F6',
+        // Semantic Colors
+        success: 'var(--color-success)', // #10B981
+        warning: 'var(--color-warning)', // #F59E0B
+        error: 'var(--color-error)',   // #EF4444
+        info: 'var(--color-info)',     // #3B82F6
 
-        // Explicit white and black (from 07-technical.md)
-        'white': '#FFFFFF',
-        'black': '#000000',
+        // Explicit white/black for utility
+        white: '#FFFFFF',
+        black: '#000000',
       },
 
-      // --- Typography (from 06-design.md) ---
+      // --- Typography ---
       fontFamily: {
-        heading: ['Lora', ...defaultTheme.fontFamily.serif], // Elegant serif for headings
-        body: ['Inter', ...defaultTheme.fontFamily.sans],    // Modern sans-serif for body
-        mono: ['Space Mono', ...defaultTheme.fontFamily.mono], // For code snippets or specific data displays
+        heading: ['var(--font-heading)', ...defaultTheme.fontFamily.serif],
+        body: ['var(--font-body)', ...defaultTheme.fontFamily.sans],
+        mono: ['var(--font-mono)', ...defaultTheme.fontFamily.mono],
       },
       fontSize: {
-        'xs': ['0.75rem', { lineHeight: '1.5' }], // 12px, from 06-design.md
-        'sm': ['0.875rem', { lineHeight: '1.5' }], // 14px, from 06-design.md
-        'base': ['1rem', { lineHeight: '1.6' }], // 16px, from 06-design.md
-        'lg': ['1.125rem', { lineHeight: '1.6' }], // 18px, from 06-design.md
-        'xl': ['1.25rem', { lineHeight: '1.4' }], // 20px, from 06-design.md
-        '2xl': ['1.5rem', { lineHeight: '1.3' }], // 24px, from 06-design.md
-        '3xl': ['1.875rem', { lineHeight: '1.3' }], // 30px, from 06-design.md
-        '4xl': ['2.25rem', { lineHeight: '1.2' }], // 36px, from 06-design.md
-        '5xl': ['3rem', { lineHeight: '1.1' }], // 48px, from 06-design.md
-        '6xl': ['3.75rem', { lineHeight: '1.1' }], // 60px, from 06-design.md
+        'xs': ['var(--text-xs)', { lineHeight: 'var(--leading-xs)' }],
+        'sm': ['var(--text-sm)', { lineHeight: 'var(--leading-sm)' }],
+        'base': ['var(--text-base)', { lineHeight: 'var(--leading-base)' }],
+        'lg': ['var(--text-lg)', { lineHeight: 'var(--leading-lg)' }],
+        'xl': ['var(--text-xl)', { lineHeight: 'var(--leading-xl)' }],
+        '2xl': ['var(--text-2xl)', { lineHeight: 'var(--leading-2xl)' }],
+        '3xl': ['var(--text-3xl)', { lineHeight: 'var(--leading-3xl)' }],
+        '4xl': ['var(--text-4xl)', { lineHeight: 'var(--leading-4xl)' }],
+        '5xl': ['var(--text-5xl)', { lineHeight: 'var(--leading-5xl)' }],
+        '6xl': ['var(--text-6xl)', { lineHeight: 'var(--leading-6xl)' }],
       },
       fontWeight: {
-        normal: '400', // From 06-design.md
-        medium: '500', // From 06-design.md
-        semibold: '600', // From 06-design.md
-        bold: '700', // From 06-design.md
+        normal: 'var(--font-weight-normal)',
+        medium: 'var(--font-weight-medium)',
+        semibold: 'var(--font-weight-semibold)',
+        bold: 'var(--font-weight-bold)',
       },
 
-      // --- Spacing (from 06-design.md and 07-technical.md for comprehensive list) ---
+      // --- Spacing ---
       spacing: {
-        'px': '1px',
-        '0.5': '0.125rem', // 2px
-        '1': '0.25rem', // 4px
-        '1.5': '0.375rem', // 6px
-        '2': '0.5rem', // 8px
-        '2.5': '0.625rem', // 10px
-        '3': '0.75rem', // 12px
-        '3.5': '0.875rem', // 14px
-        '4': '1rem', // 16px
-        '5': '1.25rem', // 20px
-        '6': '1.5rem', // 24px
-        '7': '1.75rem', // 28px
-        '8': '2rem', // 32px
-        '9': '2.25rem', // 36px
-        '10': '2.5rem', // 40px
-        '11': '2.75rem', // 44px
-        '12': '3rem', // 48px
-        '14': '3.5rem', // 56px
-        '16': '4rem', // 64px
-        '20': '5rem', // 80px
-        '24': '6rem', // 96px
-        '28': '7rem', // 112px
-        '32': '8rem', // 128px
-        '36': '9rem', // 144px
-        '40': '10rem', // 160px
-        '44': '11rem', // 176px
-        '48': '12rem', // 192px
-        '52': '13rem', // 208px
-        '56': '14rem', // 224px
-        '60': '15rem', // 240px
-        '64': '16rem', // 256px
-        '72': '18rem', // 288px
-        '80': '20rem', // 320px
-        '96': '24rem', // 384px
+        'px': 'var(--spacing-px)',
+        '0.5': 'var(--spacing-0-5)',
+        '1': 'var(--spacing-1)',
+        '2': 'var(--spacing-2)',
+        '3': 'var(--spacing-3)',
+        '4': 'var(--spacing-4)',
+        '5': 'var(--spacing-5)',
+        '6': 'var(--spacing-6)',
+        '8': 'var(--spacing-8)',
+        '10': 'var(--spacing-10)',
+        '12': 'var(--spacing-12)',
+        '16': 'var(--spacing-16)',
+        '20': 'var(--spacing-20)',
+        '24': 'var(--spacing-24)',
       },
 
-      // --- Border Radius (from 06-design.md) ---
+      // --- Border Radius ---
       borderRadius: {
-        'none': '0',
-        'sm': '0.125rem', // 2px
-        'md': '0.375rem', // 6px
-        'lg': '0.5rem', // 8px
-        'xl': '0.75rem', // 12px
-        '2xl': '1rem', // 16px
-        'full': '9999px',
+        'none': 'var(--radius-none)',
+        'sm': 'var(--radius-sm)',
+        'md': 'var(--radius-md)',
+        'lg': 'var(--radius-lg)',
+        'xl': 'var(--radius-xl)',
+        '2xl': 'var(--radius-2xl)',
+        'full': 'var(--radius-full)',
       },
 
-      // --- Shadows (from 06-design.md) ---
+      // --- Shadows ---
       boxShadow: {
-        'sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-        'md': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-        'lg': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
-        'xl': '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+        'sm': 'var(--shadow-sm)',
+        'md': 'var(--shadow-md)',
+        'lg': 'var(--shadow-lg)',
+        'xl': 'var(--shadow-xl)',
+        'outline': '0 0 0 3px rgba(0, 71, 171, 0.2)', // Custom focus outline using primary color
       },
 
-      // --- Transitions (from 06-design.md) ---
+      // --- Transitions ---
+      transitionProperty: {
+        'height': 'height',
+        'spacing': 'margin, padding',
+        'transform': 'transform',
+        'colors': 'background-color, border-color, color, fill, stroke, opacity, box-shadow, transform',
+        'all': 'all',
+      },
       transitionTimingFunction: {
-        'ease-in-out': 'cubic-bezier(0.4, 0, 0.2, 1)', // Default cubic-bezier from 06-design.md
-        'ease-in': 'cubic-bezier(0.4, 0, 1, 1)',
-        'ease-out': 'cubic-bezier(0, 0, 0.2, 1)',
-        'bounce': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+        'default': 'var(--easing-default)',
+        'in': 'var(--easing-in)',
+        'out': 'var(--easing-out)',
+        'in-out': 'var(--easing-in-out)',
+        'bounce': 'var(--easing-bounce)',
       },
       transitionDuration: {
-        'fast': '150ms', // from 06-design.md
-        'normal': '300ms', // from 06-design.md
-        'slow': '500ms', // from 06-design.md
+        'fast': 'var(--transition-fast)',
+        'normal': 'var(--transition-normal)',
+        'slow': 'var(--transition-slow)',
       },
 
-      // --- Breakpoints (from 06-design.md) ---
-      screens: {
-        'sm': '640px',
-        'md': '768px',
-        'lg': '1024px',
-        'xl': '1280px',
-        '2xl': '1536px',
+      // --- Keyframes and Animations ---
+      keyframes: {
+        'spin-slow': {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
+        'fade-in': {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        'slide-in-right': {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(0)' },
+        },
+        'slide-out-right': {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(100%)' },
+        },
+      },
+      animation: {
+        'spin-slow': 'spin-slow 3s linear infinite',
+        'fade-in': 'fade-in var(--transition-normal) var(--easing-out) forwards',
+        'slide-in-right': 'slide-in-right var(--transition-normal) var(--easing-out) forwards',
+        'slide-out-right': 'slide-out-right var(--transition-normal) var(--easing-in) forwards',
       },
     },
   },

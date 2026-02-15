@@ -1,65 +1,119 @@
 ---
-/**
- * Header Component
- * Provides the global header navigation for the website.
- * Includes the brand logo, desktop navigation links, a prominent CTA,
- * and a mobile hamburger menu icon (hidden on desktop).
- *
- * @param {string} [currentPage] - The path of the current page to highlight active navigation link.
- */
-
 import Logo from './ui/Logo.astro';
-import NavLinks from './NavLinks.astro';
-import Button from './ui/Button.astro';
+import Nav from './Nav.astro';
 
-interface Props {
-  currentPage?: string;
-}
-
-const { currentPage } = Astro.props;
+const navLinks = [
+  { text: 'Home', href: '/' },
+  { text: 'Painting Services', href: '/services/painting' },
+  { text: 'Handy Services', href: '/services/handy' },
+  { text: 'Our Work', href: '/our-work' },
+  { text: 'About Joe', href: '/about' },
+  { text: 'Contact', href: '/contact' },
+];
 ---
 
-<header class="sticky top-0 z-50 bg-neutral-surface shadow-sm" aria-label="Global Header Navigation">
-  <div class="container mx-auto px-4 py-4 flex items-center justify-between lg:px-8">
-    <Logo />
+<header class="sticky top-0 z-50 bg-surface shadow-sm py-4 transition-all duration-normal ease-default">
+  <div class="container mx-auto px-4 md:px-8 flex items-center justify-between">
+    <Logo className="z-20" />
 
     <!-- Desktop Navigation -->
-    <nav class="hidden lg:flex items-center space-x-6" aria-label="Main Navigation">
-      <NavLinks {currentPage} />
-      <Button variant="primary" size="lg" href="/consultation" class="ml-4">
-        Book a Free Consultation
-      </Button>
-    </nav>
+    <div class="hidden md:flex items-center space-x-8 lg:space-x-10">
+      <Nav links={navLinks} />
+    </div>
 
-    <!-- Mobile Menu Button (Hidden on Desktop) -->
-    <div class="lg:hidden">
+    <!-- Mobile Navigation Toggle -->
+    <div class="md:hidden flex items-center z-20">
       <button
         id="mobile-menu-button"
-        aria-label="Open mobile menu"
+        aria-label="Toggle mobile menu"
         aria-expanded="false"
-        class="p-2 text-neutral-text hover:text-primary focus-visible:text-primary transition-colors duration-fast"
+        class="text-text hover:text-primary transition-colors duration-fast ease-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm p-2 -mr-2"
       >
         <svg
+          class="h-7 w-7 transition-transform duration-normal ease-default"
           xmlns="http://www.w3.org/2000/svg"
-          class="h-7 w-7"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
           aria-hidden="true"
         >
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+          <path
+            id="menu-icon-open"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"
+            class="transition-opacity duration-normal ease-default opacity-100"
+          />
+          <path
+            id="menu-icon-close"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+            class="transition-opacity duration-normal ease-default opacity-0 absolute"
+          />
         </svg>
       </button>
     </div>
   </div>
+
+  <!-- Mobile Overlay Menu -->
+  <div
+    id="mobile-menu-overlay"
+    class="fixed inset-0 bg-surface z-10 flex flex-col items-center justify-center
+           transform translate-x-full transition-transform duration-normal ease-out
+           md:hidden overflow-y-auto"
+    aria-hidden="true"
+  >
+    <Nav links={navLinks} isMobile={true} />
+  </div>
 </header>
 
 <script is:inline>
-  // This script will be extended in TASK-008 for full mobile menu functionality.
-  // For now, it ensures the button is a valid reference for future JS.
-  const mobileMenuButton = document.getElementById('mobile-menu-button');
-  if (mobileMenuButton) {
-    // Placeholder for mobile menu logic (e.g., toggling a modal/drawer)
-    // The actual mobile menu overlay will be implemented in TASK-008
+  const menuButton = document.getElementById('mobile-menu-button');
+  const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+  const menuIconOpen = document.getElementById('menu-icon-open');
+  const menuIconClose = document.getElementById('menu-icon-close');
+  const body = document.body;
+
+  if (menuButton && mobileMenuOverlay && menuIconOpen && menuIconClose && body) {
+    let isMenuOpen = false;
+
+    const toggleMenu = () => {
+      isMenuOpen = !isMenuOpen;
+      menuButton.setAttribute('aria-expanded', String(isMenuOpen));
+      mobileMenuOverlay.setAttribute('aria-hidden', String(!isMenuOpen));
+
+      if (isMenuOpen) {
+        mobileMenuOverlay.classList.remove('translate-x-full');
+        menuIconOpen.classList.add('opacity-0');
+        menuIconClose.classList.remove('opacity-0');
+        body.classList.add('overflow-hidden-scroll'); // Lock scroll
+      } else {
+        mobileMenuOverlay.classList.add('translate-x-full');
+        menuIconOpen.classList.remove('opacity-0');
+        menuIconClose.classList.add('opacity-0');
+        body.classList.remove('overflow-hidden-scroll'); // Unlock scroll
+      }
+    };
+
+    menuButton.addEventListener('click', toggleMenu);
+
+    // Close menu if a link is clicked (for SPA-like navigation or simple page changes)
+    mobileMenuOverlay.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        if (isMenuOpen) {
+          toggleMenu();
+        }
+      });
+    });
+
+    // Close menu on escape key
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && isMenuOpen) {
+        toggleMenu();
+      }
+    });
   }
 </script>

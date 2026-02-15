@@ -1,10 +1,13 @@
 ---
-/**
- * Logo Component
- * Displays the "Joe the Painter" brand name, linking to the homepage.
- * Uses design tokens for typography and color.
- */
+interface Props {
+  className?: string;
+}
+
+const { className } = Astro.props;
 ---
-<a href="/" class="text-primary hover:text-primary-hover transition-colors duration-fast" aria-label="Joe the Painter homepage">
-  <span class="font-heading text-2xl md:text-3xl font-bold">Joe the Painter</span>
+
+<a href="/" class:list={['block focus-visible:outline-none', className]} aria-label="Joe the Painter homepage">
+  <span class="font-heading font-bold text-2xl text-text leading-none transition-colors duration-fast ease-default">
+    JOE <span class="text-primary">THE PAINTER</span>
+  </span>
 </a>

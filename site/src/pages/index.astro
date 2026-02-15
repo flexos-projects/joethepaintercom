@@ -1,0 +1,66 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Header from '@components/Header.astro'; // Ensure Header is imported if it's not directly in BaseLayout slot
+import Footer from '@components/Footer.astro'; // Ensure Footer is imported if it's not directly in BaseLayout slot
+---
+
+<BaseLayout title="Joe the Painter: Your Home, My Craft. Done Right Since 2001." description="Meticulous painting and reliable handy services, personally delivered by a licensed craftsman dedicated to your peace of mind in San Diego County.">
+  <section class="container mx-auto px-4 md:px-8 py-16 text-center">
+    <h1 class="text-6xl font-heading font-bold text-text mb-4">
+      Your Home, My Craft.
+    </h1>
+    <p class="text-3xl font-body text-text-muted mb-8">
+      Done Right Since 2001.
+    </p>
+    <p class="text-xl text-text-muted max-w-3xl mx-auto">
+      Meticulous painting and reliable handy services, personally delivered by a licensed craftsman
+      dedicated to your peace of mind in San Diego County.
+    </p>
+    <div class="mt-10">
+      <!-- Placeholder for Hero CTA -->
+      <a href="/book-consultation" class="inline-block px-8 py-4 bg-primary text-white rounded-md text-lg font-semibold hover:bg-primary-dark transition-colors duration-fast ease-default">
+        Book Your Free Consultation
+      </a>
+      <p class="text-sm text-text-subtle mt-4">CA Lic. # <a href="https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=802167" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-accent font-semibold">802167</a></p>
+    </div>
+  </section>
+
+  <section class="container mx-auto px-4 md:px-8 py-16">
+    <h2 class="text-center mb-12">Services Overview (Placeholder)</h2>
+    <div class="grid md:grid-cols-2 gap-8">
+      <div class="bg-surface p-8 rounded-lg shadow-md">
+        <h3 class="font-heading text-primary mb-4">Painting Services</h3>
+        <p class="text-text-muted">Expert interior and exterior painting, cabinet refinishing, and commercial projects.</p>
+        <a href="/services/painting" class="mt-4 inline-block text-primary hover:text-primary-dark">Learn More &rarr;</a>
+      </div>
+      <div class="bg-surface p-8 rounded-lg shadow-md">
+        <h3 class="font-heading text-primary mb-4">Handy Services</h3>
+        <p class="text-text-muted">Reliable drywall repair, minor carpentry, pressure washing, and fixture installation.</p>
+        <a href="/services/handy" class="mt-4 inline-block text-primary hover:text-primary-dark">Learn More &rarr;</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="container mx-auto px-4 md:px-8 py-16 text-center">
+    <h2 class="mb-12">About Joe (Placeholder)</h2>
+    <p class="text-lg text-text-muted max-w-3xl mx-auto">
+      Joe has built a business founded on integrity, personal service, and superior craftsmanship.
+      He is not a faceless corporation but a dedicated individual committed to his clients and his craft.
+    </p>
+    <a href="/about" class="mt-8 inline-block px-6 py-3 bg-secondary text-white rounded-md text-base font-semibold hover:bg-secondary/90 transition-colors duration-fast ease-default">
+      Meet Joe, Your Trusted Craftsman
+    </a>
+  </section>
+
+  <section class="container mx-auto px-4 md:px-8 py-16 text-center">
+    <h2 class="mb-12">Client Testimonials (Placeholder)</h2>
+    <div class="bg-surface p-8 rounded-lg shadow-md max-w-2xl mx-auto">
+      <p class="text-xl italic text-text mb-6">"Joe painted our entire home and did an incredible job. His attention to detail is unmatched, and he's incredibly reliable. We wouldn't use anyone else!"</p>
+      <p class="font-semibold text-primary">- Satisfied Homeowner, Carlsbad</p>
+    </div>
+    <a href="/testimonials" class="mt-8 inline-block px-6 py-3 bg-ghost text-primary rounded-md text-base font-semibold hover:bg-primary/[0.05] transition-colors duration-fast ease-default">
+      Read More Testimonials
+    </a>
+  </section>
+
+</BaseLayout>

@@ -1,92 +1,94 @@
 ---
+import Logo from './ui/Logo.astro';
 import Button from './ui/Button.astro';
+
+const currentYear = new Date().getFullYear();
+const cslbLicenseNumber = '802167';
+const cslbLicenseLink = `https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=${cslbLicenseNumber}`;
+
+const footerNavLinks = [
+  { text: 'Home', href: '/' },
+  { text: 'Painting Services', href: '/services/painting' },
+  { text: 'Handy Services', href: '/services/handy' },
+  { text: 'Our Work', href: '/our-work' },
+  { text: 'About Joe', href: '/about' },
+  { text: 'Contact', href: '/contact' },
+  { text: 'FAQs', href: '/faq' }, // Placeholder for future P1 feature
+  { text: 'Privacy Policy', href: '/privacy' }, // Placeholder
+  { text: 'Terms of Service', href: '/terms' }, // Placeholder
+];
 ---
 
-<footer class="bg-text-dark text-text-muted py-12 md:py-16 lg:py-20">
-  <div class="container max-w-7xl mx-auto px-4">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 lg:gap-16 mb-10 md:mb-14 lg:mb-16">
-      <!-- Brand Info / Mission -->
-      <div>
-        <a href="/" class="text-surface-light font-heading text-2xl font-bold mb-4 block" aria-label="Joe the Painter homepage">
-          JOE THE PAINTER
+<footer class="bg-text text-text-muted py-12 md:py-16">
+  <div class="container mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
+
+    <!-- Brand and CTA -->
+    <div class="md:col-span-1 flex flex-col items-start">
+      <Logo className="mb-4 text-white" />
+      <p class="text-sm leading-relaxed mb-6">
+        Your trusted partner for meticulous painting and reliable repairs in San Diego County.
+        Done Right Since 2001.
+      </p>
+      <Button href="/book-consultation" variant="outline" size="md" class="!text-white !border-white hover:!bg-white hover:!text-primary">
+        Book a Free Consultation
+      </Button>
+    </div>
+
+    <!-- Navigation Links -->
+    <div class="md:col-span-2 grid grid-cols-2 gap-x-8 gap-y-4">
+      {footerNavLinks.map((link) => (
+        <a href={link.href} class="text-sm text-text-muted hover:text-white transition-colors duration-fast ease-default">
+          {link.text}
         </a>
-        <p class="text-text-muted text-sm leading-relaxed max-w-xs">
-          Your trusted craftsman for meticulous painting and reliable handy services in San Diego County.
-          Done Right Since 2001.
+      ))}
+    </div>
+
+    <!-- Contact Info & License -->
+    <div class="md:col-span-1 flex flex-col items-start">
+      <h4 class="font-semibold text-lg text-white mb-4">Contact Joe</h4>
+      <p class="text-sm mb-2">
+        <a href="tel:+17605808173" class="hover:text-white transition-colors duration-fast ease-default">
+          +1 (760) 580-8173
+        </a>
+      </p>
+      <p class="text-sm mb-4">
+        <a href="mailto:joe@joethepainter.com" class="hover:text-white transition-colors duration-fast ease-default">
+          joe@joethepainter.com
+        </a>
+      </p>
+
+      <div class="mt-4">
+        <p class="text-sm text-text-muted">
+          CA Lic. # <a
+            href={cslbLicenseLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-primary hover:text-accent font-semibold transition-colors duration-fast ease-default"
+            aria-label={`Verify Joe the Painter's California Contractor License ${cslbLicenseNumber}`}
+          >
+            {cslbLicenseNumber}
+          </a>
+        </p>
+        <p class="text-xs text-text-subtle mt-1">
+          Licensed since March 2001
         </p>
       </div>
 
-      <!-- Navigation Links -->
-      <nav aria-label="Footer navigation">
-        <h3 class="text-surface-light text-lg font-semibold mb-4">Quick Links</h3>
-        <ul role="list" class="space-y-2">
-          <li><a href="/" class="text-text-muted hover:text-surface-light text-sm transition-colors duration-200">Home</a></li>
-          <li><a href="/services/painting" class="text-text-muted hover:text-surface-light text-sm transition-colors duration-200">Painting Services</a></li>
-          <li><a href="/services/handy" class="text-text-muted hover:text-surface-light text-sm transition-colors duration-200">Handy Services</a></li>
-          <li><a href="/our-work" class="text-text-muted hover:text-surface-light text-sm transition-colors duration-200">Our Work</a></li>
-          <li><a href="/about" class="text-text-muted hover:text-surface-light text-sm transition-colors duration-200">About Joe</a></li>
-          <li><a href="/contact" class="text-text-muted hover:text-surface-light text-sm transition-colors duration-200">Contact</a></li>
-        </ul>
-      </nav>
-
-      <!-- Contact Info -->
-      <div>
-        <h3 class="text-surface-light text-lg font-semibold mb-4">Get In Touch</h3>
-        <address class="not-italic space-y-2">
-          <p class="text-text-muted text-sm">Serving Central & North San Diego County</p>
-          <p>
-            <a href="tel:+17605808173" class="text-text-muted hover:text-surface-light text-sm transition-colors duration-200">
-              +1 (760) 580-8173
-            </a>
-          </p>
-          <p>
-            <a href="mailto:joe@joethepainter.com" class="text-text-muted hover:text-surface-light text-sm transition-colors duration-200">
-              joe@joethepainter.com
-            </a>
-          </p>
-          <!-- Placeholder for social links, will be replaced by actual icons/links in P2 -->
-          <div class="flex space-x-4 pt-2" aria-label="Social media links">
-            <a href="#" class="text-text-subtle hover:text-surface-light text-lg transition-colors duration-200" aria-label="Facebook (placeholder)">
-              <!-- Placeholder SVG for Facebook -->
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm3 8h-1.353c-.567 0-.647.286-.647.853v1.294h2l-.309 2h-1.691v7h-3v-7h-2v-2h2v-1.723c0-2.028 1.115-3.177 3.486-3.177h1.514v3z"/></svg>
-            </a>
-            <a href="#" class="text-text-subtle hover:text-surface-light text-lg transition-colors duration-200" aria-label="Instagram (placeholder)">
-              <!-- Placeholder SVG for Instagram -->
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.071 1.17.067 1.743.249 2.224.469.612.285 1.054.673 1.487 1.107.433.433.821.875 1.106 1.488.22.48.402 1.054.469 2.224.059 1.266.071 1.646.071 4.85s-.012 3.584-.071 4.85c-.067 1.17-.249 1.743-.469 2.224-.285.612-.673 1.054-1.107 1.487-.433.433-.875.821-1.488 1.106-.48.22-1.054.402-2.224.469-1.266.059-1.646.071-4.85.071s-3.584-.012-4.85-.071c-1.17-.067-1.743-.249-2.224-.469-.612-.285-1.054-.673-1.487-1.107-.433-.433-.821-.875-1.106-1.488-.22-.48-.402-1.054-.469-2.224-.059-1.266-.071-1.646-.071-4.85s.012-3.584.071-4.85c.067-1.17.249-1.743.469-2.224.285-.612.673-1.054 1.107-1.487.433-.433.821-.875 1.488-1.106.48-.22 1.054-.402 2.224-.469 1.266-.059 1.646-.071 4.85-.071zm0-2.163c-3.259 0-3.667.014-4.947.072-1.378.067-2.424.314-3.291.685-.853.361-1.57.864-2.293 1.586-.724.724-1.227 1.44-1.588 2.293-.372.868-.619 1.913-.686 3.291-.059 1.28-.073 1.688-.073 4.948s.014 3.667.072 4.947c.067 1.378.314 2.424.685 3.291.361.853.864 1.57 1.586 2.293.724.724 1.44 1.227 2.293 1.588.868.372 1.913.619 3.291.686 1.28.059 1.688.073 4.948.073s3.667-.014 4.947-.072c1.378-.067 2.424-.314 3.291-.685.853-.361 1.57-.864 2.293-1.586.724-.724 1.227-1.44 1.588-2.293.372-.868.619-1.913.686-3.291.059-1.28.073-1.688.073-4.948s-.014-3.667-.072-4.947c-.067-1.378-.314-2.424-.685-3.291-.361-.853-.864-1.57-1.586-2.293-.724-.724-1.44-1.227-2.293-1.588-.868-.372-1.913-.619-3.291-.686-1.28-.059-1.688-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4s1.791-4 4-4 4 1.791 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-            </a>
-          </div>
-        </address>
-      </div>
-
-      <!-- CTA -->
-      <div class="flex flex-col justify-start">
-        <h3 class="text-surface-light text-lg font-semibold mb-4">Ready for your project?</h3>
-        <Button
-          href="/consultation"
-          variant="primary"
-          size="lg"
-          class="w-full sm:w-auto"
-          aria-label="Book a Free Consultation"
-        >
-          Book Your Free Consultation
-        </Button>
-      </div>
-    </div>
-
-    <!-- Copyright & Legal -->
-    <div class="border-t border-border-light pt-8 md:flex md:items-center md:justify-between text-sm text-text-muted">
-      <p class="mb-4 md:mb-0">&copy; {new Date().getFullYear()} Joe the Painter. All rights reserved.</p>
-      <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
-        <a
-          href="https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=802167"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-text-muted hover:text-surface-light transition-colors duration-200 mb-2 sm:mb-0"
-        >
-          CA Lic. # 802167 (Verify License)
+      <!-- Social Media Links (Placeholder) -->
+      <div class="mt-6 flex space-x-4">
+        <!-- Replace with actual SVG icons and links -->
+        <a href="#" aria-label="Find us on Facebook" class="text-text-muted hover:text-white transition-colors duration-fast ease-default">
+          <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-3 7h-2c-.44 0-.663.22-.663.663v1.337h3l-.439 3h-2.561v6h-3v-6h-2v-3h2v-2.19c0-2.477 1.493-3.81 3.791-3.81h2.209v3z"/></svg>
         </a>
-        <a href="/privacy" class="text-text-muted hover:text-surface-light transition-colors duration-200">Privacy Policy</a>
+        <a href="#" aria-label="Find us on Instagram" class="text-text-muted hover:text-white transition-colors duration-fast ease-default">
+          <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.07 1.645.07 4.85 0 3.204-.012 3.584-.07 4.85-1.488 3.252-1.691 4.771-4.919 4.919-1.266.058-1.646.07-4.85.07-3.204 0-3.584-.012-4.85-.07-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.07-1.645-.07-4.85 0-3.204.012-3.584.07-4.85 1.488-3.252 1.691-4.771 4.919-4.919 1.266-.058 1.646-.07 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.073 4.948.073 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4s1.791-4 4-4 4 1.791 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </a>
       </div>
     </div>
+
+  </div>
+
+  <div class="container mx-auto px-4 md:px-8 mt-12 pt-8 border-t border-text-muted/20 text-center text-sm">
+    &copy; {currentYear} Joe the Painter. All rights reserved.
   </div>
 </footer>

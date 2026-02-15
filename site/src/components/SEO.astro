@@ -1,15 +1,4 @@
 ---
-/**
- * SEO Component
- * Manages all meta tags for optimal search engine visibility and social sharing.
- *
- * @param {string} title - The page title.
- * @param {string} description - The page description.
- * @param {string} canonicalURL - The canonical URL for the page.
- * @param {string} [ogImage] - Open Graph image URL. Defaults to '/images/og-default.png'.
- * @param {boolean} [noIndex] - Whether to prevent indexing of the page. Defaults to false.
- */
-
 interface Props {
   title: string;
   description: string;
@@ -22,34 +11,68 @@ const {
   title,
   description,
   canonicalURL,
-  ogImage = '/images/og-default.png', // Default image from BaseLayout
+  ogImage = '/images/og-default.png', // Default OG image path in public folder
   noIndex = false,
 } = Astro.props;
 
-// Ensure OG image is a full URL for social media platforms
-const fullOgImage = new URL(ogImage, Astro.site).href;
+// Ensure ogImage is an absolute URL
+const absoluteOgImage = new URL(ogImage, Astro.site).href;
 ---
 
 <title>{title}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonicalURL} />
 
-{/* Open Graph / Social Media Tags */}
+{noIndex && <meta name="robots" content="noindex, nofollow" />}
+{!noIndex && <meta name="robots" content="index, follow" />}
+
+<!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
 <meta property="og:url" content={canonicalURL} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
-<meta property="og:image" content={fullOgImage} />
+<meta property="og:image" content={absoluteOgImage} />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
+<meta property="og:site_name" content="Joe the Painter" />
 
-{/* Twitter Card Tags */}
+<!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:url" content={canonicalURL} />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
-<meta name="twitter:image" content={fullOgImage} />
-<meta name="twitter:creator" content="@JoeThePainterSD" /> {/* From 07-technical.md */}
+<meta name="twitter:image" content={absoluteOgImage} />
+<meta name="twitter:creator" content="@JoeThePainterSD" /> <!-- Placeholder, update if account exists -->
 
-{/* No Index - if specified */}
-{noIndex && <meta name="robots" content="noindex, nofollow" />}
+<!-- Structured Data (JSON-LD) - Basic Organization and Website -->
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Joe the Painter",
+  "url": Astro.site?.href,
+  "logo": new URL('/images/logo.svg', Astro.site).href,
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+1-760-580-8173",
+    "contactType": "customer service",
+    "email": "joe@joethepainter.com",
+    "areaServed": ["San Diego County", "Central San Diego County", "North San Diego County"]
+  },
+  "slogan": "Prompt, Professional, and Affordable",
+  "sameAs": [
+    "https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=802167"
+    // Add Yelp, Google Business Profile, etc. links once established
+  ]
+})} />
+
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "url": Astro.site?.href,
+  "name": "Joe the Painter",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": `${Astro.site?.href}search?q={search_term_string}`,
+    "query-input": "required name=search_term_string"
+  }
+})} />

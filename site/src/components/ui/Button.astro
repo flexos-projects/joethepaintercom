@@ -1,24 +1,12 @@
 ---
-/**
- * Button Component
- * A reusable UI primitive for interactive elements.
- * Supports various visual styles (variants) and sizes,
- * and can act as either a button or an anchor link.
- *
- * @param {string} [variant='primary'] - Visual style of the button.
- * @param {string} [size='md'] - Size of the button.
- * @param {string} [href] - If provided, renders an <a> tag instead of <button>.
- * @param {boolean} [disabled=false] - Disables the button/link.
- * @param {string} [class] - Additional CSS classes to apply.
- * @param {HTMLAttributes<'a' | 'button'>} [rest] - Other HTML attributes.
- */
 import type { HTMLAttributes } from 'astro/types';
 
-interface Props extends HTMLAttributes<'a' | 'button'> {
+interface Props extends HTMLAttributes<'button'> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   href?: string; // Optional for anchor buttons
   disabled?: boolean;
+  loading?: boolean;
 }
 
 const {
@@ -26,51 +14,87 @@ const {
   size = 'md',
   href,
   disabled = false,
+  loading = false,
   class: className,
-  ...rest
+  ...attrs
 } = Astro.props;
 
-// Base styling for all buttons
-const baseClasses = 'inline-flex items-center justify-center text-center font-body font-semibold text-white cursor-pointer border-2 border-transparent transition-all duration-150 ease-in-out rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2';
+const baseClasses = 'inline-flex items-center justify-center font-body font-semibold text-center no-underline cursor-pointer border border-transparent transition-all duration-fast ease-default rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary';
 
-// Variant-specific styles (using Tailwind colors defined in config)
 const variantClasses = {
-  primary: `bg-primary hover:bg-primary-hover active:bg-primary-active hover:shadow-sm active:translate-y-px`,
-  secondary: `bg-secondary hover:bg-secondary-hover active:bg-secondary-active hover:shadow-sm active:translate-y-px`,
-  outline: `bg-transparent text-primary border-primary hover:bg-primary hover:text-white active:bg-primary-active active:translate-y-px hover:shadow-sm`,
-  ghost: `bg-transparent text-primary border-transparent hover:bg-primary/[0.05] active:bg-primary/[0.1] active:translate-y-px`,
+  primary: `bg-primary text-white border-primary
+            hover:bg-primary-dark hover:border-primary-dark hover:shadow-sm
+            active:bg-primary-dark active:border-primary-dark active:translate-y-px`,
+  secondary: `bg-secondary text-white border-secondary
+              hover:bg-secondary/90 hover:border-secondary/90 hover:shadow-sm
+              active:bg-secondary/80 active:border-secondary/80 active:translate-y-px`,
+  outline: `bg-transparent text-primary border-primary
+            hover:bg-primary hover:text-white hover:shadow-sm
+            active:bg-primary-dark active:border-primary-dark active:text-white active:translate-y-px`,
+  ghost: `bg-transparent text-primary border-transparent
+          hover:bg-primary/[0.05]
+          active:bg-primary/[0.1] active:translate-y-px`,
 };
 
-// Size-specific styles
 const sizeClasses = {
   sm: 'px-3 py-2 text-sm',
   md: 'px-4 py-3 text-base',
   lg: 'px-6 py-4 text-lg',
 };
 
-// Disabled state styles
-const disabledClasses = 'opacity-60 cursor-not-allowed';
-
-// Combine all classes
-const classes = [
-  baseClasses,
-  sizeClasses[size],
-  variantClasses[variant],
-  disabled && disabledClasses, // Apply disabled classes conditionally
-  className, // Allow external classes to be passed
-].filter(Boolean).join(' '); // Filter out any falsey values and join
-
-// Determine whether to render an <a> or <button> element
-const Component = href ? 'a' : 'button';
+const disabledClasses = 'opacity-60 cursor-not-allowed pointer-events-none';
+const loadingClasses = 'relative !cursor-wait';
 ---
 
-<Component
-  {...rest}
-  {href}
-  {disabled}
-  class={classes}
-  tabindex={disabled ? -1 : undefined}
-  aria-disabled={disabled}
->
-  <slot />
-</Component>
+{href ? (
+  <a
+    href={href}
+    class:list={[
+      baseClasses,
+      variantClasses[variant],
+      sizeClasses[size],
+      disabled || loading ? disabledClasses : '',
+      className,
+    ]}
+    aria-disabled={disabled || loading}
+    tabindex={disabled || loading ? -1 : undefined}
+    {...attrs}
+  >
+    {loading && (
+      <span class="absolute inset-0 flex items-center justify-center">
+        <svg class="animate-spin-slow h-5 w-5 text-current" viewBox="0 0 24 24" aria-hidden="true">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      </span>
+    )}
+    <span class:list={[loading ? 'opacity-0' : '']}>
+      <slot />
+    </span>
+  </a>
+) : (
+  <button
+    type="button"
+    disabled={disabled || loading}
+    class:list={[
+      baseClasses,
+      variantClasses[variant],
+      sizeClasses[size],
+      disabled || loading ? disabledClasses : '',
+      className,
+    ]}
+    {...attrs}
+  >
+    {loading && (
+      <span class="absolute inset-0 flex items-center justify-center">
+        <svg class="animate-spin-slow h-5 w-5 text-current" viewBox="0 0 24 24" aria-hidden="true">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      </span>
+    )}
+    <span class:list={[loading ? 'opacity-0' : '']}>
+      <slot />
+    </span>
+  </button>
+)}
