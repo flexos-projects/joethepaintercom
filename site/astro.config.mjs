@@ -15,7 +15,7 @@ export default defineConfig({
     }),
     image({
       service: {
-        entrypoint: 'astro/assets/services/sharp', // Use Sharp for local image optimization, as Squoosh is deprecated
+        entrypoint: 'astro/assets/services/squoosh', // Use Squoosh for local image optimization
       },
       // You can also configure cloud-based services like Cloudinary here if needed
     }),

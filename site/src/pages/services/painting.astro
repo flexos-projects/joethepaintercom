@@ -1,60 +1,179 @@
 ---
-/**
- * Painting Services Page
- * URL: /services/painting
- */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Button from '@/components/ui/Button.astro';
+import type { SiteMeta } from '@/utils/seo';
+import { Image } from 'astro:assets';
 
-import { getCollection } from 'astro:content';
-import BaseLayout from '@layouts/BaseLayout.astro';
-import Hero from '@components/sections/Hero.astro';
-import ServiceDetailSection from '@components/sections/ServiceDetailSection.astro';
-import CTABanner from '@components/sections/CTABanner.astro';
-
-// Fetch all painting services
-const paintingServices = (await getCollection('services', ({ data }) => data.category === 'Painting' && data.published))
-  .sort((a, b) => a.data.title.localeCompare(b.data.title)); // Sort alphabetically for consistent order
-
-// Define page metadata
-const pageMeta = {
-  title: "Professional Painting Services | Joe the Painter San Diego",
-  description: "Explore Joe the Painter's meticulous interior, exterior, cabinet, and commercial painting services in San Diego County. Quality craftsmanship guaranteed. Book your free consultation!",
-  ogImage: "/images/services/painting-main-hero.webp", // Using the hero image as the Open Graph image for relevance.
+// Define meta for this page
+const pageMeta: SiteMeta = {
+  title: "Painting Services | Interior, Exterior, Cabinets - San Diego",
+  description: "Joe the Painter offers meticulous interior, exterior, cabinet refinishing, and commercial painting services in San Diego County. Experience a flawless finish and lasting quality.",
+  ogImage: "/images/social-share-painting.jpg"
 };
 
-// Hero content for the main Painting Services page
-const heroContent = {
-  headline: "Meticulous Painting Services for Your San Diego Home & Business",
-  subheadline: "From vibrant interiors to durable exteriors, Joe the Painter delivers exceptional craftsmanship and lasting beauty. Discover our comprehensive painting solutions.",
-  ctaText: "Book Your Free Consultation",
-  ctaHref: "/consultation",
-  image: {
-    src: "/images/services/painting-main-hero.webp", // Generic painting hero image
-    alt: "A painter meticulously working on a wall, showcasing attention to detail.",
+// Placeholder images for service sections
+import interiorPaintingHero from '/public/images/services/interior-painting-hero.webp';
+import exteriorPaintingHero from '/public/images/services/exterior-painting-hero.webp';
+import cabinetPaintingHero from '/public/images/services/cabinet-painting-hero.webp';
+import commercialPaintingHero from '/public/images/services/commercial-painting-hero.webp';
+
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "Painting Services",
+  "provider": {
+    "@type": "LocalBusiness",
+    "name": "Joe the Painter",
+    "url": "https://www.joethepainter.com",
+    "telephone": "+1-760-580-8173",
+    "email": "joe@joethepainter.com"
   },
-  licenseNumber: "CA Lic. #802167",
+  "areaServed": {
+    "@type": "AdministrativeArea",
+    "name": "San Diego County, CA"
+  },
+  "description": "Professional residential and small business painting services, known for superior craftsmanship and attention to detail, personally delivered by Joe the Painter.",
+  "url": "https://www.joethepainter.com/services/painting",
+  "image": "https://www.joethepainter.com/images/services/painting-service-hero.jpg" // General image for painting services
 };
 ---
 
-<BaseLayout {...pageMeta}>
-  <Hero
-    headline={heroContent.headline}
-    subheadline={heroContent.subheadline}
-    ctaText={heroContent.ctaText}
-    ctaHref={heroContent.ctaHref}
-    image={heroContent.image}
-    licenseNumber={heroContent.licenseNumber}
-  />
+<BaseLayout meta={pageMeta}>
+  <Fragment slot="json-ld">
+    <script type="application/ld+json" set:html={JSON.stringify(serviceSchema)} />
+  </Fragment>
 
-  <main>
-    {paintingServices.map((service, index) => (
-      <ServiceDetailSection service={service.data} index={index} />
-    ))}
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center">
+    <h1 class="mb-8">Meticulous Painting Services</h1>
+    <p class="text-lg text-text-muted max-w-3xl mx-auto mb-10">
+      From refreshing your interiors to protecting your exteriors, Joe the Painter delivers flawless results with over 25 years of licensed expertise.
+    </p>
+    <Button href="/consultation" variant="primary" size="lg">Get Your Free Painting Estimate</Button>
+  </section>
 
-    <CTABanner
-      headline="Ready for a Flawless Finish?"
-      description="Let Joe the Painter bring your vision to life with unparalleled craftsmanship and personal service. Schedule your free consultation today."
-      ctaText="Request Your Free Painting Estimate"
-      ctaHref="/consultation"
-    />
-  </main>
+  <section class="bg-background-white py-16 md:py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20 md:space-y-32">
+      <!-- Interior Painting -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div class="lg:order-2">
+          <Image
+            src={interiorPaintingHero}
+            alt="Beautifully painted modern living room with natural light"
+            widths={[400, 768, 1024]}
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            loading="lazy"
+            class="w-full h-auto rounded-xl shadow-lg"
+          />
+        </div>
+        <div class="lg:order-1">
+          <h2 class="mb-6 text-primary-dark">Interior Painting</h2>
+          <p class="text-lg text-text-dark mb-6">
+            Transform your living spaces with a fresh, flawless interior paint job, meticulously applied by a seasoned craftsman. We focus on every detail, from meticulous surface preparation to the final brushstroke, ensuring a finish that's not just beautiful but durable and long-lasting.
+          </p>
+          <ul role="list" class="list-disc list-inside text-lg text-text-muted space-y-2 mb-8">
+            <li>Flawless, Streak-Free Finish</li>
+            <li>Enhanced Home Aesthetics & Value</li>
+            <li>Protection for Walls & Surfaces</li>
+            <li>Clean & Respectful Work Environment</li>
+            <li>Durable, Long-Lasting Results</li>
+          </ul>
+          <Button href="/consultation" variant="outline" size="md">Request Interior Painting Quote</Button>
+        </div>
+      </div>
+
+      <!-- Exterior Painting -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <Image
+            src={exteriorPaintingHero}
+            alt="Modern house with a fresh exterior paint job and manicured lawn"
+            widths={[400, 768, 1024]}
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            loading="lazy"
+            class="w-full h-auto rounded-xl shadow-lg"
+          />
+        </div>
+        <div>
+          <h2 class="mb-6 text-primary-dark">Exterior Painting</h2>
+          <p class="text-lg text-text-dark mb-6">
+            Protect and enhance your home's curb appeal with high-quality, weather-resistant exterior painting. Joe's two decades of experience ensure meticulous preparation, using only top-grade, weather-resistant paints and stains to guarantee a finish that stands up to San Diego's climate.
+          </p>
+          <ul role="list" class="list-disc list-inside text-lg text-text-muted space-y-2 mb-8">
+            <li>Superior Weather Protection</li>
+            <li>Increased Curb Appeal & Home Value</li>
+            <li>Expert Surface Preparation</li>
+            <li>Premium, Long-Lasting Paints</li>
+            <li>Seamless Project Management</li>
+          </ul>
+          <Button href="/consultation" variant="outline" size="md">Request Exterior Painting Quote</Button>
+        </div>
+      </div>
+
+      <!-- Cabinet Refinishing -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div class="lg:order-2">
+          <Image
+            src={cabinetPaintingHero}
+            alt="Newly refinished kitchen cabinets looking modern and fresh"
+            widths={[400, 768, 1024]}
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            loading="lazy"
+            class="w-full h-auto rounded-xl shadow-lg"
+          />
+        </div>
+        <div class="lg:order-1">
+          <h2 class="mb-6 text-primary-dark">Cabinet Refinishing</h2>
+          <p class="text-lg text-text-dark mb-6">
+            Give your kitchen or bathroom a complete refresh without the cost of replacement. Our expert cabinet refinishing provides a durable, smooth, and beautiful factory-like finish that revitalizes your space and extends the life of your cabinetry.
+          </p>
+          <ul role="list" class="list-disc list-inside text-lg text-text-muted space-y-2 mb-8">
+            <li>Cost-Effective Kitchen Transformation</li>
+            <li>Durable, Factory-Like Finish</li>
+            <li>Wide Range of Colors & Styles</li>
+            <li>Minimal Disruption</li>
+            <li>Increased Home Value</li>
+          </ul>
+          <Button href="/consultation" variant="outline" size="md">Cabinet Refinishing Estimate</Button>
+        </div>
+      </div>
+
+      <!-- Commercial Painting -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <Image
+            src={commercialPaintingHero}
+            alt="Professional commercial building exterior painted in modern colors"
+            widths={[400, 768, 1024]}
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            loading="lazy"
+            class="w-full h-auto rounded-xl shadow-lg"
+          />
+        </div>
+        <div>
+          <h2 class="mb-6 text-primary-dark">Commercial Painting</h2>
+          <p class="text-lg text-text-dark mb-6">
+            Maintain a professional image for your small business with high-quality commercial painting. We work efficiently to minimize disruption to your operations, delivering durable and aesthetically pleasing results for offices, retail spaces, and other commercial properties.
+          </p>
+          <ul role="list" class="list-disc list-inside text-lg text-text-muted space-y-2 mb-8">
+            <li>Professional Business Appearance</li>
+            <li>Efficient Project Completion</li>
+            <li>Durable, Long-Lasting Finishes</li>
+            <li>Minimal Operational Disruption</li>
+            <li>Licensed & Insured for Commercial Work</li>
+          </ul>
+          <Button href="/consultation" variant="outline" size="md">Commercial Painting Quote</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-primary-dark text-white py-16 md:py-24 text-center">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-white mb-8">Ready for a Flawless Finish?</h2>
+      <p class="text-lg text-neutral-100 max-w-2xl mx-auto mb-10">
+        Let Joe bring his quarter-century of expertise to your next painting project.
+      </p>
+      <Button href="/consultation" variant="accent" size="lg">Book Your Free Consultation</Button>
+    </div>
+  </section>
 </BaseLayout>

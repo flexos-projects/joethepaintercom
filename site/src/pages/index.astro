@@ -1,130 +1,110 @@
 ---
-/**
- * Homepage (index.astro)
- * URL path: /
- */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/Hero.astro';
+import AboutJoeSection from '@/components/AboutJoeSection.astro';
+import TestimonialCarousel from '@/components/TestimonialCarousel.astro';
+import type { SiteMeta } from '@/utils/seo';
 
-import BaseLayout from '@layouts/BaseLayout.astro';
-// No explicit import for Header/Footer here; assuming BaseLayout handles their inclusion.
+// Define meta for this page
+const pageMeta: SiteMeta = {
+  title: "Your Home, My Craft. Done Right Since 2001.",
+  description: "Meticulous painting and reliable repairs, personally delivered by a licensed craftsman dedicated to your peace of mind in San Diego County.",
+  ogImage: "/images/social-share-home.jpg" // Specific image for homepage
+};
 
-// Page metadata
-const pageTitle = "Joe the Painter: Your Home, My Craft. Done Right Since 2001.";
-const pageDescription = "Meticulous painting and reliable repairs, personally delivered by a licensed craftsman dedicated to your peace of mind in San Diego County.";
-// Default OG image path. Will be updated with a specific image in TASK-021.
-const ogImage = "/images/social-share-default.jpg";
+const localBusinessSchema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Joe the Painter",
+  "image": "https://www.joethepainter.com/images/joe-profile.jpg", // Professional photo of Joe (placeholder)
+  "url": "https://www.joethepainter.com",
+  "telephone": "+1-760-580-8173",
+  "email": "joe@joethepainter.com",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "San Diego County", // General service area
+    "addressRegion": "CA",
+    "addressCountry": "US"
+  },
+  "priceRange": "$$", // Indicative price range
+  "hasMap": "https://www.google.com/maps/search/?api=1&query=Joe+the+Painter+San+Diego", // Link to Google Maps search
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "opens": "08:00",
+      "closes": "17:00"
+    }
+  ],
+  "areaServed": [
+    { "@type": "State", "name": "California" },
+    { "@type": "City", "name": "Carlsbad" },
+    { "@type": "City", "name": "Encinitas" },
+    { "@type": "City", "name": "Vista" },
+    { "@type": "City", "name": "San Marcos" },
+    { "@type": "City", "name": "Oceanside" },
+    { "@type": "City", "name": "Escondido" },
+    { "@type": "City", "name": "Poway" },
+    { "@type": "City", "name": "Rancho Bernardo" },
+    { "@type": "City", "name": "Del Mar" },
+    { "@type": "City", "name": "Solana Beach" }
+  ],
+  "geo": {
+    "@type": "GeoCircle",
+    "geoMidpoint": {
+      "@type": "GeoCoordinates",
+      "latitude": 33.0903, // Approximate center of North San Diego County
+      "longitude": -117.2519
+    },
+    "geoRadius": 50000 // Radius in meters, ~30 miles
+  },
+  "review": [ /* Will be populated dynamically from testimonials, placeholder for now */ ],
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "5", // Placeholder: Assume 5-star for now
+    "reviewCount": "25" // Placeholder: Assume 25 reviews for now
+  }
+};
 ---
 
-<BaseLayout title={pageTitle} description={pageDescription} ogImage={ogImage}>
-  <main>
-    {/* Hero Section Placeholder (TASK-012) */}
-    <section class="relative bg-neutral-50 py-16 md:py-24 text-center">
-      <div class="container mx-auto px-4 md:px-8 max-w-7xl">
-        <h1 class="text-5xl md:text-6xl font-heading font-bold text-neutral-800 mb-6 leading-tight">
-          Your Home, My Craft. Done Right Since 2001.
-        </h1>
-        <p class="text-lg md:text-xl font-body text-neutral-500 mb-8 max-w-3xl mx-auto leading-relaxed">
-          Meticulous painting and reliable repairs, personally delivered by a licensed craftsman dedicated to your peace of mind in San Diego County.
-        </p>
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-          <a href="/consultation" class="px-8 py-4 bg-primary text-white rounded-md font-semibold text-lg hover:bg-primary-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-offset-2">
-            Request Your Free Consultation
-          </a>
-        </div>
-        <p class="text-sm font-body text-neutral-500">
-          CA Lic. #802167 <a href="https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=802167" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline focus:underline">Verify License</a>
-        </p>
-        {/* Placeholder for Joe's authentic image */}
-        <div class="mt-12">
-          <img
-            src="/images/joe-hero.webp"
-            alt="Joe the Painter, a trusted craftsman in San Diego County"
-            class="max-w-xl mx-auto rounded-lg shadow-lg w-full h-auto"
-            width="700"
-            height="467"
-            loading="eager"
-            fetchpriority="high"
-          />
-        </div>
-      </div>
-    </section>
+<BaseLayout meta={pageMeta}>
+  <Fragment slot="json-ld">
+    <script type="application/ld+json" set:html={JSON.stringify(localBusinessSchema)} />
+  </Fragment>
 
-    {/* About Joe Section Placeholder (TASK-013) */}
-    <section class="py-16 md:py-24 bg-white">
-      <div class="container mx-auto px-4 md:px-8 max-w-4xl text-center">
-        <h2 class="text-4xl font-heading font-bold text-neutral-800 mb-6 leading-tight">Meet Joe, Your Trusted Craftsman</h2>
-        <p class="text-lg font-body text-neutral-500 mb-8 leading-relaxed">
-          For over 25 years, Joe has been delivering meticulous painting and reliable handyman services across San Diego County. As a sole proprietor, he personally oversees every project, ensuring unparalleled quality and a personal touch that larger companies can't match.
-        </p>
-        <a href="/about" class="px-6 py-3 bg-neutral-500 text-white rounded-md font-semibold text-base hover:bg-neutral-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2">
-          Learn More About Joe
-        </a>
-      </div>
-    </section>
+  <Hero />
 
-    {/* Services Overview Section Placeholder */}
-    <section class="py-16 md:py-24 bg-neutral-50">
-      <div class="container mx-auto px-4 md:px-8 max-w-7xl">
-        <h2 class="text-4xl font-heading font-bold text-neutral-800 mb-12 text-center leading-tight">Our Services</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-          <div class="bg-white rounded-lg shadow-md p-8 flex flex-col items-center text-center hover:shadow-lg transition-shadow duration-200">
-            <h3 class="text-3xl font-heading font-semibold text-neutral-800 mb-4 leading-tight">Painting Services</h3>
-            <p class="text-lg font-body text-neutral-500 mb-6 leading-relaxed">
-              From vibrant interiors to durable exteriors, Joe's precision painting transforms and protects your property with lasting beauty.
-            </p>
-            <a href="/services/painting" class="px-6 py-3 bg-transparent border-2 border-primary text-primary rounded-md font-semibold text-base hover:bg-primary hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
-              Explore Painting
-            </a>
-          </div>
-          <div class="bg-white rounded-lg shadow-md p-8 flex flex-col items-center text-center hover:shadow-lg transition-shadow duration-200">
-            <h3 class="text-3xl font-heading font-semibold text-neutral-800 mb-4 leading-tight">Handy Services</h3>
-            <p class="text-lg font-body text-neutral-500 mb-6 leading-relaxed">
-              Expert repairs and maintenance, ensuring your home or business is in perfect condition before and after the paint.
-            </p>
-            <a href="/services/handy" class="px-6 py-3 bg-transparent border-2 border-primary text-primary rounded-md font-semibold text-base hover:bg-primary hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
-              Discover Handy Services
-            </a>
-          </div>
-        </div>
-        <div class="text-center mt-12">
-          <a href="/our-work" class="px-8 py-4 bg-primary text-white rounded-md font-semibold text-lg hover:bg-primary-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-offset-2">
-            View Our Work & Transformations
-          </a>
-        </div>
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+    <h2 class="text-center mb-12">
+      Your Trusted Partner for Home & Business
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16">
+      <div class="bg-surface-light p-6 md:p-8 rounded-lg shadow-md flex flex-col items-center text-center">
+        <h3 class="font-heading text-primary text-3xl mb-4">Painting Services</h3>
+        <p class="text-lg text-text-muted mb-6">
+          From vibrant interiors to durable exteriors, Joe delivers a flawless finish that protects and beautifies your property.
+        </p>
+        <a href="/services/painting" class="btn btn-primary-outline btn-md">Explore Painting</a>
+      </div>
+      <div class="bg-surface-light p-6 md:p-8 rounded-lg shadow-md flex flex-col items-center text-center">
+        <h3 class="font-heading text-primary text-3xl mb-4">Handy Services</h3>
+        <p class="text-lg text-text-muted mb-6">
+          Seamlessly integrate essential repairs like drywall and carpentry with your painting project, ensuring a comprehensive solution.
+        </p>
+        <a href="/services/handy" class="btn btn-primary-outline btn-md">Discover Handy Services</a>
+      </div>
     </div>
-    </section>
+  </section>
 
-    {/* Testimonials Section Placeholder (TASK-018) */}
-    <section class="py-16 md:py-24 bg-white">
-      <div class="container mx-auto px-4 md:px-8 max-w-5xl text-center">
-        <h2 class="text-4xl font-heading font-bold text-neutral-800 mb-6 leading-tight">What Our Clients Say</h2>
-        <p class="text-lg font-body text-neutral-500 mb-12 leading-relaxed">
-          Hear directly from homeowners and businesses who have experienced Joe's meticulous craftsmanship and reliable service.
-        </p>
-        {/* Placeholder for Testimonial Carousel component */}
-        <div class="bg-neutral-50 p-8 rounded-lg shadow-md text-neutral-500 italic text-lg font-body leading-relaxed">
-          "Joe painted our entire home, and we couldn't be happier with the results. His attention to detail and professionalism were exceptional. Highly recommend!"
-          <footer class="mt-4 text-neutral-800 font-semibold not-italic">— Jane D., Homeowner in Carlsbad</footer>
-        </div>
-        <div class="mt-12">
-          <a href="/testimonials" class="px-6 py-3 bg-neutral-500 text-white rounded-md font-semibold text-base hover:bg-neutral-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2">
-            Read More Testimonials
-          </a>
-        </div>
-      </div>
-    </section>
+  <AboutJoeSection />
 
-    {/* Final CTA Section */}
-    <section class="py-16 md:py-24 bg-primary text-white text-center">
-      <div class="container mx-auto px-4 md:px-8 max-w-4xl">
-        <h2 class="text-4xl font-heading font-bold mb-6 leading-tight">Ready for a Transformation?</h2>
-        <p class="text-lg font-body mb-8 leading-relaxed">
-          Let's discuss your vision. Schedule a free, no-obligation consultation with Joe.
-        </p>
-        <a href="/consultation" class="px-8 py-4 bg-accent text-white rounded-md font-semibold text-lg hover:bg-accent-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent-light focus:ring-offset-2">
-          Book Your Free Consultation Today
-        </a>
-      </div>
-    </section>
-  </main>
+  <TestimonialCarousel />
+
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center">
+    <h2 class="mb-8">Ready for a Transformation?</h2>
+    <p class="text-lg text-text-muted max-w-3xl mx-auto mb-10">
+      Experience the difference of working with a licensed craftsman dedicated to quality and your peace of mind.
+    </p>
+    <a href="/consultation" class="btn btn-primary btn-lg">Book Your Free Consultation</a>
+  </section>
 </BaseLayout>
----

@@ -1,113 +1,38 @@
 ---
-import { getCollection } from 'astro:content';
-import BaseLayout from '@layouts/BaseLayout.astro';
-import ProjectCard from '@components/ProjectCard.astro';
-import CTABanner from '@components/sections/CTABanner.astro';
-import Button from '@components/ui/Button.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PortfolioGrid from '@/components/PortfolioGrid.astro';
+import Button from '@/components/ui/Button.astro';
+import type { SiteMeta } from '@/utils/seo';
 
-// Fetch all published projects
-const allProjects = (await getCollection('projects', ({ data }) => data.published))
-  .sort((a, b) => b.data.projectDate.valueOf() - a.data.projectDate.valueOf());
-
-// Extract unique service types for filtering
-const allServiceTypes = new Set<string>();
-allProjects.forEach(project => {
-  project.data.servicesPerformed.forEach(service => allServiceTypes.add(service));
-});
-const uniqueServiceTypes = Array.from(allServiceTypes);
-
-// Map service slugs to more readable names for display
-const serviceTypeDisplayNames: { [key: string]: string } = {
-  'exterior-painting': 'Exterior Painting',
-  'interior-painting': 'Interior Painting',
-  'drywall-repair': 'Drywall Repair',
-  'minor-carpentry': 'Minor Carpentry',
-  'cabinet-refinishing': 'Cabinet Refinishing',
-  'commercial-painting': 'Commercial Painting',
-  'pressure-washing': 'Pressure Washing',
-  'fixture-installation': 'Fixture Installation',
-  // Add more as needed based on your service collection
+// Define meta for this page
+const pageMeta: SiteMeta = {
+  title: "Our Work | Joe the Painter's Project Portfolio - San Diego",
+  description: "Explore Joe the Painter's portfolio of meticulous interior, exterior, and handyman projects throughout San Diego County. See before-and-after transformations.",
+  ogImage: "/images/social-share-portfolio.jpg"
 };
-
-// Page metadata
-const title = 'Our Work | Joe the Painter: Your San Diego Craftsman Since 2001';
-const description = 'Explore Joe the Painter\'s portfolio of meticulous painting and reliable handyman projects across San Diego County. See the transformations firsthand!';
-const ogImage = '/images/og/our-work.jpg';
 ---
 
-<BaseLayout title={title} description={description} ogImage={ogImage}>
-  <section class="py-16 md:py-20 bg-background">
-    <div class="container mx-auto px-4">
-      <h1 class="font-heading text-4xl md:text-5xl font-bold text-center text-text-dark mb-6">
-        Our Work: Projects & Transformations
-      </h1>
-      <p class="font-body text-lg text-text-muted text-center max-w-3xl mx-auto mb-12">
-        Browse a selection of Joe's completed projects across San Diego County. Witness the meticulous craftsmanship and lasting quality that defines every painting and handyman service we provide.
-      </p>
+<BaseLayout meta={pageMeta}>
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center">
+    <h1 class="mb-8">Our Work: A Legacy of Craftsmanship</h1>
+    <p class="text-lg text-text-muted max-w-3xl mx-auto mb-10">
+      Browse through a selection of my completed painting and handyman projects. Each one reflects my commitment to quality, attention to detail, and the personal touch that defines Joe the Painter.
+    </p>
+  </section>
 
-      <!-- Filter Buttons (Client-side interactivity) -->
-      <div class="flex flex-wrap justify-center gap-4 mb-12" id="project-filters">
-        <Button variant="primary" size="md" data-filter="all" class="filter-button">
-          All Projects
-        </Button>
-        {uniqueServiceTypes.map(service => (
-          <Button variant="outline" size="md" data-filter={service} class="filter-button">
-            {serviceTypeDisplayNames[service] || service.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-          </Button>
-        ))}
-      </div>
-
-      <!-- Project Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="project-grid">
-        {allProjects.map(project => (
-          <div class="project-item" data-services={project.data.servicesPerformed.join(',')}>
-            <ProjectCard project={project} />
-          </div>
-        ))}
-      </div>
-      {allProjects.length === 0 && (
-        <p class="font-body text-lg text-text-muted text-center mt-12">No projects found. Please check back soon!</p>
-      )}
+  <section class="bg-background-white py-16 md:py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <PortfolioGrid /> {/* This component should fetch and display projects */}
     </div>
   </section>
 
-  <CTABanner
-    headline="Ready for Your Property's Transformation?"
-    description="Discuss your vision with Joe and get a free, no-obligation consultation for your next painting or handy project."
-    ctaText="Book Your Free Consultation"
-    ctaHref="/contact"
-  />
-
-  <script is:inline>
-    // Client-side filtering logic for project gallery
-    const filterButtons = document.querySelectorAll('#project-filters .filter-button');
-    const projectItems = document.querySelectorAll('#project-grid .project-item');
-
-    filterButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        const filter = button.dataset.filter;
-
-        // Update active button state
-        filterButtons.forEach(btn => btn.classList.remove('bg-primary', 'text-surface'));
-        button.classList.add('bg-primary', 'text-surface');
-        button.classList.remove('bg-transparent', 'text-primary', 'border-primary'); // Remove outline variant styles
-
-        projectItems.forEach(item => {
-          const itemServices = item.dataset.services ? item.dataset.services.split(',') : [];
-          if (filter === 'all' || itemServices.includes(filter)) {
-            item.style.display = 'block'; // Show item
-          } else {
-            item.style.display = 'none'; // Hide item
-          }
-        });
-      });
-    });
-
-    // Initialize 'All Projects' button as active on page load
-    const allProjectsButton = document.querySelector('#project-filters .filter-button[data-filter="all"]');
-    if (allProjectsButton) {
-      allProjectsButton.classList.add('bg-primary', 'text-surface');
-      allProjectsButton.classList.remove('bg-transparent', 'text-primary', 'border-primary');
-    }
-  </script>
+  <section class="bg-primary-dark text-white py-16 md:py-24 text-center">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-white mb-8">Inspired by Our Transformations?</h2>
+      <p class="text-lg text-neutral-100 max-w-2xl mx-auto mb-10">
+        Let's discuss how we can bring your vision to life with the same level of expertise and dedication.
+      </p>
+      <Button href="/consultation" variant="accent" size="lg">Book Your Free Consultation</Button>
+    </div>
+  </section>
 </BaseLayout>

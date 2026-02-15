@@ -1,121 +1,98 @@
 ---
+import BaseLayout from '@/layouts/BaseLayout.astro';
 import { Image } from 'astro:assets';
-import BaseLayout from '@layouts/BaseLayout.astro';
-import Section from '../components/sections/Section.astro';
-import Button from '../components/ui/Button.astro';
-import CTABanner from '../components/sections/CTABanner.astro';
+import Button from '@/components/ui/Button.astro';
+import type { SiteMeta } from '@/utils/seo';
 
-// Assets
-// Assuming joe-profile.jpg and joe-action.jpg are in public/images/
-import joeHeadshot from '../../public/images/joe-profile.jpg'; 
-import joeActionShot from '../../public/images/joe-action.jpg'; 
-
-// Constants
-const CSLB_LINK = "https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=802167";
-const JOE_PHONE = "+1 (760) 580-8173"; 
-const JOE_EMAIL = "joe@joethepainter.com"; 
-
-// Page metadata
-const meta = {
-  title: 'About Joe | Joe the Painter: Your San Diego Craftsman Since 2001',
-  description: 'Meet Joe, a licensed C33 Painting and Decorating contractor serving San Diego County since 2001. Learn about his commitment to craftsmanship, integrity, and personal service.',
-  ogImage: '/images/og/about-joe.jpg', // Assuming this asset exists
+// Define meta for this page
+const pageMeta: SiteMeta = {
+  title: "About Joe the Painter - Your Trusted San Diego Craftsman",
+  description: "Learn about Joe, a licensed C33 Painting and Decorating contractor with over 25 years of experience serving San Diego County. Discover his commitment to integrity, craftsmanship, and personalized service.",
+  ogImage: "/images/social-share-about.jpg"
 };
+
+// Placeholder images - replace with actual assets
+import joeProfilePic from '/public/images/joe-profile.jpg';
+import joePaintingAction from '/public/images/joe-painting-action.jpg';
 ---
 
-<BaseLayout {...meta}>
-  <Section background="background" class="pt-24 pb-16">
-    <div class="max-w-4xl mx-auto text-center">
-      <Image
-        src={joeHeadshot}
-        alt="Professional headshot of Joe the Painter, a friendly and experienced contractor."
-        width={200}
-        height={200}
-        class="rounded-full w-48 h-48 object-cover shadow-xl border-4 border-accent mx-auto mb-8"
-      />
-      <h1 class="font-heading text-5xl sm:text-6xl font-bold text-text mb-6">
-        Meet Joe: Your Trusted Craftsman
-      </h1>
-      <p class="font-body text-xl text-text-muted leading-relaxed max-w-3xl mx-auto">
-        With more than 25 years of licensed experience, Joe the Painter isn't just a contractor; he's a dedicated craftsman committed to transforming your home or business with unparalleled precision and a personal touch.
-      </p>
-      <p class="font-body text-lg text-text-muted mt-8">
-        <strong class="text-accent">Serving San Diego County Since March 2001</strong><br />
-        <a href={CSLB_LINK} target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary-dark font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-light">
-          CA Lic. # 802167 <span class="sr-only">(Verify License on CSLB website)</span>
-        </a>
-      </p>
-    </div>
-  </Section>
+<BaseLayout meta={pageMeta}>
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+    <h1 class="text-center mb-12 md:mb-16">Meet Joe, Your Trusted Craftsman</h1>
 
-  <Section title="Our Story: A Legacy of Quality" background="surface">
-    <div class="grid md:grid-cols-2 gap-12 items-center">
-      <div>
-        <p class="font-body text-lg text-text-muted mb-4 leading-relaxed">
-          Established in March 2001, Joe the Painter began as a sole proprietorship founded on a simple principle: deliver superior craftsmanship with integrity and a personal commitment to every client. Unlike larger, impersonal companies, when you hire Joe the Painter, you work directly with Joe—the expert who personally oversees and executes your project. This hands-on approach ensures consistent quality, clear communication, and a level of personal accountability that has built a legacy of trust in the San Diego community.
-        </p>
-        <p class="font-body text-lg text-text-muted leading-relaxed">
-          Joe's passion for his craft extends beyond just painting. His unique ability to seamlessly integrate essential handyman repairs means your property receives a comprehensive solution, ensuring a lasting and flawless finish. It's this "fix-it-first, then-paint-it-perfect" philosophy that truly sets Joe apart, providing peace of mind and exceptional results.
-        </p>
-      </div>
-      <div class="flex justify-center">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
+      <div class="order-2 lg:order-1">
         <Image
-          src={joeActionShot}
-          alt="Joe the Painter meticulously working on a project, demonstrating craftsmanship."
-          width={500}
-          height={350}
-          class="rounded-lg shadow-lg w-full max-w-md object-cover"
+          src={joeProfilePic}
+          alt="Joe the Painter smiling, a trusted professional"
+          widths={[400, 768, 1024]}
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          loading="eager"
+          class="w-full h-auto rounded-xl shadow-lg"
+        />
+      </div>
+      <div class="order-1 lg:order-2 text-lg text-text-dark">
+        <p class="mb-6">
+          I'm Joe, and for over **25 years**, I've had the privilege of transforming homes and businesses throughout San Diego County. My journey began in **March 2001** when I established Joe the Painter as a licensed C33 Painting and Decorating contractor (CA Lic. # <a href="https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=802167" target="_blank" rel="noopener noreferrer" class="font-semibold">802167</a>). This isn't just a business for me; it's a personal commitment to my craft and my clients.
+        </p>
+        <p class="mb-6">
+          Unlike larger, impersonal companies, you'll work directly with me. I personally oversee and execute every project, ensuring that your vision is understood and flawlessly brought to life. My reputation is built on **integrity, clear communication, and an unwavering attention to detail** – qualities that have earned me a high percentage of repeat customers and referrals.
+        </p>
+        <p class="mb-6">
+          I believe in delivering not just a service, but a true partnership. From meticulous surface preparation to the final brushstroke, I guarantee a superior, lasting finish that enhances your property's beauty and value.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 mt-8">
+          <Button href="/consultation" variant="primary" size="lg">Book Your Free Consultation</Button>
+          <Button href="/our-work" variant="outline" size="lg">View My Work</Button>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-surface-light p-8 md:p-12 rounded-xl shadow-lg my-16 md:my-24 text-lg">
+      <h2 class="text-center mb-10 text-primary-dark">My Core Values</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="text-center">
+          <h3 class="text-2xl font-semibold mb-4 text-text-dark">Integrity</h3>
+          <p class="text-text-muted">
+            My foundation is built on honesty, transparency, and clear communication. I do what's right, always, ensuring you have peace of mind throughout your project.
+          </p>
+        </div>
+        <div class="text-center">
+          <h3 class="text-2xl font-semibold mb-4 text-text-dark">Craftsmanship</h3>
+          <p class="text-text-muted">
+            I am committed to superior quality, meticulous attention to detail, and delivering results that don't just meet, but exceed your expectations.
+          </p>
+        </div>
+        <div class="text-center">
+          <h3 class="text-2xl font-semibold mb-4 text-text-dark">Customer Focus</h3>
+          <p class="text-text-muted">
+            Your needs and satisfaction are paramount. Every decision and action I take is driven by the goal of a comfortable, collaborative, and ultimately, a delightful client experience.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div class="text-lg text-text-dark">
+        <h2 class="mb-6">More Than Just Painting: The Handy Synergy</h2>
+        <p class="mb-6">
+          What truly sets Joe the Painter apart is the seamless integration of expert painting with reliable handyman services. This unique advantage means I can not only transform your space with a fresh coat of paint but also expertly handle all necessary pre-paint repairs—from drywall patching and wood rot replacement to minor carpentry and fixture installations.
+        </p>
+        <p class="mb-6">
+          This "fix-it-first, then-paint-it-perfect" approach offers unparalleled convenience. You avoid the hassle of coordinating multiple contractors, saving time and ensuring a superior, lasting finish where every detail is taken care of by one trusted professional. It's about delivering a comprehensive solution that truly lasts.
+        </p>
+        <Button href="/services/handy" variant="primary" size="lg" class="mt-8">Discover Handy Services</Button>
+      </div>
+      <div>
+        <Image
+          src={joePaintingAction}
+          alt="Joe the Painter meticulously painting a wall"
+          widths={[400, 768, 1024]}
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          loading="lazy"
+          class="w-full h-auto rounded-xl shadow-lg"
         />
       </div>
     </div>
-  </Section>
-
-  <Section title="Our Core Values" background="background" centered>
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
-      <div class="bg-surface p-8 rounded-lg shadow-md text-center">
-        <h3 class="font-heading text-2xl font-semibold text-text mb-3">Integrity</h3>
-        <p class="font-body text-text-muted leading-relaxed">
-          Our foundation is built on honesty, transparency, and clear communication. We do what's right, always, ensuring trust in every interaction.
-        </p>
-      </div>
-      <div class="bg-surface p-8 rounded-lg shadow-md text-center">
-        <h3 class="font-heading text-2xl font-semibold text-text mb-3">Craftsmanship</h3>
-        <p class="font-body text-text-muted leading-relaxed">
-          We are committed to superior quality, meticulous attention to detail, and delivering results that exceed expectations in every brushstroke and repair.
-        </p>
-      </div>
-      <div class="bg-surface p-8 rounded-lg shadow-md text-center">
-        <h3 class="font-heading text-2xl font-semibold text-text mb-3">Customer Focus</h3>
-        <p class="font-body text-text-muted leading-relaxed">
-          The needs and satisfaction of our clients are paramount, driving every decision and action we take to ensure a comfortable and collaborative experience.
-        </p>
-      </div>
-      <div class="bg-surface p-8 rounded-lg shadow-md text-center">
-        <h3 class="font-heading text-2xl font-semibold text-text mb-3">Reliability</h3>
-        <p class="font-body text-text-muted leading-relaxed">
-          Consistently delivering on promises, showing up on time, and completing projects efficiently and effectively, so you can count on us.
-        </p>
-      </div>
-      <div class="bg-surface p-8 rounded-lg shadow-md text-center">
-        <h3 class="font-heading text-2xl font-semibold text-text mb-3">Experience</h3>
-        <p class="font-body text-text-muted leading-relaxed">
-          Possessing deep, practical knowledge and skill honed over decades, offering confident solutions and expert advice for any project.
-        </p>
-      </div>
-      <div class="bg-surface p-8 rounded-lg shadow-md text-center">
-        <h3 class="font-heading text-2xl font-semibold text-text mb-3">Approachability</h3>
-        <p class="font-body text-text-muted leading-relaxed">
-          Joe's personal involvement and clear communication make him easy to work with, fostering a comfortable and collaborative client experience from start to finish.
-        </p>
-      </div>
-    </div>
-  </Section>
-
-  <CTABanner
-    headline="Ready for the Craftsman's Guarantee?"
-    description="Discuss your next project with Joe and experience the difference of true professionalism and personal commitment."
-    ctaText="Book Your Free Consultation"
-    ctaHref="/consultation"
-  />
+  </section>
 </BaseLayout>
----

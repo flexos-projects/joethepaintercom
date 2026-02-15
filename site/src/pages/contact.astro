@@ -1,255 +1,125 @@
 ---
-import BaseLayout from '@layouts/BaseLayout.astro';
-import ConsultationForm from '@components/ConsultationForm.astro'; // Assuming this component exists from TASK-009
-import Input from '@components/ui/Input.astro'; // From TASK-005
-import Label from '@components/ui/Label.astro'; // From TASK-005
-import Button from '@components/ui/Button.astro'; // From TASK-004
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ConsultationForm from '@/components/ConsultationForm.astro';
+import Button from '@/components/ui/Button.astro';
+import type { SiteMeta } from '@/utils/seo';
 
-const pageTitle = "Contact Joe the Painter | Free Consultation & Inquiries";
-const pageDescription = "Reach out to Joe the Painter for a free consultation, project estimates, or any questions about painting and handyman services in San Diego County. Your trusted local craftsman.";
+// Define meta for this page
+const pageMeta: SiteMeta = {
+  title: "Contact Joe the Painter - Free Consultation in San Diego",
+  description: "Get in touch with Joe the Painter for a free consultation and estimate on your painting or handyman project in San Diego County. Call or email today!",
+  ogImage: "/images/social-share-contact.jpg"
+};
 
-// Quick Question form submission endpoint. This will be an actual Formspree endpoint (TASK-024).
-// Replace 'f/xknokoyg' with your actual Formspree form ID during deployment.
-const QUICK_QUESTION_FORM_ENDPOINT = "https://formspree.io/f/xknokoyg";
-
-// Note: reCAPTCHA integration is handled in TASK-025, assumed to be part of the Formspree integration or a separate component.
+const localBusinessSchema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Joe the Painter",
+  "image": "https://www.joethepainter.com/images/joe-profile.jpg", // Professional photo of Joe (placeholder)
+  "url": "https://www.joethepainter.com",
+  "telephone": "+1-760-580-8173",
+  "email": "joe@joethepainter.com",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "San Diego County", // General service area
+    "addressRegion": "CA",
+    "addressCountry": "US"
+  },
+  "priceRange": "$$", // Indicative price range
+  "hasMap": "https://www.google.com/maps/search/?api=1&query=Joe+the+Painter+San+Diego", // Link to Google Maps search
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "opens": "08:00",
+      "closes": "17:00"
+    }
+  ],
+  "areaServed": [
+    { "@type": "State", "name": "California" },
+    { "@type": "City", "name": "Carlsbad" },
+    { "@type": "City", "name": "Encinitas" },
+    { "@type": "City", "name": "Vista" },
+    { "@type": "City", "name": "San Marcos" },
+    { "@type": "City", "name": "Oceanside" },
+    { "@type": "City", "name": "Escondido" },
+    { "@type": "City", "name": "Poway" },
+    { "@type": "City", "name": "Rancho Bernardo" },
+    { "@type": "City", "name": "Del Mar" },
+    { "@type": "City", "name": "Solana Beach" }
+  ],
+  "geo": {
+    "@type": "GeoCircle",
+    "geoMidpoint": {
+      "@type": "GeoCoordinates",
+      "latitude": 33.0903, // Approximate center of North San Diego County
+      "longitude": -117.2519
+    },
+    "geoRadius": 50000 // Radius in meters, ~30 miles
+  },
+  "review": [], // No specific reviews on contact page
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "5", // Placeholder: Assume 5-star for now
+    "reviewCount": "25" // Placeholder: Assume 25 reviews for now
+  }
+};
 ---
 
-<BaseLayout title={pageTitle} description={pageDescription}>
-  <section class="container mx-auto px-4 py-16 md:py-24">
-    <div class="max-w-4xl mx-auto text-center mb-12">
-      <h1 class="font-heading text-4xl md:text-5xl font-bold text-text-dark mb-4">
-        Let's Connect About Your Project
-      </h1>
-      <p class="font-body text-lg text-text-muted">
-        Whether you're ready for a free consultation or have a quick question,
-        Joe is here to provide direct, expert communication.
-      </p>
-    </div>
+<BaseLayout meta={pageMeta}>
+  <Fragment slot="json-ld">
+    <script type="application/ld+json" set:html={JSON.stringify(localBusinessSchema)} />
+  </Fragment>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-      <!-- Contact Information & CTA -->
-      <div class="bg-surface p-8 rounded-lg shadow-md flex flex-col justify-between">
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+    <h1 class="text-center mb-8">Get in Touch with Joe</h1>
+    <p class="text-lg text-text-muted text-center max-w-3xl mx-auto mb-12">
+      Ready to discuss your painting or handyman project? I'm here to provide honest advice and a no-obligation estimate. Choose your preferred method to reach out!
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+      <div class="bg-surface-light p-8 rounded-xl shadow-lg">
+        <h2 class="text-primary-dark mb-6">Book Your Free Consultation</h2>
+        <ConsultationForm />
+      </div>
+
+      <div class="bg-surface-light p-8 rounded-xl shadow-lg flex flex-col justify-between h-full">
         <div>
-          <h2 class="font-heading text-3xl font-semibold text-text-dark mb-6">
-            Get in Touch Directly
-          </h2>
-          <p class="font-body text-base text-text-muted mb-6">
-            Reach out to Joe directly for personalized service and expert advice.
-            He's committed to clear communication from your first call to project completion.
-          </p>
+          <h2 class="text-primary-dark mb-6">Direct Contact</h2>
+          <div class="mb-8">
+            <h3 class="text-2xl font-semibold mb-2">Phone</h3>
+            <p class="text-lg text-text-dark">
+              Call me directly for immediate assistance or to discuss your project.
+            </p>
+            <a href="tel:+17605808173" class="text-primary text-xl font-bold block mt-4 hover:underline">
+              +1 (760) 580-8173
+            </a>
+          </div>
 
-          <div class="space-y-6 mb-8">
-            <div>
-              <h3 class="font-body text-xl font-medium text-text-dark mb-2">
-                Phone
-              </h3>
-              <a
-                href="tel:+17605808173"
-                class="font-body text-primary text-lg font-semibold hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
-                aria-label="Call Joe the Painter at 760-580-8173"
-              >
-                +1 (760) 580-8173
-              </a>
-            </div>
+          <div class="mb-8">
+            <h3 class="text-2xl font-semibold mb-2">Email</h3>
+            <p class="text-lg text-text-dark">
+              Send me a detailed message, and I'll get back to you promptly.
+            </p>
+            <a href="mailto:joe@joethepainter.com" class="text-primary text-xl font-bold block mt-4 hover:underline">
+              joe@joethepainter.com
+            </a>
+          </div>
 
-            <div>
-              <h3 class="font-body text-xl font-medium text-text-dark mb-2">
-                Email
-              </h3>
-              <a
-                href="mailto:joe@joethepainter.com"
-                class="font-body text-primary text-lg font-semibold hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
-                aria-label="Email Joe the Painter at joe@joethepainter.com"
-              >
-                joe@joethepainter.com
-              </a>
-            </div>
-
-            <div>
-              <h3 class="font-body text-xl font-medium text-text-dark mb-2">
-                Service Area
-              </h3>
-              <p class="font-body text-lg text-text-muted">
-                Proudly serving Central & North San Diego County.
-              </p>
-            </div>
+          <div class="mb-8">
+            <h3 class="text-2xl font-semibold mb-2">Service Area</h3>
+            <p class="text-lg text-text-dark">
+              Proudly serving Central and North San Diego County since 2001.
+            </p>
+            <p class="text-lg text-text-muted mt-2">
+              CA Lic. # <a href="https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=802167" target="_blank" rel="noopener noreferrer" class="font-semibold text-primary hover:underline">802167</a>
+            </p>
           </div>
         </div>
-
-        <div class="mt-auto pt-8 border-t border-border">
-          <p class="font-body text-base text-text-muted mb-4">
-            Ready to transform your space?
-          </p>
-          <Button
-            href="/consultation"
-            variant="primary"
-            size="lg"
-            class="w-full"
-            aria-label="Book a Free Consultation"
-          >
-            Book Your Free Consultation
-          </Button>
+        <div class="mt-auto">
+          <Button href="/about" variant="secondary" size="lg" class="w-full">Learn More About Joe</Button>
         </div>
       </div>
-
-      <!-- Free Consultation Form -->
-      <div class="bg-surface p-8 rounded-lg shadow-md">
-        <h2 class="font-heading text-3xl font-semibold text-text-dark mb-6">
-          Request a Free Consultation
-        </h2>
-        <p class="font-body text-base text-text-muted mb-8">
-          Tell Joe about your project needs, and he'll personally get in touch to discuss details and provide a no-obligation estimate.
-        </p>
-        <ConsultationForm /> {/* This component will handle its own Formspree endpoint and reCAPTCHA */}
-      </div>
-    </div>
-
-    {/* Quick Question Section */}
-    <div class="max-w-2xl mx-auto mt-20 bg-surface p-8 rounded-lg shadow-md">
-      <h2 class="font-heading text-3xl font-semibold text-text-dark mb-6 text-center">
-        Have a Quick Question?
-      </h2>
-      <p class="font-body text-base text-text-muted mb-8 text-center">
-        If you're not ready for a full consultation but have a general inquiry, send Joe a quick message here.
-      </p>
-      <form
-        action={QUICK_QUESTION_FORM_ENDPOINT}
-        method="POST"
-        class="space-y-6"
-        data-form-type="quick-question"
-        aria-label="Quick Question Form"
-      >
-        <div>
-          <Label for="quick-name">Your Name</Label>
-          <Input type="text" id="quick-name" name="name" required aria-required="true" />
-          <p id="quick-name-error" class="text-error text-sm mt-1 hidden" aria-live="polite"></p>
-        </div>
-        <div>
-          <Label for="quick-email">Your Email</Label>
-          <Input type="email" id="quick-email" name="email" required aria-required="true" />
-          <p id="quick-email-error" class="text-error text-sm mt-1 hidden" aria-live="polite"></p>
-        </div>
-        <div>
-          <Label for="quick-message">Your Message</Label>
-          <textarea
-            id="quick-message"
-            name="message"
-            rows={5}
-            class="w-full px-4 py-3 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-text-dark placeholder-text-muted bg-surface"
-            required
-            aria-required="true"
-            minlength="10"
-          ></textarea>
-          <p id="quick-message-error" class="text-error text-sm mt-1 hidden" aria-live="polite"></p>
-        </div>
-        {/* reCAPTCHA integration (TASK-025) would go here, often provided by the form service */}
-        <div class="text-sm text-text-muted">
-          This site is protected by reCAPTCHA and the Google
-          <a href="https://policies.google.com/privacy" class="text-primary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded" target="_blank" rel="noopener noreferrer">Privacy Policy</a> and
-          <a href="https://policies.google.com/terms" class="text-primary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded" target="_blank" rel="noopener noreferrer">Terms of Service</a> apply.
-        </div>
-        <Button
-          type="submit"
-          variant="primary"
-          size="lg"
-          class="w-full"
-          aria-label="Send my quick question to Joe"
-        >
-          Send My Message
-        </Button>
-      </form>
     </div>
   </section>
-
-  <script is:inline>
-    document.addEventListener('DOMContentLoaded', () => {
-      const form = document.querySelector('form[data-form-type="quick-question"]');
-
-      if (form) {
-        const nameInput = form.querySelector('#quick-name');
-        const emailInput = form.querySelector('#quick-email');
-        const messageTextarea = form.querySelector('#quick-message');
-        const submitButton = form.querySelector('button[type="submit"]');
-
-        const nameError = form.querySelector('#quick-name-error');
-        const emailError = form.querySelector('#quick-email-error');
-        const messageError = form.querySelector('#quick-message-error');
-
-        const validateField = (inputElement, errorElement, errorMessage, validationFn) => {
-          if (!validationFn(inputElement.value.trim())) {
-            inputElement.classList.add('border-error');
-            inputElement.setAttribute('aria-invalid', 'true');
-            errorElement.textContent = errorMessage;
-            errorElement.classList.remove('hidden');
-            return false;
-          } else {
-            inputElement.classList.remove('border-error');
-            inputElement.removeAttribute('aria-invalid');
-            errorElement.textContent = '';
-            errorElement.classList.add('hidden');
-            return true;
-          }
-        };
-
-        const validateName = (value) => value.length >= 2;
-        const validateEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-        const validateMessage = (value) => value.length >= 10 && value.length <= 1000;
-
-        const performValidation = (event) => {
-          event.preventDefault(); // Prevent default submission for client-side control
-
-          let isValid = true;
-
-          // Validate Name
-          if (!validateField(nameInput, nameError, 'Please enter your name (at least 2 characters).', validateName)) {
-            isValid = false;
-          }
-
-          // Validate Email
-          if (!validateField(emailInput, emailError, 'Please enter a valid email address.', validateEmail)) {
-            isValid = false;
-          }
-
-          // Validate Message
-          if (!validateField(messageTextarea, messageError, 'Please enter your message (at least 10 characters, max 1000).', validateMessage)) {
-            isValid = false;
-          }
-
-          if (!isValid) {
-            // Focus on the first invalid field
-            form.querySelector('.border-error')?.focus();
-            return;
-          }
-
-          // If valid, proceed with simulated submission (actual submission handled by Formspree via 'action' attribute)
-          // For demo purposes, we simulate success message here.
-          const originalButtonText = submitButton.textContent;
-          submitButton.textContent = 'Sending...';
-          submitButton.disabled = true;
-          submitButton.classList.add('cursor-not-allowed');
-
-          setTimeout(() => {
-            // In a real scenario, after successful Formspree submission, you'd redirect or display a static success message.
-            // Here, we replace the form content with a success message.
-            form.innerHTML = `
-              <div class="text-center py-8">
-                <p class="font-heading text-2xl font-semibold text-success mb-4">Thank You!</p>
-                <p class="font-body text-base text-text-dark">Your message has been sent to Joe.</p>
-                <p class="font-body text-sm text-text-muted mt-2">He aims to respond to all inquiries within 2 business days.</p>
-              </div>
-            `;
-          }, 1000); // Simulate network delay
-        };
-
-        // Add event listeners for blur validation
-        nameInput.addEventListener('blur', () => validateField(nameInput, nameError, 'Please enter your name (at least 2 characters).', validateName));
-        emailInput.addEventListener('blur', () => validateField(emailInput, emailError, 'Please enter a valid email address.', validateEmail));
-        messageTextarea.addEventListener('blur', () => validateField(messageTextarea, messageError, 'Please enter your message (at least 10 characters, max 1000).', validateMessage));
-
-        // Add event listener for form submission
-        form.addEventListener('submit', performValidation);
-      }
-    });
-  </script>
 </BaseLayout>

@@ -1,118 +1,165 @@
 ---
-/**
- * Handy Services Page
- * URL: /services/handy
- */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Button from '@/components/ui/Button.astro';
+import type { SiteMeta } from '@/utils/seo';
+import { Image } from 'astro:assets';
 
-import { getEntry } from 'astro:content';
-import BaseLayout from '@layouts/BaseLayout.astro';
-import Hero from '@components/sections/Hero.astro';
-import Section from '@components/sections/Section.astro';
-import Button from '@components/ui/Button.astro';
-import BenefitCard from '@components/ui/BenefitCard.astro';
-import ProcessSteps from '@components/sections/ProcessSteps.astro';
-import Accordion from '@components/ui/Accordion.astro';
-
-const handyServicesEntry = await getEntry('service', 'handy-services');
-
-if (!handyServicesEntry) {
-  // Handle case where content entry is not found
-  return Astro.redirect('/404');
-}
-
-const { data } = handyServicesEntry;
-
-const pageMeta = {
-  title: data.seo.title,
-  description: data.seo.description,
-  ogImage: data.featuredImage?.src || '/images/social-share-default.jpg',
+// Define meta for this page
+const pageMeta: SiteMeta = {
+  title: "Handy Services | Drywall Repair, Carpentry, Home Maintenance - San Diego",
+  description: "Joe the Painter offers reliable handy services including drywall repair, minor carpentry, pressure washing, and fixture installation in San Diego County. Your single source for home maintenance.",
+  ogImage: "/images/social-share-handy.jpg"
 };
 
-// Extract a relevant snippet from longDescription for benefit cards
-const benefitCardDescriptionSnippet = "Joe brings the same level of integrity, attention to detail, and craftsmanship to every repair and maintenance task.";
+// Placeholder images for service sections
+import handyServicesHero from '/public/images/services/handy-services-hero.webp';
+import drywallRepair from '/public/images/services/handy-drywall-repair.jpg';
+import minorCarpentry from '/public/images/services/handy-minor-carpentry.jpg';
+import pressureWashing from '/public/images/services/handy-pressure-washing.jpg';
 ---
 
-<BaseLayout {...pageMeta}>
-  <Hero
-    headline={data.title}
-    subheadline={data.shortDescription}
-    ctaText={data.ctaText}
-    ctaHref="/consultation"
-    image={data.featuredImage}
-    licenseNumber="802167"
-  />
+<BaseLayout meta={pageMeta}>
+  <Fragment slot="json-ld">
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "serviceType": "Handyman Services",
+      "provider": {
+        "@type": "LocalBusiness",
+        "name": "Joe the Painter",
+        "url": "https://www.joethepainter.com",
+        "telephone": "+1-760-580-8173",
+        "email": "joe@joethepainter.com"
+      },
+      "areaServed": {
+        "@type": "AdministrativeArea",
+        "name": "San Diego County, CA"
+      },
+      "description": "Reliable home and small business handy services, from drywall repair to minor carpentry and general maintenance, personally delivered by Joe the Painter.",
+      "url": "https://www.joethepainter.com/services/handy",
+      "image": "https://www.joethepainter.com/images/services/handy-service-hero.jpg" // General image for handy services
+    })} />
+  </Fragment>
 
-  <Section id="overview" background="background">
-    <div class="max-w-4xl mx-auto text-center">
-      <h2 class="font-heading text-4xl md:text-5xl font-bold text-text-dark mb-8">
-        Comprehensive Handy Solutions for Your Property
-      </h2>
-      <p class="text-text-muted text-lg leading-relaxed md:leading-relaxed">
-        {data.longDescription}
-      </p>
-    </div>
-  </Section>
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center">
+    <h1 class="mb-8">Reliable Handy Services</h1>
+    <p class="text-lg text-text-muted max-w-3xl mx-auto mb-10">
+      Beyond exceptional painting, Joe the Painter is your trusted partner for a wide array of handy services to keep your home or business in top shape.
+    </p>
+    <Button href="/consultation" variant="primary" size="lg">Discuss Your Handy Project</Button>
+  </section>
 
-  <Section id="benefits" background="surface">
-    <h2 class="font-heading text-4xl md:text-5xl font-bold text-text-dark text-center mb-12">
-      Why Choose Joe for Your Handy Services
-    </h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-      {data.benefits.map(benefit => (
-        <BenefitCard
-          title={benefit}
-          description={benefitCardDescriptionSnippet}
-          icon="wrench"
-        />
-      ))}
-    </div>
-  </Section>
-
-  <Section id="services-list" background="background">
-    <h2 class="font-heading text-4xl md:text-5xl font-bold text-text-dark text-center mb-12">
-      Our Range of Reliable Handy Services
-    </h2>
-    <div class="max-w-3xl mx-auto">
-      <ul class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-text-dark text-lg list-disc list-inside">
-        {data.serviceTypes.map(serviceType => (
-          <li>{serviceType}</li>
-        ))}
-      </ul>
-      <p class="mt-8 text-center text-text-muted text-base">
-        Don't see your specific need listed? Joe is versatile! <a href="/contact" class="text-primary hover:underline">Contact us</a> to discuss your project.
-      </p>
-    </div>
-  </Section>
-
-  {data.processSteps && data.processSteps.length > 0 && (
-    <ProcessSteps
-      heading="Our Handy Services Process: Clear, Concise, Complete"
-      steps={data.processSteps}
-    />
-  )}
-
-  {data.faqs && data.faqs.length > 0 && (
-    <Section id="faqs" background="background">
-      <h2 class="font-heading text-4xl md:text-5xl font-bold text-text-dark text-center mb-12">
-        Frequently Asked Questions About Handy Services
-      </h2>
-      <div class="max-w-4xl mx-auto">
-        <Accordion items={data.faqs.map(faq => ({ question: faq.question, answer: String(faq.answer) }))} />
+  <section class="bg-background-white py-16 md:py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20 md:space-y-32">
+      <!-- Overview -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div class="lg:order-2">
+          <Image
+            src={handyServicesHero}
+            alt="Man fixing a broken fence, showing general handyman work"
+            widths={[400, 768, 1024]}
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            loading="lazy"
+            class="w-full h-auto rounded-xl shadow-lg"
+          />
+        </div>
+        <div class="lg:order-1">
+          <h2 class="mb-6 text-primary-dark">Your Trusted Hand for Home Repairs</h2>
+          <p class="text-lg text-text-dark mb-6">
+            As a licensed contractor, Joe brings the same level of integrity, attention to detail, and craftsmanship to every repair and maintenance task. Whether it's fixing drywall before a paint job, repairing a fence, replacing fixtures, or tackling that daunting to-do list, having one reliable professional handle it all saves you time, stress, and ensures consistent quality.
+          </p>
+          <ul role="list" class="list-disc list-inside text-lg text-text-muted space-y-2 mb-8">
+            <li>Licensed Contractor Reliability</li>
+            <li>Efficient & Effective Repairs</li>
+            <li>Convenient 'One-Call' Solution</li>
+            <li>Meticulous Attention to Detail</li>
+            <li>Peace of Mind for Your Property</li>
+          </ul>
+          <Button href="/consultation" variant="outline" size="md">Get a Handy Service Estimate</Button>
+        </div>
       </div>
-    </Section>
-  )}
 
-  <Section id="cta-bottom" background="primary-dark">
-    <div class="text-center text-white max-w-3xl mx-auto">
-      <h2 class="font-heading text-4xl md:text-5xl font-bold mb-6">
-        Ready to Tackle Your To-Do List?
-      </h2>
-      <p class="text-lg md:text-xl mb-8 leading-relaxed">
-        From minor repairs to essential maintenance, Joe provides reliable, high-quality handyman services with a personal touch.
-      </p>
-      <Button variant="accent" size="lg" href="/consultation">
-        {data.ctaText}
-      </Button>
+      <!-- Specific Services Grid -->
+      <div class="text-center">
+        <h2 class="mb-10 text-primary-dark">Common Handy Services Offered</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div class="bg-surface-light p-6 rounded-lg shadow-md flex flex-col items-center text-center">
+            <Image
+              src={drywallRepair}
+              alt="Close-up of a perfectly repaired drywall patch"
+              widths={[300, 600]}
+              sizes="(max-width: 768px) 100vw, 33vw"
+              loading="lazy"
+              class="w-full h-48 object-cover rounded-md mb-4"
+            />
+            <h3 class="text-xl font-semibold mb-2 text-text-dark">Drywall Repair</h3>
+            <p class="text-text-muted">
+              From small holes to larger sections, we expertly patch, sand, and prepare drywall, creating a seamless surface ready for paint.
+            </p>
+          </div>
+
+          <div class="bg-surface-light p-6 rounded-lg shadow-md flex flex-col items-center text-center">
+            <Image
+              src={minorCarpentry}
+              alt="Carpenter working on minor wood trim repair"
+              widths={[300, 600]}
+              sizes="(max-width: 768px) 100vw, 33vw"
+              loading="lazy"
+              class="w-full h-48 object-cover rounded-md mb-4"
+            />
+            <h3 class="text-xl font-semibold mb-2 text-text-dark">Minor Carpentry</h3>
+            <p class="text-text-muted">
+              Repairing damaged trim, baseboards, door frames, or other small wood elements to restore structural integrity and appearance.
+            </p>
+          </div>
+
+          <div class="bg-surface-light p-6 rounded-lg shadow-md flex flex-col items-center text-center">
+            <Image
+              src={pressureWashing}
+              alt="Person pressure washing a dirty house exterior"
+              widths={[300, 600]}
+              sizes="(max-width: 768px) 100vw, 33vw"
+              loading="lazy"
+              class="w-full h-48 object-cover rounded-md mb-4"
+            />
+            <h3 class="text-xl font-semibold mb-2 text-text-dark">Pressure Washing</h3>
+            <p class="text-text-muted">
+              Thorough cleaning of exterior surfaces, driveways, and patios to remove dirt, grime, mold, and prepare for painting or staining.
+            </p>
+          </div>
+
+          <div class="bg-surface-light p-6 rounded-lg shadow-md flex flex-col items-center text-center">
+            <h3 class="text-xl font-semibold mb-2 text-text-dark">Fixture Installation</h3>
+            <p class="text-text-muted">
+              Professional installation of light fixtures, ceiling fans, shelving, and other home accessories.
+            </p>
+          </div>
+
+          <div class="bg-surface-light p-6 rounded-lg shadow-md flex flex-col items-center text-center">
+            <h3 class="text-xl font-semibold mb-2 text-text-dark">Fence & Gate Repair</h3>
+            <p class="text-text-muted">
+              Repairing or replacing damaged fence panels, posts, and gate hardware to restore security and appearance.
+            </p>
+          </div>
+
+          <div class="bg-surface-light p-6 rounded-lg shadow-md flex flex-col items-center text-center">
+            <h3 class="text-xl font-semibold mb-2 text-text-dark">General Home Maintenance</h3>
+            <p class="text-text-muted">
+              Addressing various small repairs and maintenance tasks around your home or business, ensuring everything runs smoothly.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
-  </Section>
+  </section>
+
+  <section class="bg-primary-dark text-white py-16 md:py-24 text-center">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-white mb-8">Need a Reliable Hand?</h2>
+      <p class="text-lg text-neutral-100 max-w-2xl mx-auto mb-10">
+        Let Joe tackle your to-do list with the same dedication and expertise he brings to every painting project.
+      </p>
+      <Button href="/consultation" variant="accent" size="lg">Book Your Free Consultation</Button>
+    </div>
+  </section>
 </BaseLayout>
