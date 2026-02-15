@@ -1,0 +1,233 @@
+---
+/**
+ * ConsultationForm.astro
+ *
+ * A reusable component for capturing free consultation requests.
+ * It includes fields for client information, project details,
+ * and preferred contact method, with a placeholder for reCAPTCHA.
+ */
+
+// Component imports
+import Input from '@components/ui/Input.astro';
+import Label from '@components/ui/Label.astro';
+import Button from '@components/ui/Button.astro';
+
+// Type imports (if any, not directly needed for this static form but good practice)
+// import type { HTMLAttributes } from 'astro/types';
+
+// Props interface (no specific props for this self-contained form, but good for future extensibility)
+interface Props {
+  // Any props for customization, e.g., initialValues, onSubmit handler
+  // For now, it's a static form.
+}
+
+// Destructure props if any
+const {} = Astro.props;
+
+// Hardcoded options for select and radio fields based on specs
+const serviceTypeOptions = [
+  { value: 'painting', label: 'Painting Services' },
+  { value: 'handy', label: 'Handy Services' },
+  { value: 'both', label: 'Both Painting & Handy Services' },
+];
+
+const preferredContactOptions = [
+  { value: 'phone', label: 'Phone Call' },
+  { value: 'email', label: 'Email' },
+];
+
+// Placeholder for form submission handler
+// In a real application, this would interact with a backend endpoint
+// as specified in TASK-024. For now, it's a client-side placeholder.
+const handleSubmit = (event: Event) => {
+  event.preventDefault();
+  const form = event.target as HTMLFormElement;
+  const formData = new FormData(form);
+  const data = Object.fromEntries(formData.entries());
+
+  console.log('Consultation Form Submitted:', data);
+  alert('Thank you for your request! Joe will be in touch shortly.'); // Placeholder for success message
+  form.reset(); // Clear the form
+  // Here, you would typically make an API call (TASK-024)
+  // and handle success/error states (TASK-010, TASK-024).
+};
+---
+
+<form
+  class="w-full max-w-lg mx-auto p-6 lg:p-8 bg-surface rounded-lg shadow-md space-y-6"
+  aria-label="Free Consultation Request Form"
+  id="consultation-form"
+  data-form-type="consultation"
+  onsubmit="handleSubmit(event)"
+>
+  <h2 class="text-3xl font-heading font-bold text-text text-center mb-4">
+    Book Your Free Consultation
+  </h2>
+  <p class="text-text-muted text-center mb-6">
+    Let's discuss your project with no obligation. Joe personally reviews every request.
+  </p>
+
+  <!-- Full Name -->
+  <div>
+    <Label for="fullName">Full Name</Label>
+    <Input
+      id="fullName"
+      name="fullName"
+      type="text"
+      placeholder="John Doe"
+      required
+      aria-required="true"
+    />
+    <p id="fullName-help" class="text-text-muted text-xs mt-1">Your full name, so Joe knows who to address.</p>
+  </div>
+
+  <!-- Email Address -->
+  <div>
+    <Label for="emailAddress">Email Address</Label>
+    <Input
+      id="emailAddress"
+      name="emailAddress"
+      type="email"
+      placeholder="john.doe@example.com"
+      required
+      aria-required="true"
+    />
+    <p id="emailAddress-help" class="text-text-muted text-xs mt-1">We'll send your confirmation here.</p>
+  </div>
+
+  <!-- Phone Number -->
+  <div>
+    <Label for="phoneNumber">Phone Number</Label>
+    <Input
+      id="phoneNumber"
+      name="phoneNumber"
+      type="tel"
+      pattern="^\(?([0-9]{3})\)?[-.●]?([0-9]{3})[-.●]?([0-9]{4})$"
+      placeholder="(760) 555-1234"
+      required
+      aria-required="true"
+    />
+    <p id="phoneNumber-help" class="text-text-muted text-xs mt-1">For Joe to call you directly.</p>
+  </div>
+
+  <!-- Project Type (Dropdown) -->
+  <div>
+    <Label for="projectType">Project Type</Label>
+    <div class="relative">
+      <select
+        id="projectType"
+        name="projectType"
+        class="block w-full appearance-none border border-border rounded-md p-3 text-base text-text bg-surface focus:outline-none focus:ring-2 focus:ring-primary/[0.2] focus:border-primary transition-all duration-150 ease-in-out pr-10"
+        required
+        aria-required="true"
+      >
+        <option value="" disabled selected>Select a service type...</option>
+        {serviceTypeOptions.map((option) => (
+          <option value={option.value}>{option.label}</option>
+        ))}
+      </select>
+      <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text-muted">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
+    </div>
+    <p id="projectType-help" class="text-text-muted text-xs mt-1">What kind of project are you considering?</p>
+  </div>
+
+  <!-- Service Location -->
+  <div>
+    <Label for="serviceLocation">Service Location</Label>
+    <Input
+      id="serviceLocation"
+      name="serviceLocation"
+      type="text"
+      placeholder="Carlsbad, CA"
+      required
+      aria-required="true"
+    />
+    <p id="serviceLocation-help" class="text-text-muted text-xs mt-1">Which San Diego County city or zip code is your project located in?</p>
+  </div>
+
+  <!-- Project Details (Textarea) -->
+  <div>
+    <Label for="projectDetails">Project Details</Label>
+    <textarea
+      id="projectDetails"
+      name="projectDetails"
+      rows={5}
+      class="block w-full border border-border rounded-md p-3 text-base text-text bg-surface placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary/[0.2] focus:border-primary transition-all duration-150 ease-in-out"
+      placeholder="e.g., Exterior house paint, 3 bedrooms, drywall repair needed."
+      minlength="10"
+      maxlength="500"
+      required
+      aria-required="true"
+    ></textarea>
+    <p id="projectDetails-help" class="text-text-muted text-xs mt-1">Tell Joe about your project (min 10, max 500 characters).</p>
+  </div>
+
+  <!-- Preferred Contact Method (Radio) -->
+  <fieldset>
+    <legend class="font-body text-sm font-medium text-text mb-2 block">Preferred Contact Method</legend>
+    <div class="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
+      {preferredContactOptions.map((option) => (
+        <div class="flex items-center">
+          <input
+            id={`contact-${option.value}`}
+            name="preferredContact"
+            type="radio"
+            value={option.value}
+            class="h-4 w-4 text-primary border-border focus:ring-primary"
+            required
+            aria-required="true"
+          />
+          <Label for={`contact-${option.value}`} class="ml-2 !mb-0 cursor-pointer">
+            {option.label}
+          </Label>
+        </div>
+      ))}
+    </div>
+    <p id="preferredContact-help" class="text-text-muted text-xs mt-1">How would you prefer Joe to reach out for your consultation?</p>
+  </fieldset>
+
+  <!-- How Did You Hear About Joe? (Optional) -->
+  <div>
+    <Label for="howHearAboutJoe">How Did You Hear About Joe?</Label>
+    <Input
+      id="howHearAboutJoe"
+      name="howHearAboutJoe"
+      type="text"
+      placeholder="e.g., Google, friend's referral, Yelp"
+      aria-describedby="howHearAboutJoe-help"
+    />
+    <p id="howHearAboutJoe-help" class="text-text-muted text-xs mt-1">Optional: This helps us understand our clients better.</p>
+  </div>
+
+  <!-- reCAPTCHA Placeholder -->
+  <div class="recaptcha-placeholder bg-background p-4 rounded-md text-center text-text-muted text-sm border border-border">
+    <!-- reCAPTCHA integration will go here (TASK-025) -->
+    <p>reCAPTCHA will be integrated here for spam prevention.</p>
+  </div>
+
+  <Button type="submit" variant="primary" size="lg" class="w-full">
+    Request My Free Consultation
+  </Button>
+</form>
+
+<script is:inline>
+  // This client-side script is a placeholder.
+  // The actual form submission and backend integration will be handled in TASK-024.
+  // This inline script simply logs data and shows an alert for immediate testing.
+  function handleSubmit(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const data = {};
+    for (let [key, value] of formData.entries()) {
+      data[key] = value;
+    }
+    console.log('Consultation Form Submitted (Client-side Placeholder):', data);
+    alert('Thank you for your request! Joe will be in touch shortly.');
+    form.reset();
+  }
+</script>

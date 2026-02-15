@@ -1,146 +1,72 @@
 ---
 /**
  * Input.astro
- * Reusable input and textarea component for form fields, ensuring consistent styling,
- * accessibility, and proper feedback states (focus, error, disabled).
+ *
+ * A reusable input component for text, email, password, tel, etc.
+ * Applies consistent styling and accessibility attributes.
  */
 
 // Type imports
 import type { HTMLAttributes } from 'astro/types';
 
-// Define common input types
-type InputType =
-  | 'text'
-  | 'email'
-  | 'tel'
-  | 'password'
-  | 'number'
-  | 'url'
-  | 'search'
-  | 'date'
-  | 'time'
-  | 'datetime-local'
-  | 'month'
-  | 'week';
-
 // Props interface with JSDoc comments
-interface Props extends HTMLAttributes<'input' | 'textarea'> {
-  /** The unique ID for the input field, essential for label association. */
-  id: string;
-  /** The name attribute for the input field, used in form submission. */
+interface Props extends HTMLAttributes<'input'> {
+  /** The type of the input (e.g., 'text', 'email', 'password', 'tel') */
+  type?: 'text' | 'email' | 'password' | 'tel' | 'url' | 'number' | 'search';
+  /** The name attribute for the input, used for form submission */
   name: string;
-  /** The type of the input field (e.g., 'text', 'email', 'password'). */
-  type?: InputType;
-  /** Placeholder text for the input field. */
+  /** The id attribute for the input, crucial for linking with labels */
+  id: string;
+  /** Placeholder text for the input */
   placeholder?: string;
-  /** The current value of the input field. */
-  value?: string;
-  /** Indicates if the input field is required. */
+  /** Whether the input is required */
   required?: boolean;
-  /** Indicates if the input field is disabled. */
+  /** Value of the input */
+  value?: string;
+  /** Whether the input is disabled */
   disabled?: boolean;
-  /** Indicates if the input field is read-only. */
-  readonly?: boolean;
-  /** Indicates if the input field is in an error state. */
-  error?: boolean;
-  /** Optional class names to apply to the input field. */
+  /** Aria-required attribute for accessibility */
+  'aria-required'?: boolean;
+  /** Aria-describedby attribute for accessibility, linking to help/error text */
+  'aria-describedby'?: string;
+  /** Custom Tailwind classes to apply to the input */
   class?: string;
-  /** If true, renders a textarea instead of an input. */
-  textarea?: boolean;
-  /** Number of rows for a textarea. Only applicable if `textarea` is true. */
-  rows?: number;
-  /** Minimum length for text/textarea inputs. */
-  minlength?: number;
-  /** Maximum length for text/textarea inputs. */
-  maxlength?: number;
-  /** Autocomplete attribute for input fields. */
-  autocomplete?: string;
 }
 
 // Destructure with defaults
 const {
-  id,
-  name,
   type = 'text',
+  name,
+  id,
   placeholder,
-  value,
   required = false,
+  value,
   disabled = false,
-  readonly = false,
-  error = false,
   class: className,
-  textarea = false,
-  rows = 4, // Default rows for textarea
-  minlength,
-  maxlength,
-  autocomplete,
   ...attrs
 } = Astro.props;
-
-// Base classes for both input and textarea
-const baseClasses = [
-  'block',
-  'w-full',
-  'font-body',
-  'text-base',
-  'text-text',
-  'bg-surface',
-  'border',
-  'border-border',
-  'rounded-md',
-  'py-3', // Tailwind's `py-3` is 12px, matching spacing-3
-  'px-4', // Tailwind's `px-4` is 16px, matching spacing-4
-  'placeholder:text-textMuted', // Placeholder color
-  'transition-all',
-  'duration-fast', // From design tokens
-  'ease-in-out', // From design tokens
-  'focus:outline-none',
-  'focus:border-primary',
-  'focus:ring-2',
-  'focus:ring-primary/[.2]', // Custom focus shadow rgba(0, 71, 171, 0.2)
-  'motion-reduce:transition-none', // Accessibility: Reduced motion
-];
-
-// Classes for error state
-const errorClasses = error ? ['border-error', 'focus:border-error', 'focus:ring-error/[.2]'] : [];
-
-// Classes for disabled state
-const disabledClasses = disabled ? ['bg-background', 'cursor-not-allowed', 'text-textSubtle'] : [];
 ---
 
-{
-  textarea ? (
-    <textarea
-      id={id}
-      name={name}
-      rows={rows}
-      placeholder={placeholder}
-      required={required}
-      disabled={disabled}
-      readonly={readonly}
-      minlength={minlength}
-      maxlength={maxlength}
-      autocomplete={autocomplete}
-      aria-invalid={error ? 'true' : 'false'}
-      class:list={[...baseClasses, ...errorClasses, ...disabledClasses, className]}
-      {...attrs}
-    >{value}</textarea>
-  ) : (
-    <input
-      id={id}
-      name={name}
-      type={type}
-      value={value}
-      placeholder={placeholder}
-      required={required}
-      disabled={disabled}
-      readonly={readonly}
-      minlength={minlength}
-      maxlength={maxlength}
-      autocomplete={autocomplete}
-      aria-invalid={error ? 'true' : 'false'}
-      class:list={[...baseClasses, ...errorClasses, ...disabledClasses, className]}
-      {...attrs}
-    />
-  )
-}
+<input
+  type={type}
+  name={name}
+  id={id}
+  placeholder={placeholder}
+  required={required}
+  value={value}
+  disabled={disabled}
+  class:list={[
+    'block w-full border border-border rounded-md p-3 text-base text-text bg-surface placeholder-neutral-400',
+    'focus:outline-none focus:ring-2 focus:ring-primary/[0.2] focus:border-primary',
+    'transition-all duration-150 ease-in-out',
+    className,
+  ]}
+  aria-required={required ? 'true' : undefined}
+  {...attrs}
+/>
+
+<style>
+  /* Base styles are applied via Tailwind classes in the component definition.
+     This <style> block is kept for potential future component-specific CSS,
+     but is empty as Tailwind is preferred for design tokens. */
+</style>

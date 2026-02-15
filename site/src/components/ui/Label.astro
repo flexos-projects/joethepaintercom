@@ -1,7 +1,9 @@
 ---
 /**
  * Label.astro
- * Reusable label component for form fields, ensuring accessibility and consistent styling.
+ *
+ * A reusable label component for form elements.
+ * Ensures accessibility by linking to its associated input.
  */
 
 // Type imports
@@ -9,19 +11,15 @@ import type { HTMLAttributes } from 'astro/types';
 
 // Props interface with JSDoc comments
 interface Props extends HTMLAttributes<'label'> {
-  /** The ID of the form control the label is associated with. */
+  /** The `for` attribute, linking the label to an input's `id`. */
   for: string;
-  /** The text content of the label. */
-  text: string;
-  /** Optional boolean to indicate if the field is required. */
-  required?: boolean;
+  /** Custom Tailwind classes to apply to the label. */
+  class?: string;
 }
 
 // Destructure with defaults
 const {
-  for: htmlFor, // Rename 'for' to 'htmlFor' to avoid conflict with JS keyword
-  text,
-  required = false,
+  for: htmlFor, // Rename 'for' to 'htmlFor' to avoid keyword conflict
   class: className,
   ...attrs
 } = Astro.props;
@@ -30,16 +28,16 @@ const {
 <label
   for={htmlFor}
   class:list={[
-    'block',
-    'font-body',
-    'text-sm',
-    'font-medium',
-    'text-text',
-    'mb-1',
+    'font-body text-sm font-medium text-text mb-2 block',
     className,
   ]}
   {...attrs}
 >
-  {text}
-  {required && <span class="text-error ml-0.5" aria-hidden="true">*</span>}
+  <slot />
 </label>
+
+<style>
+  /* Base styles are applied via Tailwind classes in the component definition.
+     This <style> block is kept for potential future component-specific CSS,
+     but is empty as Tailwind is preferred for design tokens. */
+</style>
