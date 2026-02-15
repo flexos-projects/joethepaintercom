@@ -52,7 +52,7 @@ const descriptionId = `${modalId}-description`;
             {title}
           </h2>
           <button
-            class="p-2 text-text hover:text-primary transition-all-colors-transform"
+            class="p-2 text-text hover:text-primary transition-colors duration-150 ease-in-out motion-reduce:transition-none"
             onClick={onClose}
             aria-label="Close modal"
           >
@@ -81,17 +81,51 @@ const descriptionId = `${modalId}-description`;
 }
 
 <script define:vars={{ modalId }} is:inline>
+  // These variables will retain their state for the lifetime of the script (while modal is mounted)
+  let previouslyFocusedElement = null;
+  let firstFocusableElement = null;
+  let lastFocusableElement = null;
+
   const modalElement = document.getElementById(modalId);
   const focusableElementsSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-  let previouslyFocusedElement;
-  let firstFocusableElement;
-  let lastFocusableElement;
 
-  function handleOpen() {
-    if (!modalElement) return;
+  const handleKeyDown = (event) => {
+    if (event.key === 'Escape') {
+      // Dispatch custom event for parent to listen to and call its onClose prop
+      // Parent is responsible for reacting to this event, calling its onClose,
+      // which should then handle body scroll restoration and focus return.
+      modalElement?.dispatchEvent(new CustomEvent('modalCloseRequest', { bubbles: true }));
+    }
+    if (event.key === 'Tab') {
+      if (firstFocusableElement && lastFocusableElement) { // Ensure elements are defined
+        if (event.shiftKey) { // if shift + tab
+          if (document.activeElement === firstFocusableElement) {
+            lastFocusableElement.focus();
+            event.preventDefault();
+          }
+        } else { // if tab
+          if (document.activeElement === lastFocusableElement) {
+            firstFocusableElement.focus();
+            event.preventDefault();
+          }
+        }
+      }
+    }
+  };
 
-    previouslyFocusedElement = document.activeElement;
-    modalElement.focus(); // Focus the modal itself
+  const enforceFocus = (event) => {
+    // If focus moves outside the modal, return it to the first focusable element
+    if (modalElement && !modalElement.contains(event.target)) {
+      event.stopPropagation();
+      firstFocusableElement?.focus();
+    }
+  };
+
+  // Logic to run when the modal is mounted (script executes)
+  if (modalElement) {
+    previouslyFocusedElement = document.activeElement; // Capture focus on mount
+
+    modalElement.focus(); // Focus the modal itself initially for keyboard trap
 
     const focusableContent = modalElement.querySelectorAll(focusableElementsSelector);
     firstFocusableElement = focusableContent[0];
@@ -100,82 +134,20 @@ const descriptionId = `${modalId}-description`;
     firstFocusableElement?.focus(); // Focus the first focusable element inside the modal
 
     document.body.style.overflow = 'hidden'; // Prevent scrolling on body
+
+    // Add event listeners
     document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('focusin', enforceFocus); // Enforce focus within modal
+    document.addEventListener('focusin', enforceFocus);
+
+    // IMPORTANT: The parent component using this Modal is responsible for cleanup.
+    // When the modal is closed (via button click or parent handling `modalCloseRequest`):
+    // 1. The parent must set `isOpen` to `false` to unmount this component.
+    // 2. The parent's `onClose` function (or a separate cleanup function) MUST explicitly:
+    //    - Restore `document.body.style.overflow = '';`
+    //    - Restore `previouslyFocusedElement?.focus();`
+    //    - Remove `document.removeEventListener('keydown', handleKeyDown);`
+    //    - Remove `document.removeEventListener('focusin', enforceFocus);`
+    // This contract ensures full accessibility and proper resource management.
   }
-
-  function handleClose() {
-    if (!modalElement) return;
-
-    document.body.style.overflow = ''; // Restore scrolling on body
-    document.removeEventListener('keydown', handleKeyDown);
-    document.removeEventListener('focusin', enforceFocus);
-    previouslyFocusedElement?.focus(); // Return focus to where it was
-  }
-
-  function handleKeyDown(event) {
-    if (event.key === 'Escape') {
-      // Assuming onClose is globally accessible or passed via a custom event
-      // For this example, we'll dispatch a custom event that parent can listen to
-      modalElement.dispatchEvent(new CustomEvent('modalCloseRequest'));
-    }
-    if (event.key === 'Tab') {
-      if (event.shiftKey) { // if shift + tab
-        if (document.activeElement === firstFocusableElement) {
-          lastFocusableElement.focus();
-          event.preventDefault();
-        }
-      } else { // if tab
-        if (document.activeElement === lastFocusableElement) {
-          firstFocusableElement.focus();
-          event.preventDefault();
-        }
-      }
-    }
-  }
-
-  function enforceFocus(event) {
-    if (!modalElement.contains(event.target)) {
-      event.stopPropagation();
-      firstFocusableElement?.focus();
-    }
-  }
-
-  // Listener for custom close event from parent (Astro component)
-  // This is a simplified way to manage state across Astro components.
-  // In a real app, you'd use a more robust state management or framework component.
-  modalElement?.addEventListener('modalCloseRequest', () => {
-    // The parent component's `onClose` prop needs to be called.
-    // Astro's server-side rendering makes direct JS calls to parent props tricky.
-    // For this example, we'll assume the `onClose` function is directly available
-    // or that the parent component re-renders `isOpen=false` based on some state.
-    // For now, we'll just handle the cleanup.
-    handleClose();
-    // A more robust solution for Astro would be to wrap the modal in a framework component
-    // (e.g., React) to manage its internal state and emit events.
-  });
-
-
-  // Observe changes to the `aria-hidden` attribute if `isOpen` is toggled by parent Astro
-  const observer = new MutationObserver((mutationsList) => {
-    for (const mutation of mutationsList) {
-      if (mutation.type === 'attributes' && mutation.attributeName === 'aria-hidden') {
-        if (modalElement.getAttribute('aria-hidden') === 'false' && modalElement.offsetParent !== null) {
-          handleOpen();
-        } else if (modalElement.getAttribute('aria-hidden') === 'true') {
-          handleClose();
-        }
-      }
-    }
-  });
-
-  if (modalElement) {
-    observer.observe(modalElement, { attributes: true });
-    // Initial check if modal is open on page load (e.g., if set to true by default)
-    if (modalElement.getAttribute('aria-hidden') === 'false' && modalElement.offsetParent !== null) {
-      handleOpen();
-    }
-  }
-
 </script>
 ---

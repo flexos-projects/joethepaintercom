@@ -13,7 +13,7 @@ const { for: htmlFor, required = false, class: className, ...rest } = Astro.prop
 <label
   for={htmlFor}
   class:list={[
-    'block text-sm font-medium text-text mb-1.5',
+    'block text-sm font-medium text-text mb-1',
     className,
   ]}
   {...rest}
@@ -21,4 +21,3 @@ const { for: htmlFor, required = false, class: className, ...rest } = Astro.prop
   <slot />
   {required && <span class="text-error ml-1" aria-hidden="true">*</span>}
 </label>
----

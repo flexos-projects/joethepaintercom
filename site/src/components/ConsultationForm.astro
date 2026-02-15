@@ -6,24 +6,27 @@ import type { HTMLAttributes } from 'astro/types';
 
 interface FormProps extends HTMLAttributes<'form'> {
   formId: string; // Unique ID for the form, for Formspree endpoint
-  onSuccess?: string; // Optional URL to redirect to on success
-  onClose?: () => void; // For modal usage
+  successRedirectUrl?: string; // Optional URL to redirect to on success
 }
 
-const { formId, onSuccess, onClose, ...rest } = Astro.props;
+const { formId, successRedirectUrl, ...rest } = Astro.props;
 
-// Placeholder for Formspree endpoint. Replace with actual Formspree endpoint in production.
+// Formspree endpoint. This MUST be replaced with your actual Formspree endpoint in production.
+// For development and initial setup, using a generic ID from Formspree is common.
+// This example uses a placeholder `formId` for illustration, but in a real scenario,
+// `formId` would map to a specific Formspree form ID (e.g., "abcdefg").
+// The `joe@joethepainter.com` email should be configured in Formspree for this form ID.
 const formspreeEndpoint = `https://formspree.io/f/${formId}`;
 
 // Client-side script for form submission feedback and validation
-// This script needs to be inline or client:load for dynamic behavior
+// This script needs to be inline for dynamic behavior without client-side framework hydration.
 ---
 <form
   id={`form-${formId}`}
   action={formspreeEndpoint}
   method="POST"
   class="space-y-6"
-  data-on-success={onSuccess}
+  data-success-redirect-url={successRedirectUrl}
   {...rest}
 >
   <h2 class="font-heading text-3xl font-bold text-text text-center mb-6">Book Your Free Consultation</h2>
@@ -43,7 +46,7 @@ const formspreeEndpoint = `https://formspree.io/f/${formId}`;
     label="Email Address"
     name="email"
     type="email"
-    placeholder="john.doe@example.com"
+    placeholder="Your email address"
     required
   />
 
@@ -56,19 +59,20 @@ const formspreeEndpoint = `https://formspree.io/f/${formId}`;
   />
 
   <div>
-    <Label for="service-type" required>Project Type</Label>
+    <Label for={`service-type-${formId}`} required>Project Type</Label>
     <select
-      id="service-type"
+      id={`service-type-${formId}`}
       name="service_type"
       required
       class="w-full px-4 py-3 border border-border rounded-md text-text bg-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all-colors-transform"
+      aria-describedby={`service-type-${formId}-error`}
     >
       <option value="">Select a service type...</option>
       <option value="painting">Painting Services</option>
       <option value="handy_services">Handy Services</option>
       <option value="both">Both Painting & Handy Services</option>
     </select>
-    <p id="service-type-error" class="text-error text-sm mt-1 hidden" role="alert"></p>
+    <p id={`service-type-${formId}-error`} class="text-error text-sm mt-1 hidden" role="alert"></p>
   </div>
 
   <Input
@@ -80,17 +84,17 @@ const formspreeEndpoint = `https://formspree.io/f/${formId}`;
   />
 
   <div>
-    <Label for="project-description" required>Project Details</Label>
+    <Label for={`project-description-${formId}`} required>Project Details</Label>
     <textarea
-      id="project-description"
+      id={`project-description-${formId}`}
       name="project_description"
       rows={5}
       placeholder="Describe your project here (e.g., exterior house painting, drywall repair in living room)"
       required
       class="w-full px-4 py-3 border border-border rounded-md text-text bg-surface placeholder:text-textMuted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all-colors-transform"
-      aria-describedby="project-description-error"
+      aria-describedby={`project-description-${formId}-error`}
     ></textarea>
-    <p id="project-description-error" class="text-error text-sm mt-1 hidden" role="alert"></p>
+    <p id={`project-description-${formId}-error`} class="text-error text-sm mt-1 hidden" role="alert"></p>
   </div>
 
   <fieldset class="mb-4">
@@ -98,28 +102,30 @@ const formspreeEndpoint = `https://formspree.io/f/${formId}`;
     <div class="mt-2 space-y-2">
       <div class="flex items-center">
         <input
-          id="contact-phone"
+          id={`contact-phone-${formId}`}
           name="preferred_contact"
           type="radio"
           value="phone"
           required
           class="h-4 w-4 text-primary border-border focus:ring-primary"
+          aria-describedby={`preferred-contact-${formId}-error`}
         />
-        <label for="contact-phone" class="ml-2 block text-base text-text">Phone Call</label>
+        <label for={`contact-phone-${formId}`} class="ml-2 block text-base text-text">Phone Call</label>
       </div>
       <div class="flex items-center">
         <input
-          id="contact-email"
+          id={`contact-email-${formId}`}
           name="preferred_contact"
           type="radio"
           value="email"
           required
           class="h-4 w-4 text-primary border-border focus:ring-primary"
+          aria-describedby={`preferred-contact-${formId}-error`}
         />
-        <label for="contact-email" class="ml-2 block text-base text-text">Email</label>
+        <label for={`contact-email-${formId}`} class="ml-2 block text-base text-text">Email</label>
       </div>
     </div>
-    <p id="preferred-contact-error" class="text-error text-sm mt-1 hidden" role="alert"></p>
+    <p id={`preferred-contact-${formId}-error`} class="text-error text-sm mt-1 hidden" role="alert"></p>
   </fieldset>
 
   <input type="text" name="_gotcha" class="hidden" tabindex="-1" autocomplete="off" /> <!-- Honeypot field -->
@@ -132,36 +138,53 @@ const formspreeEndpoint = `https://formspree.io/f/${formId}`;
 </form>
 
 <script is:inline>
-  const form = document.getElementById('form-{formId}');
-  const statusDiv = document.getElementById('form-status-{formId}');
-  const submitButton = form.querySelector('button[type="submit"]');
+  const formElement = document.getElementById('form-{formId}');
+  const statusDivElement = document.getElementById('form-status-{formId}');
+  const submitButtonElement = formElement.querySelector('button[type="submit"]');
 
-  // Basic client-side validation for required fields
+  // Helper to find the correct error element for an input or fieldset
+  function getErrorElement(input) {
+    let errorElement = document.getElementById(`${input.id}-error`);
+    if (!errorElement && input.type === 'radio') {
+      errorElement = input.closest('fieldset')?.querySelector('[role="alert"]');
+    }
+    // Fallback if specific ID not found, but prefer explicit IDs
+    if (!errorElement && input.nextElementSibling?.tagName === 'P' && input.nextElementSibling.getAttribute('role') === 'alert') {
+      errorElement = input.nextElementSibling;
+    }
+    return errorElement;
+  }
+
+  // Client-side validation for required fields
   function validateForm() {
     let isValid = true;
-    form.querySelectorAll('[required]').forEach(input => {
-      const errorElement = document.getElementById(`${input.id}-error`) || input.nextElementSibling; // Generic error or next p tag
+    formElement.querySelectorAll('[required]').forEach(input => {
+      const errorElement = getErrorElement(input);
+
       if (input.type === 'radio') {
-        const radioGroup = form.querySelector(`input[name="${input.name}"]:checked`);
+        const radioGroup = formElement.querySelector(`input[name="${input.name}"]:checked`);
         if (!radioGroup) {
           isValid = false;
-          input.closest('fieldset')?.querySelector('[role="alert"]').textContent = 'Please select a contact method.';
-          input.closest('fieldset')?.querySelector('[role="alert"]').classList.remove('hidden');
-          // No specific border for radios, but ensure fieldset is visually distinct on error if needed
+          if (errorElement) {
+            errorElement.textContent = 'Please select a contact method.';
+            errorElement.classList.remove('hidden');
+          }
         } else {
-          input.closest('fieldset')?.querySelector('[role="alert"]').textContent = '';
-          input.closest('fieldset')?.querySelector('[role="alert"]').classList.add('hidden');
+          if (errorElement) {
+            errorElement.textContent = '';
+            errorElement.classList.add('hidden');
+          }
         }
       } else if (!input.value.trim()) {
         isValid = false;
         input.classList.add('border-error');
-        if (errorElement && errorElement.tagName === 'P' && errorElement.getAttribute('role') === 'alert') {
-          errorElement.textContent = `${input.previousElementSibling?.textContent.replace('*', '').trim()} is required.`;
+        if (errorElement) {
+          errorElement.textContent = `${input.previousElementSibling?.textContent.replace('*', '').trim() || input.placeholder || input.name} is required.`;
           errorElement.classList.remove('hidden');
         }
       } else {
         input.classList.remove('border-error');
-        if (errorElement && errorElement.tagName === 'P' && errorElement.getAttribute('role') === 'alert') {
+        if (errorElement) {
           errorElement.textContent = '';
           errorElement.classList.add('hidden');
         }
@@ -170,75 +193,73 @@ const formspreeEndpoint = `https://formspree.io/f/${formId}`;
     return isValid;
   }
 
-  form.addEventListener('input', (event) => {
+  formElement.addEventListener('input', (event) => {
     const input = event.target;
     if (input.hasAttribute('required')) {
+      const errorElement = getErrorElement(input);
+
       if (input.type === 'radio') {
-        const radioGroup = form.querySelector(`input[name="${input.name}"]:checked`);
-        if (radioGroup) {
-          input.closest('fieldset')?.querySelector('[role="alert"]').textContent = '';
-          input.closest('fieldset')?.querySelector('[role="alert"]').classList.add('hidden');
+        const radioGroup = formElement.querySelector(`input[name="${input.name}"]:checked`);
+        if (radioGroup && errorElement) {
+          errorElement.textContent = '';
+          errorElement.classList.add('hidden');
         }
       } else if (input.value.trim()) {
         input.classList.remove('border-error');
-        const errorElement = document.getElementById(`${input.id}-error`);
         if (errorElement) errorElement.classList.add('hidden');
       }
     }
   });
 
 
-  form.addEventListener('submit', async (event) => {
+  formElement.addEventListener('submit', async (event) => {
     event.preventDefault(); // Prevent default form submission
 
     if (!validateForm()) {
-      statusDiv.innerHTML = '<p class="text-error">Please fill out all required fields.</p>';
+      statusDivElement.innerHTML = '<p class="text-error">Please fill out all required fields.</p>';
       return;
     }
 
-    submitButton.disabled = true;
-    submitButton.innerHTML = '<span class="flex items-center justify-center"><svg class="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Sending Request...</span>';
-    statusDiv.innerHTML = '';
+    submitButtonElement.disabled = true;
+    submitButtonElement.innerHTML = '<span class="flex items-center justify-center"><svg class="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Sending Request...</span>';
+    statusDivElement.innerHTML = '';
 
     try {
-      const response = await fetch(form.action, {
-        method: form.method,
-        body: new FormData(form),
+      const response = await fetch(formElement.action, {
+        method: formElement.method,
+        body: new FormData(formElement),
         headers: {
           'Accept': 'application/json'
         }
       });
 
       if (response.ok) {
-        statusDiv.innerHTML = '<p class="text-success">Thank You! Your request has been received. Joe will contact you shortly.</p>';
-        form.reset();
-        // If in a modal and onClose is provided, call it after a short delay
-        if (typeof {onClose} === 'function') {
-          setTimeout(() => {
-            // Need to pass a function reference, not an object literal
-            // This part might need adjustment if onClose is a direct prop in Astro
-            // For now, it's a string, so we'll rely on redirect or manual close
-          }, 2000);
-        }
-        const successUrl = form.dataset.onSuccess;
-        if (successUrl) {
-          window.location.href = successUrl;
+        statusDivElement.innerHTML = '<p class="text-success">Thank You! Your request has been received. Joe will contact you shortly.</p>';
+        formElement.reset();
+        
+        // Dispatch a custom event for parent components to listen to
+        document.dispatchEvent(new CustomEvent('consultation-form-success', {
+          detail: { formId: '{formId}' }
+        }));
+
+        const successRedirectUrl = formElement.dataset.successRedirectUrl;
+        if (successRedirectUrl) {
+          window.location.href = successRedirectUrl;
         }
       } else {
         const data = await response.json();
         if (data.errors) {
-          statusDiv.innerHTML = `<p class="text-error">Error: ${data.errors.map(e => e.field).join(', ')} failed validation.</p>`;
+          statusDivElement.innerHTML = `<p class="text-error">Error: ${data.errors.map(e => e.field).join(', ')} failed validation.</p>`;
         } else {
-          statusDiv.innerHTML = '<p class="text-error">Oops! Something went wrong. Please try again or call Joe directly.</p>';
+          statusDivElement.innerHTML = '<p class="text-error">Oops! Something went wrong. Please try again or call Joe directly.</p>';
         }
       }
     } catch (error) {
-      statusDiv.innerHTML = '<p class="text-error">Network error. Please try again later.</p>';
+      statusDivElement.innerHTML = '<p class="text-error">Network error. Please try again later.</p>';
       console.error('Form submission error:', error);
     } finally {
-      submitButton.disabled = false;
-      submitButton.innerHTML = 'Request My Free Consultation';
+      submitButtonElement.disabled = false;
+      submitButtonElement.innerHTML = 'Request My Free Consultation';
     }
   });
 </script>
----

@@ -1,5 +1,6 @@
 ---
 import TestimonialCard from './TestimonialCard.astro';
+import Button from './ui/Button.astro'; // Assuming Button component is available
 
 const testimonials = [
   {
@@ -62,7 +63,7 @@ const carouselItems = shuffledTestimonials.slice(0, 3); // Display 3 testimonial
       <!-- For a static display, buttons are not needed, but included for future JS interaction -->
       <div class="absolute inset-y-0 left-0 flex items-center -ml-6 hidden md:flex">
         <button
-          class="p-2 bg-surface rounded-full shadow-md text-text hover:bg-primary hover:text-surface transition-all-colors-transform"
+          class="p-2 bg-surface rounded-full shadow-md text-text hover:bg-primary hover:text-surface transition-colors duration-150 ease-in-out"
           aria-label="Previous testimonial"
           disabled
         >
@@ -73,7 +74,7 @@ const carouselItems = shuffledTestimonials.slice(0, 3); // Display 3 testimonial
       </div>
       <div class="absolute inset-y-0 right-0 flex items-center -mr-6 hidden md:flex">
         <button
-          class="p-2 bg-surface rounded-full shadow-md text-text hover:bg-primary hover:text-surface transition-all-colors-transform"
+          class="p-2 bg-surface rounded-full shadow-md text-text hover:bg-primary hover:text-surface transition-colors duration-150 ease-in-out"
           aria-label="Next testimonial"
           disabled
         >
@@ -91,4 +92,3 @@ const carouselItems = shuffledTestimonials.slice(0, 3); // Display 3 testimonial
     </div>
   </div>
 </section>
----

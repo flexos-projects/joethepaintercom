@@ -1,9 +1,7 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
 import TestimonialCard from '@components/TestimonialCard.astro';
-import Button from '@components/ui/Button.astro';
 
-// Placeholder data for testimonials - will be replaced by content collection in TASK-027
 const allTestimonials = [
   {
     quote: "Joe did an incredible job painting our home's exterior. His attention to detail and prep work were outstanding. It looks brand new!",
@@ -55,8 +53,7 @@ const allTestimonials = [
   },
 ];
 
-// Placeholder for aggregated rating
-const averageRating = 5.0; // Assuming 5 stars for now
+const averageRating = 5.0;
 const totalReviews = allTestimonials.length;
 ---
 
@@ -101,7 +98,7 @@ const totalReviews = allTestimonials.length;
             href="https://g.page/joe-the-painter/review?rc"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center px-6 py-3 bg-primary text-surface rounded-md font-semibold hover:bg-primary-dark transition-all-colors-transform"
+            class="inline-flex items-center px-6 py-3 bg-primary text-surface rounded-md font-semibold hover:bg-primary-dark transition-all duration-150"
             aria-label="Leave a review for Joe the Painter on Google (opens in new tab)"
           >
             Leave a Review on Google
@@ -114,4 +111,3 @@ const totalReviews = allTestimonials.length;
     </section>
   </main>
 </BaseLayout>
----
