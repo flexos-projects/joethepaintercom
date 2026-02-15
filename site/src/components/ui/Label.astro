@@ -1,31 +1,14 @@
 ---
-/**
- * Label
- * A reusable component for form field labels.
- */
-
-import type { HTMLAttributes } from 'astro/types';
-
-interface Props extends HTMLAttributes<'label'> {
-  /** The HTML `for` attribute for associating with an input. */
+interface Props {
   for: string;
+  text: string;
+  required?: boolean;
 }
 
-const { for: htmlFor, class: className, ...attrs } = Astro.props;
+const { for: htmlFor, text, required = false } = Astro.props;
 ---
 
-<label
-  for={htmlFor}
-  class:list={[
-    'block',
-    'font-body',
-    'text-sm',
-    'font-medium',
-    'text-text',
-    'mb-1',
-    className,
-  ]}
-  {...attrs}
->
-  <slot />
+<label for={htmlFor} class="block font-body text-sm font-medium text-text-dark mb-1">
+  {text}
+  {required && <span class="text-error ml-1">*</span>}
 </label>

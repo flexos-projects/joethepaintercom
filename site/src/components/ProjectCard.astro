@@ -1,54 +1,63 @@
 ---
 import { Image } from 'astro:assets';
 
-interface Props {
-  title: string;
-  slug: string;
-  location: string;
-  shortDescription: string;
-  featuredImage: {
-    src: string;
-    alt: string;
+interface ProjectCardProps {
+  project: {
+    slug: string;
+    data: {
+      title: string;
+      location: string;
+      shortDescription: string;
+      featuredImage: {
+        src: string;
+        alt: string;
+      };
+      servicesPerformed: string[]; // e.g., ['Painting', 'Handy']
+    };
   };
 }
 
-const { title, slug, location, shortDescription, featuredImage } = Astro.props;
+const { project } = Astro.props;
+const projectLink = `/our-work/${project.slug}`;
 ---
 
-<article class="group relative bg-surface rounded-lg shadow-md overflow-hidden flex flex-col h-full
-                transition-all duration-normal ease-in-out
-                hover:shadow-lg hover:-translate-y-1
-                focus-within:shadow-lg focus-within:-translate-y-1">
-  <a href={`/projects/${slug}`} class="block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-t-lg" aria-label={`View project: ${title}`}>
-    <figure class="relative w-full h-48 overflow-hidden">
-      <Image
-        src={featuredImage.src}
-        alt={featuredImage.alt}
-        width={600}
-        height={300}
-        class="w-full h-full object-cover transition-transform duration-normal ease-in-out group-hover:scale-105"
-        loading="lazy"
-        widths={[300, 600, 900]}
-        densities={[1, 2]}
-      />
-    </figure>
-  </a>
-
-  <div class="p-6 flex flex-col flex-grow">
-    <h3 class="font-heading text-xl md:text-2xl font-semibold text-text mb-2">
-      <a href={`/projects/${slug}`} class="block hover:text-primary focus:outline-none focus-visible:text-primary">
-        {title}
-      </a>
-    </h3>
-    <p class="text-sm text-text-muted mb-2">{location}</p>
-    <p class="text-base text-text flex-grow mb-4">
-      {shortDescription}
-    </p>
-    <a href={`/projects/${slug}`} class="inline-flex items-center text-primary font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm self-start" aria-label={`Learn more about ${title}`}>
-      View Project
-      <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-      </svg>
-    </a>
+<a
+  href={projectLink}
+  class="group block bg-surface rounded-lg shadow-md overflow-hidden
+         transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1
+         focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
+         transform"
+  data-service-types={project.data.servicesPerformed.join(',')}
+>
+  <div class="relative w-full h-48 overflow-hidden">
+    <Image
+      src={project.data.featuredImage.src}
+      alt={project.data.featuredImage.alt}
+      width={600}
+      height={384}
+      class="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
+      loading="lazy"
+      decoding="async"
+    />
   </div>
-</article>
+  <div class="p-4 sm:p-6 flex flex-col justify-between h-auto">
+    <div>
+      <h3 class="font-heading text-xl text-text-dark group-hover:text-primary transition-colors duration-200">
+        {project.data.title}
+      </h3>
+      <p class="text-sm text-text-muted mt-1">
+        {project.data.location}
+      </p>
+      <p class="text-base text-text-dark mt-3">
+        {project.data.shortDescription}
+      </p>
+    </div>
+    <div class="mt-4 flex flex-wrap gap-2 text-sm">
+      {project.data.servicesPerformed.map(service => (
+        <span class="bg-primary/10 text-primary px-3 py-1 rounded-full font-medium">
+          {service}
+        </span>
+      ))}
+    </div>
+  </div>
+</a>

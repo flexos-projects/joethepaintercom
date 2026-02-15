@@ -1,25 +1,73 @@
 ---
-import Button from '@components/ui/Button.astro';
+import { Image } from 'astro:assets';
+import Button from '../ui/Button.astro';
 
 interface Props {
   headline: string;
   description: string;
   ctaText: string;
   ctaHref: string;
+  image?: {
+    src: string;
+    alt: string;
+  };
+  backgroundColor?: 'primary' | 'secondary' | 'accent' | 'background' | 'surface' | 'dark';
+  textColor?: 'white' | 'text-dark' | 'text-muted';
 }
 
-const { headline, description, ctaText, ctaHref } = Astro.props;
+const {
+  headline,
+  description,
+  ctaText,
+  ctaHref,
+  image,
+  backgroundColor = 'primary',
+  textColor = 'white'
+} = Astro.props;
+
+const bgClass = {
+  primary: 'bg-primary',
+  secondary: 'bg-secondary',
+  accent: 'bg-accent',
+  background: 'bg-background',
+  surface: 'bg-surface',
+  dark: 'bg-neutral-900', // Using neutral-900 from design tokens as a dark background
+}[backgroundColor];
+
+const textClass = {
+  white: 'text-white',
+  'text-dark': 'text-text-dark',
+  'text-muted': 'text-text-muted',
+}[textColor];
+
+// Determine button variant based on background color
+const buttonVariant = (backgroundColor === 'primary' || backgroundColor === 'secondary' || backgroundColor === 'dark') ? 'outline' : 'primary';
+const outlineButtonColor = (backgroundColor === 'primary' || backgroundColor === 'dark') ? 'white' : 'primary'; // Outline text color
 ---
 
-<section class="bg-primary py-16 md:py-24 text-white text-center">
-  <div class="container mx-auto px-4 max-w-4xl">
-    <h2 class="font-heading text-4xl md:text-5xl font-bold mb-6">
+<section class={`${bgClass} py-12 md:py-16 relative overflow-hidden`}>
+  {image && (
+    <div class="absolute inset-0 z-0 opacity-10">
+      <Image
+        src={image.src}
+        alt={image.alt}
+        class="w-full h-full object-cover"
+        widths={[640, 1024, 1920]}
+        sizes="(max-width: 768px) 100vw, 100vw"
+        loading="lazy"
+        decoding="async"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-current to-transparent"></div>
+    </div>
+  )}
+  <div class="relative container mx-auto px-4 text-center z-10">
+    <h2 class={`font-heading text-4xl md:text-5xl font-bold mb-4 ${textClass}`}>
       {headline}
     </h2>
-    <p class="text-lg md:text-xl mb-10 max-w-prose mx-auto">
+    <p class={`text-lg md:text-xl max-w-3xl mx-auto mb-8 ${textColor === 'white' ? 'text-white/90' : textClass}`}>
       {description}
     </p>
-    <Button href={ctaHref} variant="accent" size="lg" aria-label={ctaText}>
+    <Button href={ctaHref} variant={buttonVariant} size="lg" color={outlineButtonColor}>
       {ctaText}
     </Button>
   </div>
