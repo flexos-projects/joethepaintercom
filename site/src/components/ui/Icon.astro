@@ -11,7 +11,7 @@ import type { HTMLAttributes } from 'astro/types';
 // Props interface with JSDoc comments
 interface Props extends HTMLAttributes<'div'> {
   /** The name of the icon to render. */
-  name: 'arrow-left' | 'arrow-right';
+  name: 'arrow-left' | 'arrow-right' | 'menu' | 'close' | 'facebook' | 'instagram' | 'linkedin' | 'yelp' | 'chevron-down';
   /** Additional CSS classes to apply to the icon container. */
   class?: string;
 }
@@ -24,10 +24,17 @@ const { name, class: className, ...attrs } = Astro.props;
 const icons: Record<Props['name'], string> = {
   'arrow-left': `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /></svg>`,
   'arrow-right': `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>`,
+  'menu': `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>`,
+  'close': `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>`,
+  'facebook': `<svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M22.5 12.002a10.5 10.5 0 00-9.617-10.457v2.969h2.339l.352-3.051h-2.691V4.5c0 .736.205 1.237 1.258 1.237h1.344V8.002h-2.122c-2.486 0-3.328 1.854-3.328 3.322v1.731h-2.34v3.428h2.34v8.541a10.5 10.5 0 0010.5-10.5z" clip-rule="evenodd" /></svg>`,
+  'instagram': `<svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 5.25a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM12 7.5a4.5 4.5 0 100 9 4.5 4.5 0 000-9zM18.75 8.25a.75.75 0 100-1.5.75.75 0 000 1.5zM12 2.25c-1.488 0-1.748.007-2.361.036-.59.028-1.018.156-1.391.309a3.75 3.75 0 00-2.404 2.404c-.153.373-.281.801-.309 1.391-.029.613-.036.873-.036 2.36s.007 1.748.036 2.361c.028.59.156 1.018.309 1.391a3.75 3.75 0 002.404 2.404c.373.153.801.281 1.391.309.613.029.873.036 2.36.036s1.748-.007 2.361-.036c.59-.028 1.018-.156 1.391-.309a3.75 3.75 0 002.404-2.404c.153-.373.281-.801.309-1.391.029-.613.036-.873.036-2.36s-.007-1.748-.036-2.361c-.028-.59-.156-1.018-.309-1.391a3.75 3.75 0 00-2.404-2.404c-.373-.153-.801-.281-1.391-.309-.613-.029-.873-.036-2.36-.036z" clip-rule="evenodd" /></svg>`,
+  'linkedin': `<svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M19.5 2.25h-15a.75.75 0 00-.75.75v18a.75.75 0 00.75.75h15a.75.75 0 00.75-.75V3a.75.75 0 00-.75-.75zM17.25 18h-2.25v-5.4a1.5 1.5 0 00-1.5-1.5c-.828 0-1.5.672-1.5 1.5v5.4h-2.25V9h2.25v1.275a2.981 2.981 0 012.25-1.275c1.242 0 2.25 1.008 2.25 2.25V18zM6.75 6.75a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM6.75 9h2.25v9H6.75V9z" clip-rule="evenodd" /></svg>`,
+  'yelp': `<svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm-1.85 14.28L4.74 9.17l1.73-1.02 5.76 7.42-1.85 1.71zm8.38-2.61l-5.76-7.42-1.73 1.02 6.07 4.19.82 2.21-1.85 1.71z" /></svg>`,
+  'chevron-down': `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>`,
 };
 ---
 
-<div class={className} set:html={icons[name]} {...attrs}></div>
+<div class={className} set:html={icons[name]} {...attrs} aria-hidden="true"></div>
 
 <style>
   /* Base styles for the icon container if needed, e.g., for default sizing */

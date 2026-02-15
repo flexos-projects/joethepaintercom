@@ -2,7 +2,7 @@
 /**
  * TestimonialCard Component
  * Displays a single client testimonial including the quote, client's name,
- * location, and an optional project type.
+ * location, an optional project type, and an optional star rating.
  */
 
 // Type imports
@@ -18,6 +18,8 @@ interface Props extends HTMLAttributes<'div'> {
   clientLocation: string;
   /** Optional type of project the testimonial relates to. */
   projectType?: string;
+  /** Optional star rating given by the client (1-5). */
+  starRating?: 1 | 2 | 3 | 4 | 5;
 }
 
 // Destructure props
@@ -26,6 +28,7 @@ const {
   clientName,
   clientLocation,
   projectType,
+  starRating,
   class: className,
   ...attrs
 } = Astro.props;
@@ -40,6 +43,24 @@ const {
 >
   <p class="testimonial-quote" set:html={quote}></p>
   <div class="testimonial-author">
+    {starRating && (
+      <div class="star-rating mb-2" role="img" aria-label={`${starRating} out of 5 stars`}>
+        {[...Array(5)].map((_, i) => (
+          <svg
+            class:list={[
+              'star-icon',
+              i < starRating ? 'text-accent' : 'text-textSubtle'
+            ]}
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.539 1.118l-2.8-2.034a1 1 0 00-1.176 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.381-1.81.588-1.81h3.462a1 1 0 00.95-.69l1.07-3.292z" />
+          </svg>
+        ))}
+      </div>
+    )}
     <p class="testimonial-name">{clientName}</p>
     <p class="testimonial-location">{clientLocation}</p>
     {projectType && <p class="testimonial-project-type">{projectType}</p>}
@@ -53,8 +74,9 @@ const {
     transition: all var(--animation-duration-normal) var(--animation-easing-default);
   }
 
+  /* Hide empty paragraphs from RichText output to prevent extra spacing */
   .testimonial-card:has(.testimonial-quote :global(p):last-child:empty) .testimonial-quote :global(p):last-child {
-    display: none; /* Hide empty paragraphs from RichText */
+    display: none;
   }
 
   .testimonial-quote {
@@ -64,11 +86,19 @@ const {
 
   /* Ensure RichText content (e.g., paragraphs) within the quote is styled consistently */
   .testimonial-quote :global(p) {
-    @apply mb-0; /* Remove default margin from last paragraph in quote */
+    @apply mb-0; /* Remove default margin from last paragraph in quote to control spacing */
   }
 
   .testimonial-author {
     @apply flex flex-col items-start mt-auto; /* Pushes author info to the bottom */
+  }
+
+  .star-rating {
+    @apply flex gap-0.5; /* Small gap between stars */
+  }
+
+  .star-icon {
+    @apply w-4 h-4; /* Size of the star icon */
   }
 
   .testimonial-name {
