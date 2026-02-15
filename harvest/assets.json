@@ -1,0 +1,42 @@
+{
+  "projectId": "joethepaintercom-kibm3",
+  "generatedAt": "2026-02-15T03:09:51.631Z",
+  "summary": {
+    "totalAssets": 0,
+    "harvest": 0,
+    "replace": 0,
+    "ignore": 0
+  },
+  "assets": [],
+  "photographyBrief": {
+    "needed": true,
+    "shots": [
+      "Professional, approachable headshot of Joe",
+      "Action shots of Joe performing painting services (e.g., detail work, prepping a wall)",
+      "Action shots of Joe performing handyman services (e.g., fixing something, consulting with a client)",
+      "High-quality 'after' shots of completed painting projects (clean walls, crisp lines, modern aesthetic)",
+      "Shots demonstrating professionalism and attention to detail"
+    ],
+    "style": "Clean, professional, authentic, bright, and trustworthy. Emphasize professionalism and craftsmanship.",
+    "priority": "critical"
+  },
+  "stockRecommendations": {
+    "needed": true,
+    "types": [
+      "Modern, clean illustrations or vector graphics for header/hero sections (abstract paint swatches, stylized home elements)",
+      "High-quality lifestyle images depicting happy homeowners in freshly painted spaces (if client portfolio is limited)",
+      "Background textures (subtle paint strokes, clean wall textures)"
+    ],
+    "style": "Contemporary, bright, clean, professional, and inviting. Avoid generic clip art."
+  },
+  "generationNeeds": {
+    "images": [
+      {
+        "description": "A modern, professional graphic or abstract illustration representing painting and handyman services, suitable for a website header. Should be clean and convey quality.",
+        "purpose": "Primary header graphic, replacing the dated clip art.",
+        "priority": "critical"
+      }
+    ],
+    "videos": []
+  }
+}
