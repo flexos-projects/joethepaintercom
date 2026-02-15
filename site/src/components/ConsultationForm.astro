@@ -2,14 +2,10 @@
 import Input from '@/components/ui/Input.astro';
 import Label from '@/components/ui/Label.astro';
 import Button from '@/components/ui/Button.astro';
-import Textarea from '@/components/ui/Textarea.astro'; // Assuming a Textarea component exists
+import Textarea from '@/components/ui/Textarea.astro';
 
-// Formspree endpoint from environment variables
-const FORMSPREE_ENDPOINT_URL = import.meta.env.FORMSPREE_ENDPOINT_URL || 'YOUR_FORMSPREE_ENDPOINT_HERE';
-
-// Ensure the Textarea component is defined as per task TASK-005 requirements.
-// For now, I'll assume it exists or use a basic HTML textarea with Tailwind classes.
-// If Textarea.astro is not created by TASK-005, it will need to be added.
+const FORMSPREE_ENDPOINT_URL = import.meta.env.PUBLIC_FORMSPREE_ENDPOINT_URL;
+const RECAPTCHA_SITE_KEY = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY;
 ---
 
 <form
@@ -24,7 +20,6 @@ const FORMSPREE_ENDPOINT_URL = import.meta.env.FORMSPREE_ENDPOINT_URL || 'YOUR_F
       id="fullName"
       name="fullName"
       type="text"
-      placeholder="John Doe"
       required
       autocomplete="name"
     />
@@ -37,7 +32,6 @@ const FORMSPREE_ENDPOINT_URL = import.meta.env.FORMSPREE_ENDPOINT_URL || 'YOUR_F
       id="email"
       name="email"
       type="email"
-      placeholder="john.doe@example.com"
       required
       autocomplete="email"
     />
@@ -50,7 +44,6 @@ const FORMSPREE_ENDPOINT_URL = import.meta.env.FORMSPREE_ENDPOINT_URL || 'YOUR_F
       id="phone"
       name="phone"
       type="tel"
-      placeholder="(XXX) XXX-XXXX"
       required
       autocomplete="tel"
     />
@@ -73,7 +66,7 @@ const FORMSPREE_ENDPOINT_URL = import.meta.env.FORMSPREE_ENDPOINT_URL || 'YOUR_F
       </select>
       <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text-muted">
         <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
         </svg>
       </div>
     </div>
@@ -86,7 +79,6 @@ const FORMSPREE_ENDPOINT_URL = import.meta.env.FORMSPREE_ENDPOINT_URL || 'YOUR_F
       id="serviceLocation"
       name="serviceLocation"
       type="text"
-      placeholder="San Diego, CA"
       required
     />
     <p id="serviceLocation-error" class="text-error text-sm mt-1 hidden" aria-live="polite"></p>
@@ -98,7 +90,6 @@ const FORMSPREE_ENDPOINT_URL = import.meta.env.FORMSPREE_ENDPOINT_URL || 'YOUR_F
       id="projectDetails"
       name="projectDetails"
       rows={5}
-      placeholder="Describe your project (e.g., exterior house paint, drywall repair for living room, cabinet refinishing for kitchen)..."
       required
     />
     <p id="projectDetails-error" class="text-error text-sm mt-1 hidden" aria-live="polite"></p>
@@ -139,13 +130,12 @@ const FORMSPREE_ENDPOINT_URL = import.meta.env.FORMSPREE_ENDPOINT_URL || 'YOUR_F
       id="howDidYouHear"
       name="howDidYouHear"
       type="text"
-      placeholder="e.g., Google, Friend's referral, Yelp"
       required={false}
     />
   </div>
 
-  <!-- reCAPTCHA placeholder - actual integration handled by TASK-025 -->
-  <div class="g-recaptcha" data-sitekey="YOUR_RECAPTCHA_SITE_KEY" data-size="invisible"></div>
+  <!-- reCAPTCHA integration handled by TASK-025 -->
+  <div class="g-recaptcha" data-sitekey={RECAPTCHA_SITE_KEY} data-size="invisible"></div>
   <p id="recaptcha-error" class="text-error text-sm mt-1 hidden" aria-live="polite"></p>
 
   <Button type="submit" size="lg" variant="primary" class="w-full" id="submit-button">
@@ -158,6 +148,8 @@ const FORMSPREE_ENDPOINT_URL = import.meta.env.FORMSPREE_ENDPOINT_URL || 'YOUR_F
   const form = document.getElementById('consultation-form');
   const submitButton = document.getElementById('submit-button');
   const formStatus = document.getElementById('form-status');
+  const formspreeEndpoint = import.meta.env.PUBLIC_FORMSPREE_ENDPOINT_URL;
+
 
   const fields = [
     { id: 'fullName', validate: (val) => val.trim().length >= 2, message: 'Please enter your full name.' },
@@ -263,7 +255,7 @@ const FORMSPREE_ENDPOINT_URL = import.meta.env.FORMSPREE_ENDPOINT_URL || 'YOUR_F
     formData.append('g-recaptcha-response', recaptchaToken); // Append reCAPTCHA token
 
     try {
-      const response = await fetch(form.action, {
+      const response = await fetch(formspreeEndpoint, {
         method: form.method,
         body: formData,
         headers: {

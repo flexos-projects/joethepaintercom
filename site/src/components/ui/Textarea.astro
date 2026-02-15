@@ -23,7 +23,6 @@ const {
   autocomplete,
   'aria-describedby': ariaDescribedby,
   'aria-invalid': ariaInvalid = false,
-  ...rest
 } = Astro.props;
 ---
 
@@ -44,5 +43,4 @@ const {
     disabled && "bg-background cursor-not-allowed text-text-subtle",
     ariaInvalid && "border-error focus-visible:ring-error"
   ]}
-  {...rest}
 >{value}</textarea>

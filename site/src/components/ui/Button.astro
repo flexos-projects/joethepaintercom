@@ -22,14 +22,14 @@ const {
   ...rest
 } = Astro.props;
 
-const baseClasses = "inline-flex items-center justify-center font-semibold text-center text-decoration-none cursor-pointer border border-transparent transition-all duration-150 ease-in-out rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-light";
+const baseClasses = "inline-flex items-center justify-center font-semibold text-center text-decoration-none cursor-pointer border transition-all duration-150 ease-in-out rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-light focus-visible:ring-offset-2";
 
 const variantClasses = {
-  primary: "bg-primary text-white border-primary hover:bg-primary-dark hover:border-primary-dark active:bg-primary-darker active:border-primary-darker shadow-sm hover:shadow-md",
-  secondary: "bg-secondary text-white border-secondary hover:bg-neutral-600 hover:border-neutral-600 active:bg-neutral-700 active:border-neutral-700 shadow-sm hover:shadow-md",
-  outline: "bg-transparent text-primary border-primary hover:bg-primary hover:text-white shadow-sm hover:shadow-md",
-  ghost: "bg-transparent text-primary border-transparent hover:bg-primary-light/10",
-  accent: "bg-accent text-text-dark border-accent hover:bg-accent-dark hover:border-accent-dark active:bg-accent-darker active:border-accent-darker shadow-sm hover:shadow-md",
+  primary: "bg-primary text-white border-primary hover:bg-primary-dark hover:border-primary-dark active:bg-primary-dark active:border-primary-dark active:translate-y-px shadow-sm hover:shadow-md",
+  secondary: "bg-neutral-500 text-white border-neutral-500 hover:bg-neutral-600 hover:border-neutral-600 active:bg-neutral-700 active:border-neutral-700 active:translate-y-px shadow-sm hover:shadow-md",
+  outline: "bg-transparent text-primary border-primary hover:bg-primary hover:text-white active:bg-primary-dark active:border-primary-dark active:text-white active:translate-y-px shadow-sm hover:shadow-md",
+  ghost: "bg-transparent text-primary border-transparent hover:bg-primary/5 active:bg-primary/10 active:translate-y-px",
+  accent: "bg-accent text-neutral-800 border-accent hover:bg-accent-dark hover:border-accent-dark active:bg-accent-dark active:border-accent-dark active:translate-y-px shadow-sm hover:shadow-md",
 };
 
 const sizeClasses = {
@@ -38,7 +38,7 @@ const sizeClasses = {
   lg: "py-4 px-6 text-lg",
 };
 
-const disabledClasses = "bg-neutral-300 text-neutral-500 border-neutral-300 cursor-not-allowed shadow-none hover:shadow-none";
+const disabledClasses = "bg-neutral-200 text-neutral-400 border-neutral-200 cursor-not-allowed shadow-none hover:shadow-none";
 
 const classes = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${disabled ? disabledClasses : ''}`;
 
@@ -57,59 +57,3 @@ const Element = href ? 'a' : 'button';
 >
   <slot />
 </Element>
-
-<style define:vars={{
-  primary: 'var(--colors-primary)',
-  primaryDark: 'var(--colors-primary-dark)',
-  primaryDarker: 'var(--colors-primary-900)', /* Assuming a darker shade for active */
-  accent: 'var(--colors-accent)',
-  accentDark: 'var(--colors-accent-dark)',
-  accentDarker: 'var(--colors-accent-900)', /* Assuming a darker shade for active */
-  neutral600: 'var(--colors-neutral-600)',
-  neutral700: 'var(--colors-neutral-700)',
-  primaryLight: 'var(--colors-primary-light)',
-}}>
-  /* Custom styles to ensure consistent hover/active feedback */
-  .btn-primary:hover {
-    background-color: var(--primaryDark);
-    border-color: var(--primaryDark);
-  }
-  .btn-primary:active {
-    background-color: var(--primaryDarker);
-    border-color: var(--primaryDarker);
-    transform: translateY(1px); /* Subtle press effect */
-  }
-
-  .btn-accent:hover {
-    background-color: var(--accentDark);
-    border-color: var(--accentDark);
-  }
-  .btn-accent:active {
-    background-color: var(--accentDarker);
-    border-color: var(--accentDarker);
-    transform: translateY(1px); /* Subtle press effect */
-  }
-
-  .btn-outline:hover {
-    color: white; /* Text becomes white on hover */
-    background-color: var(--primary);
-  }
-  .btn-outline:active {
-    background-color: var(--primaryDark);
-    border-color: var(--primaryDark);
-    transform: translateY(1px);
-  }
-
-  .btn-ghost:hover {
-    background-color: rgba(var(--primary-rgb), 0.05); /* Use RGB for transparency */
-  }
-  .btn-ghost:active {
-    background-color: rgba(var(--primary-rgb), 0.1);
-    transform: translateY(1px);
-  }
-
-  /* Focus-visible ring color from design tokens */
-  .focus-visible:ring-primary-light {
-    --tw-ring-color: var(--primary-light);
-  }
-</style>

@@ -4,26 +4,29 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import CtaBlock from '@/components/sections/CtaBlock.astro';
 import { generateFAQPageSchema } from '@/utils/seo';
 
+// Fetch FAQ content from collections, filtering by category ID
 const generalFaqs = await getCollection('faqs', ({ id }) => id === 'general');
 const paintingFaqs = await getCollection('faqs', ({ id }) => id === 'painting');
 const handymanFaqs = await getCollection('faqs', ({ id }) => id === 'handyman');
 
-// Combine all questions for the FAQPage schema
+// Combine all questions for the FAQPage schema. Ensure safe access to questions array.
 const allQuestions = [
   ...(generalFaqs[0]?.data.questions || []),
   ...(paintingFaqs[0]?.data.questions || []),
   ...(handymanFaqs[0]?.data.questions || []),
 ];
 
+// Define SEO metadata for the FAQ page
 const pageSeo = {
   title: "Frequently Asked Questions | Joe the Painter",
   description: "Find answers to common questions about Joe the Painter's licensed painting and handyman services, estimates, service areas, and more in San Diego County.",
   keywords: ["FAQ painter san diego", "handyman questions", "licensed contractor faq", "painting process", "service area"],
-  ogImage: "/images/social-share-faq.jpg" // Placeholder for FAQ image
+  ogImage: "/images/social-share-faq.jpg" // Social share image for FAQ page
 };
 ---
 
 <BaseLayout seo={pageSeo}>
+  {/* Inject JSON-LD Schema.org for FAQPage structured data */}
   <Fragment slot="head-schema">
     <script type="application/ld+json">
       {JSON.stringify(generateFAQPageSchema(allQuestions))}
@@ -35,10 +38,11 @@ const pageSeo = {
       Frequently Asked Questions
     </h1>
     <p class="text-center text-lg md:text-xl text-text-muted max-w-3xl mx-auto mb-16">
-      Have questions about our painting or handyman services? We've compiled a list of common inquiries to provide you with quick and helpful answers.
+      Have questions about our painting or handyman services? We've compiled a list of common inquiries to provide you with quick and helpful answers. We believe in clear communication and transparency, ensuring you feel confident and informed every step of the way.
     </p>
 
     <div class="max-w-4xl mx-auto space-y-16">
+      {/* Render General FAQs if available */}
       {generalFaqs.length > 0 && (
         <div>
           <h2 class="text-3xl font-heading font-semibold text-text-dark mb-8 text-center">
@@ -49,17 +53,19 @@ const pageSeo = {
               <details class="bg-surface p-6 rounded-lg shadow-sm group">
                 <summary class="flex justify-between items-center cursor-pointer text-xl font-medium text-text-dark">
                   {faq.question}
-                  <svg class="w-6 h-6 transform transition-transform duration-200 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                  <svg class="w-6 h-6 transform transition-transform duration-200 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </summary>
-                <p class="mt-4 text-text-muted leading-relaxed">
-                  {faq.answer}
-                </p>
+                {/* Render RichText answer as HTML */}
+                <div class="prose prose-sm max-w-none mt-4 text-text-muted leading-relaxed">
+                  <Fragment set:html={faq.answer} />
+                </div>
               </details>
             ))}
           </div>
         </div>
       )}
 
+      {/* Render Painting FAQs if available */}
       {paintingFaqs.length > 0 && (
         <div>
           <h2 class="text-3xl font-heading font-semibold text-text-dark mb-8 text-center">
@@ -70,17 +76,19 @@ const pageSeo = {
               <details class="bg-surface p-6 rounded-lg shadow-sm group">
                 <summary class="flex justify-between items-center cursor-pointer text-xl font-medium text-text-dark">
                   {faq.question}
-                  <svg class="w-6 h-6 transform transition-transform duration-200 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                  <svg class="w-6 h-6 transform transition-transform duration-200 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </summary>
-                <p class="mt-4 text-text-muted leading-relaxed">
-                  {faq.answer}
-                </p>
+                {/* Render RichText answer as HTML */}
+                <div class="prose prose-sm max-w-none mt-4 text-text-muted leading-relaxed">
+                  <Fragment set:html={faq.answer} />
+                </div>
               </details>
             ))}
           </div>
         </div>
       )}
 
+      {/* Render Handyman FAQs if available */}
       {handymanFaqs.length > 0 && (
         <div>
           <h2 class="text-3xl font-heading font-semibold text-text-dark mb-8 text-center">
@@ -91,11 +99,12 @@ const pageSeo = {
               <details class="bg-surface p-6 rounded-lg shadow-sm group">
                 <summary class="flex justify-between items-center cursor-pointer text-xl font-medium text-text-dark">
                   {faq.question}
-                  <svg class="w-6 h-6 transform transition-transform duration-200 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                  <svg class="w-6 h-6 transform transition-transform duration-200 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </summary>
-                <p class="mt-4 text-text-muted leading-relaxed">
-                  {faq.answer}
-                </p>
+                {/* Render RichText answer as HTML */}
+                <div class="prose prose-sm max-w-none mt-4 text-text-muted leading-relaxed">
+                  <Fragment set:html={faq.answer} />
+                </div>
               </details>
             ))}
           </div>
