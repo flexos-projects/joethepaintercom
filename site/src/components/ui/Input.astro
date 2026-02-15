@@ -2,17 +2,14 @@
 interface Props {
   id: string;
   name: string;
-  type?: 'text' | 'email' | 'password' | 'tel' | 'url' | 'number' | 'date';
+  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url';
   placeholder?: string;
   required?: boolean;
-  minLength?: number;
-  maxLength?: number;
-  pattern?: string;
-  title?: string;
   value?: string;
   disabled?: boolean;
-  isInvalid?: boolean; // Added for error state styling based on design system
-  errorMessageId?: string; // Optional ID for an associated error message element for accessibility
+  autocomplete?: string;
+  'aria-describedby'?: string;
+  'aria-invalid'?: boolean;
 }
 
 const {
@@ -21,25 +18,13 @@ const {
   type = 'text',
   placeholder,
   required = false,
-  minLength,
-  maxLength,
-  pattern,
-  title,
   value,
   disabled = false,
-  isInvalid = false, // Default to false, controlled by parent form component
-  errorMessageId,
+  autocomplete,
+  'aria-describedby': ariaDescribedby,
+  'aria-invalid': ariaInvalid = false,
+  ...rest
 } = Astro.props;
-
-// Dynamically build the class string to apply error styling if isInvalid is true
-const inputClasses = [
-  "w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-surface text-text text-base transition-colors duration-200",
-  "disabled:bg-background disabled:cursor-not-allowed disabled:text-textSubtle", // Disabled styles
-  isInvalid ? "border-error" : "border-border" // Conditional border color based on validation state
-].join(" ");
-
-// Conditionally apply aria-describedby attribute only if an errorMessageId is provided
-const ariaDescribedByAttrs = errorMessageId ? { 'aria-describedby': errorMessageId } : {};
 ---
 
 <input
@@ -48,12 +33,17 @@ const ariaDescribedByAttrs = errorMessageId ? { 'aria-describedby': errorMessage
   type={type}
   placeholder={placeholder}
   required={required}
-  minlength={minLength}
-  maxlength={maxLength}
-  pattern={pattern}
-  title={title}
   value={value}
   disabled={disabled}
-  class={inputClasses}
-  {...ariaDescribedByAttrs}
+  autocomplete={autocomplete}
+  aria-describedby={ariaDescribedby}
+  aria-invalid={ariaInvalid}
+  class:list={[
+    "w-full px-4 py-3 border rounded-md text-text-dark bg-surface",
+    "border-border placeholder-text-muted focus:outline-none",
+    "focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-transparent",
+    disabled && "bg-background cursor-not-allowed text-text-subtle",
+    ariaInvalid && "border-error focus-visible:ring-error"
+  ]}
+  {...rest}
 />

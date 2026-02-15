@@ -1,165 +1,176 @@
 ---
-import BaseLayout from '@layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CtaBlock from '@/components/sections/CtaBlock.astro';
 import { Image } from 'astro:assets';
-import Button from '@components/ui/Button.astro';
-import handyHero from '@images/services/handy-hero.webp'; // Example image
-import drywallRepair from '@images/handy-services/drywall-repair.webp';
-import minorCarpentry from '@images/handy-services/minor-carpentry.webp';
-import fixtureInstallation from '@images/handy-services/fixture-installation.webp';
+import { generateServiceSchema } from '@/utils/seo';
+
+const handyService = await getEntry('services', 'handy');
+
+if (!handyService) {
+  return Astro.redirect('/404');
+}
+
+const { data: service } = handyService;
+
+const pageSeo = {
+  title: service.seo.title,
+  description: service.seo.description,
+  keywords: service.seo.keywords,
+  ogImage: service.featuredImage.src
+};
 ---
 
-<BaseLayout
-  title="Handy Services"
-  description="Reliable handyman services for home repairs and maintenance in San Diego County. Drywall, carpentry, pressure washing, and more by Joe the Painter."
->
-  <main id="main-content">
-    <section class="bg-background py-16 md:py-24" aria-labelledby="handy-services-title">
-      <div class="container mx-auto px-4 max-w-5xl text-center">
-        <h1 id="handy-services-title" class="font-heading text-5xl md:text-6xl font-bold text-text mb-6">
-          Reliable Handy Services
+<BaseLayout seo={pageSeo}>
+  <Fragment slot="head-schema">
+    <script type="application/ld+json">
+      {JSON.stringify(generateServiceSchema(Astro, {
+        title: service.title,
+        shortDescription: service.shortDescription,
+        featuredImage: service.featuredImage
+      }))}
+    </script>
+  </Fragment>
+
+  <section class="relative bg-background pt-16 pb-12 overflow-hidden">
+    <div class="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
+      <div class="text-center md:text-left">
+        <h1 class="text-4xl md:text-5xl font-heading font-bold text-text-dark mb-6">
+          {service.title}
         </h1>
-        <p class="text-lg md:text-xl text-textMuted mb-8 leading-relaxed">
-          Beyond exceptional painting, Joe the Painter is your trusted partner for a wide array of home and business repairs and maintenance tasks. Get it fixed right, the first time.
+        <p class="text-lg md:text-xl text-text-muted mb-8">
+          {service.shortDescription}
         </p>
+        <div class="flex justify-center md:justify-start">
+          <a href="/contact" class="btn btn-primary btn-lg">
+            {service.ctaText}
+          </a>
+        </div>
+      </div>
+      <div class="relative w-full h-64 md:h-96 rounded-lg shadow-xl overflow-hidden">
         <Image
-          src={handyHero}
-          alt="Man fixing a broken fence, showing general handyman work"
-          width={1000}
+          src={service.featuredImage.src}
+          alt={service.featuredImage.alt}
+          width={800}
           height={600}
-          class="rounded-lg shadow-lg w-full h-auto object-cover mt-12"
+          class="w-full h-full object-cover"
           loading="eager"
         />
+        {service.featuredImage.caption && (
+          <p class="absolute bottom-4 left-4 text-sm text-white bg-black bg-opacity-50 px-3 py-1 rounded-md">
+            {service.featuredImage.caption}
+          </p>
+        )}
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Why Choose Joe for Handy Services -->
-    <section class="bg-surface py-16 md:py-24" aria-labelledby="why-joe-handy-heading">
-      <div class="container mx-auto px-4 max-w-4xl text-center">
-        <h2 id="why-joe-handy-heading" class="font-heading text-3xl md:text-4xl font-bold text-text mb-8">
-          Your Go-To Professional for Home Repairs
+  <section class="container mx-auto px-4 py-16 md:py-24">
+    <div class="prose lg:prose-lg max-w-none text-text-dark">
+      <h2 class="font-heading text-3xl font-semibold mb-6">What We Offer</h2>
+      <Fragment set:html={service.longDescription} />
+    </div>
+
+    {service.benefits && service.benefits.length > 0 && (
+      <div class="mt-16">
+        <h2 class="text-3xl font-heading font-semibold text-text-dark mb-8 text-center">
+          Why Choose Joe for Your Handy Project?
         </h2>
-        <p class="text-lg text-textMuted mb-10 leading-relaxed">
-          As a licensed contractor, I bring the same level of integrity, attention to detail, and craftsmanship to every repair and maintenance task. With Joe, you get the convenience of a single, trusted professional for both your painting and essential handyman needs.
-        </p>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div class="p-6 bg-background rounded-lg shadow-sm">
-            <h3 class="font-heading text-2xl font-semibold text-primary mb-3">Licensed Reliability</h3>
-            <p class="text-textMuted">
-              Work with a professional who is fully licensed and committed to high standards.
-            </p>
-          </div>
-          <div class="p-6 bg-background rounded-lg shadow-sm">
-            <h3 class="font-heading text-2xl font-semibold text-primary mb-3">Efficient Solutions</h3>
-            <p class="text-textMuted">
-              Quick, effective, and lasting repairs that save you time and hassle.
-            </p>
-          </div>
-          <div class="p-6 bg-background rounded-lg shadow-sm">
-            <h3 class="font-heading text-2xl font-semibold text-primary mb-3">Seamless Integration</h3>
-            <p class="text-textMuted">
-              The perfect partner for pre-paint repairs and general home maintenance.
-            </p>
-          </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {service.benefits.map((benefit) => (
+            <div class="bg-surface p-6 rounded-lg shadow-md flex items-start space-x-4">
+              <svg class="w-6 h-6 text-primary flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <p class="text-lg text-text-dark">{benefit}</p>
+            </div>
+          ))}
         </div>
       </div>
-    </section>
+    )}
 
-    <!-- Specific Handy Services Offered -->
-    <section class="bg-background py-16 md:py-24" aria-labelledby="specific-handy-services-heading">
-      <div class="container mx-auto px-4 max-w-5xl">
-        <h2 id="specific-handy-services-heading" class="font-heading text-3xl md:text-4xl font-bold text-text mb-10 text-center">
-          Comprehensive Handy Services
+    {service.processSteps && service.processSteps.length > 0 && (
+      <div class="mt-16 md:mt-24">
+        <h2 class="text-3xl font-heading font-semibold text-text-dark mb-12 text-center">
+          Our Reliable Handy Process
         </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          <div class="bg-surface rounded-lg shadow-md overflow-hidden">
-            <Image
-              src={drywallRepair}
-              alt="Close-up of a perfectly repaired and sanded drywall patch"
-              width={400}
-              height={250}
-              class="w-full h-48 object-cover"
-              loading="lazy"
-            />
-            <div class="p-6">
-              <h3 class="font-heading text-2xl font-semibold text-text mb-3">Drywall Repair</h3>
-              <p class="text-textMuted leading-relaxed">
-                From small holes to larger sections, I provide seamless drywall repair, ready for a fresh coat of paint.
-              </p>
+        <div class="grid lg:grid-cols-2 gap-12">
+          {service.processSteps.map((step, index) => (
+            <div class="flex flex-col md:flex-row items-start space-x-6">
+              <div class="flex-shrink-0 text-primary text-5xl font-bold font-heading mb-4 md:mb-0">
+                {String(index + 1).padStart(2, '0')}
+              </div>
+              <div>
+                <h3 class="text-2xl font-heading font-semibold text-text-dark mb-3">
+                  {step.title}
+                </h3>
+                <p class="text-lg text-text-muted">{step.description}</p>
+                {step.image && (
+                  <Image
+                    src={step.image.src}
+                    alt={step.image.alt}
+                    width={400}
+                    height={300}
+                    class="mt-6 rounded-lg shadow-md"
+                    loading="lazy"
+                  />
+                )}
+              </div>
             </div>
-          </div>
-
-          <div class="bg-surface rounded-lg shadow-md overflow-hidden">
-            <Image
-              src={minorCarpentry}
-              alt="Carpenter working on minor wood trim repair with tools"
-              width={400}
-              height={250}
-              class="w-full h-48 object-cover"
-              loading="lazy"
-            />
-            <div class="p-6">
-              <h3 class="font-heading text-2xl font-semibold text-text mb-3">Minor Carpentry</h3>
-              <p class="text-textMuted leading-relaxed">
-                Baseboard installation, trim repair, door adjustments, and other small wood-working tasks.
-              </p>
-            </div>
-          </div>
-
-          <div class="bg-surface rounded-lg shadow-md overflow-hidden">
-            <Image
-              src={fixtureInstallation}
-              alt="New light fixture being installed on a ceiling"
-              width={400}
-              height={250}
-              class="w-full h-48 object-cover"
-              loading="lazy"
-            />
-            <div class="p-6">
-              <h3 class="font-heading text-2xl font-semibold text-text mb-3">Fixture Installation</h3>
-              <p class="text-textMuted leading-relaxed">
-                Expert installation of light fixtures, ceiling fans, shelving, and curtain rods.
-              </p>
-            </div>
-          </div>
-
-          <div class="bg-surface rounded-lg shadow-md p-6">
-            <h3 class="font-heading text-2xl font-semibold text-text mb-3">Pressure Washing</h3>
-            <p class="text-textMuted leading-relaxed">
-              Clean and rejuvenate your home's exterior, driveways, and patios.
-            </p>
-          </div>
-
-          <div class="bg-surface rounded-lg shadow-md p-6">
-            <h3 class="font-heading text-2xl font-semibold text-text mb-3">Deck Staining & Sealing</h3>
-            <p class="text-textMuted leading-relaxed">
-              Protect and enhance your outdoor living spaces with professional staining.
-            </p>
-          </div>
-
-          <div class="bg-surface rounded-lg shadow-md p-6">
-            <h3 class="font-heading text-2xl font-semibold text-text mb-3">General Repairs</h3>
-            <p class="text-textMuted leading-relaxed">
-              Tackle your home's to-do list, from fence repairs to screen door fixes and more.
-            </p>
-          </div>
+          ))}
         </div>
       </div>
-    </section>
+    )}
 
-    <!-- Call to Action -->
-    <section class="bg-primary text-surface py-16 md:py-20 text-center" aria-labelledby="handy-cta-heading">
-      <div class="container mx-auto px-4 max-w-3xl">
-        <h2 id="handy-cta-heading" class="font-heading text-4xl md:text-5xl font-bold mb-6">
-          Need a Helping Hand with Home Repairs?
+    {service.galleryImages && service.galleryImages.length > 0 && (
+      <div class="mt-16 md:mt-24">
+        <h2 class="text-3xl font-heading font-semibold text-text-dark mb-8 text-center">
+          Recent Handy Projects
         </h2>
-        <p class="text-lg md:text-xl mb-8">
-          Contact Joe today to discuss your project and discover the difference a trusted craftsman makes.
-        </p>
-        <Button href="/contact" variant="outline" size="lg">
-          Discuss Your Handy Project
-        </Button>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {service.galleryImages.map((img) => (
+            <div class="rounded-lg shadow-md overflow-hidden">
+              <Image
+                src={img.src}
+                alt={img.alt}
+                width={600}
+                height={450}
+                class="w-full h-auto object-cover"
+                loading="lazy"
+              />
+              {img.caption && (
+                <p class="text-sm text-text-muted p-4">{img.caption}</p>
+              )}
+            </div>
+          ))}
+        </div>
+        <div class="text-center mt-12">
+          <a href="/our-work" class="btn btn-secondary btn-lg">
+            View Full Portfolio &rarr;
+          </a>
+        </div>
       </div>
-    </section>
-  </main>
+    )}
+
+    {service.faqs && service.faqs.length > 0 && (
+      <div class="mt-16 md:mt-24">
+        <h2 class="text-3xl font-heading font-semibold text-text-dark mb-8 text-center">
+          Frequently Asked Questions
+        </h2>
+        <div class="space-y-4 max-w-2xl mx-auto">
+          {service.faqs.map((faq) => (
+            <details class="bg-surface p-6 rounded-lg shadow-sm group">
+              <summary class="flex justify-between items-center cursor-pointer text-xl font-medium text-text-dark">
+                {faq.question}
+                <svg class="w-6 h-6 transform transition-transform duration-200 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+              </summary>
+              <p class="mt-4 text-text-muted leading-relaxed">
+                {faq.answer}
+              </p>
+            </details>
+          ))}
+        </div>
+      </div>
+    )}
+  </section>
+
+  <CtaBlock />
 </BaseLayout>
----

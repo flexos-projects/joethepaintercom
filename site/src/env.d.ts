@@ -1,14 +1,12 @@
----
+/// <reference path="../.astro/types.d.ts" />
 /// <reference types="astro/client" />
-/// <reference types="astro/content" />
 
 interface ImportMetaEnv {
-  readonly PUBLIC_GA_MEASUREMENT_ID: string;
   readonly FORMSPREE_ENDPOINT_URL: string;
-  // Add other environment variables here
+  readonly PUBLIC_GA_MEASUREMENT_ID: string;
+  readonly PUBLIC_RECAPTCHA_SITE_KEY: string; // Added for TASK-025
 }
 
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
----

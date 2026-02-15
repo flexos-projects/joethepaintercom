@@ -1,21 +1,21 @@
 {
-  "category": "General Business",
+  "category": "General Business FAQs",
   "questions": [
     {
-      "question": "Are you licensed and insured?",
-      "answer": "Yes, Joe the Painter is a fully licensed C33 Painting and Decorating contractor (CA Lic. # 802167) and is fully insured for your peace of mind. You can verify the license directly with the California Contractors State License Board (CSLB) at [cslb.ca.gov](https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=802167)."
+      "question": "Is Joe the Painter licensed and insured?",
+      "answer": "Yes, Joe the Painter is a fully licensed C33 Painting and Decorating contractor (CA Lic. # 802167) and is fully insured for your peace of mind. You can verify my license directly on the California Contractors State License Board website."
     },
     {
       "question": "What areas do you serve?",
-      "answer": "Joe the Painter proudly serves homeowners and small businesses across **Central and North San Diego County**, including Carlsbad, Encinitas, Vista, San Marcos, Oceanside, Escondido, Poway, Rancho Bernardo, Del Mar, and Solana Beach."
+      "answer": "We proudly serve homeowners and small businesses across Central and North San Diego County, including Carlsbad, Encinitas, Vista, San Marcos, Oceanside, Escondido, Poway, Rancho Bernardo, Del Mar, and Solana Beach."
     },
     {
       "question": "How do I get a free estimate?",
-      "answer": "Getting a free, no-obligation estimate is easy! Simply fill out our 'Book a Free Consultation' form on any page, or call Joe directly at `(760) 580-8173`. Joe will personally discuss your project and schedule a convenient time for an on-site assessment."
+      "answer": "Getting a free, no-obligation estimate is easy! Simply fill out the 'Book a Free Consultation' form on our website, or give Joe a call directly at (760) 580-8173. We'll discuss your project and schedule a convenient time to assess your needs."
     },
     {
-      "question": "What are your operating hours?",
-      "answer": "Joe the Painter typically operates Monday through Friday, from 8:00 AM to 5:00 PM. Project scheduling can be flexible to accommodate your specific needs, so please discuss your preferred times during your consultation."
+      "question": "What makes Joe the Painter different from other contractors?",
+      "answer": "With over 25 years of licensed experience, Joe personally oversees and performs every project, ensuring unparalleled attention to detail, clear communication, and a level of personal accountability that larger companies can't match. Plus, we offer seamless integration of expert painting and essential handyman services."
     }
   ]
 }

@@ -1,113 +1,84 @@
 ---
-import BaseLayout from '@layouts/BaseLayout.astro';
-import TestimonialCard from '@components/TestimonialCard.astro';
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import TestimonialCard from '@/components/TestimonialCard.astro';
+import CtaBlock from '@/components/sections/CtaBlock.astro';
+import { generateLocalBusinessSchema, generateReviewSchema } from '@/utils/seo';
 
-const allTestimonials = [
-  {
-    quote: "Joe did an incredible job painting our home's exterior. His attention to detail and prep work were outstanding. It looks brand new!",
-    clientName: 'Sarah L.',
-    clientLocation: 'Homeowner, Encinitas',
-    projectType: 'Exterior Painting',
-  },
-  {
-    quote: "We've hired Joe for multiple handy projects around our office. Always reliable, professional, and gets the job done right. Highly recommend!",
-    clientName: 'Mark D.',
-    clientLocation: 'Small Business Owner, Carlsbad',
-    projectType: 'Handy Services',
-  },
-  {
-    quote: "Our kitchen cabinets were completely transformed! Joe's refinishing work is meticulous, and the finish is absolutely perfect. So happy with the results.",
-    clientName: 'Jessica R.',
-    clientLocation: 'Homeowner, San Marcos',
-    projectType: 'Cabinet Refinishing',
-  },
-  {
-    quote: "Joe painted our entire interior and fixed several drywall issues. It was a seamless process, and he was a pleasure to work with. True craftsman!",
-    clientName: 'David P.',
-    clientLocation: 'Homeowner, Vista',
-    projectType: 'Interior Painting & Drywall Repair',
-  },
-  {
-    quote: "Prompt, professional, and the quality of work is unmatched. Joe is our go-to for any painting or repair needs. He truly cares about his clients.",
-    clientName: 'Emily S.',
-    clientLocation: 'Repeat Client, Oceanside',
-    projectType: 'Various Projects',
-  },
-  {
-    quote: "Finding a reliable handyman who also paints is a game-changer. Joe saved us so much time and hassle. Fantastic work on our rental property!",
-    clientName: 'Robert M.',
-    clientLocation: 'Property Manager, Escondido',
-    projectType: 'Maintenance & Painting',
-  },
-  {
-    quote: "The exterior of our commercial building needed a major refresh. Joe handled it efficiently and the results were beyond our expectations. Very professional.",
-    clientName: 'Karen T.',
-    clientLocation: 'Business Owner, Poway',
-    projectType: 'Commercial Exterior Painting',
-  },
-  {
-    quote: "Every detail was perfect, from the color consultation to the final cleanup. Joe is truly a master of his craft. Our home feels brand new.",
-    clientName: 'Michael B.',
-    clientLocation: 'Homeowner, Del Mar',
-    projectType: 'Full Interior Painting',
-  },
-];
+const allTestimonials = await getCollection('testimonials');
 
-const averageRating = 5.0;
-const totalReviews = allTestimonials.length;
+// Sort by date, newest first
+const sortedTestimonials = allTestimonials.sort((a, b) => (b.data.date?.valueOf() || 0) - (a.data.date?.valueOf() || 0));
+
+// Calculate aggregate rating for LocalBusiness schema
+let totalRating = 0;
+let reviewCount = 0;
+if (allTestimonials.length > 0) {
+  allTestimonials.forEach(t => {
+    totalRating += t.data.rating;
+    reviewCount++;
+  });
+}
+const aggregateRating = reviewCount > 0 ? {
+  ratingValue: parseFloat((totalRating / reviewCount).toFixed(1)),
+  reviewCount: reviewCount,
+} : undefined;
+
+const pageSeo = {
+  title: "Client Testimonials & Reviews | Joe the Painter",
+  description: "Read what satisfied clients in San Diego County say about Joe the Painter's meticulous craftsmanship, reliability, and personal service for painting and handyman projects.",
+  keywords: ["client reviews", "joe the painter testimonials", "san diego painter reviews", "handyman reviews", "customer satisfaction"],
+  ogImage: "/images/social-share-testimonials.jpg" // Placeholder for testimonials image
+};
 ---
 
-<BaseLayout
-  title="Client Testimonials"
-  description="Read honest reviews and testimonials from satisfied homeowners and business owners who chose Joe the Painter for their painting and handyman needs in San Diego County."
->
-  <main id="main-content">
-    <section class="bg-background py-16 md:py-24" aria-labelledby="testimonials-page-title">
-      <div class="container mx-auto px-4 max-w-5xl text-center">
-        <h1 id="testimonials-page-title" class="font-heading text-5xl md:text-6xl font-bold text-text mb-6">
-          Hear From Our Happy Clients
-        </h1>
-        <p class="text-lg md:text-xl text-textMuted mb-8 leading-relaxed max-w-3xl mx-auto">
-          Our commitment to superior craftsmanship and personal service is reflected in every project. Read what homeowners and businesses across San Diego County have to say about working with Joe the Painter.
+<BaseLayout seo={pageSeo}>
+  <Fragment slot="head-schema">
+    <script type="application/ld+json">
+      {JSON.stringify(generateLocalBusinessSchema(Astro, sortedTestimonials.map(t => generateReviewSchema(t.data)), aggregateRating))}
+    </script>
+  </Fragment>
+
+  <section class="container mx-auto px-4 py-16 md:py-24">
+    <h1 class="text-center text-4xl md:text-5xl font-heading font-bold text-text-dark mb-12">
+      What Our Clients Say
+    </h1>
+    <p class="text-center text-lg md:text-xl text-text-muted max-w-3xl mx-auto mb-16">
+      Our reputation is built on trust, quality, and exceptional service. Read authentic testimonials from homeowners and businesses across San Diego County who have experienced the Joe the Painter difference.
+    </p>
+
+    {aggregateRating && (
+      <div class="text-center mb-12">
+        <p class="text-accent text-5xl font-bold leading-none mb-2">
+          {aggregateRating.ratingValue} <span class="text-xl">/ 5</span>
         </p>
-
-        <!-- Aggregated Rating Display -->
-        <div class="flex items-center justify-center gap-3 mb-12" aria-label={`Average rating ${averageRating} out of 5 stars from ${totalReviews} reviews`}>
-          <div class="flex text-accent" role="img" aria-label={`${averageRating} stars`}>
-            {Array(Math.floor(averageRating)).fill(null).map(() => (
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.538 1.118l-2.8-2.034a1 1 0 00-1.176 0l-2.8 2.034c-.783.57-1.838-.197-1.538-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.462a1 1 0 00.95-.69l1.07-3.292z" />
-              </svg>
-            ))}
-            {/* Handle half stars if needed */}
-          </div>
-          <p class="text-textMuted text-lg font-medium">
-            <span class="sr-only">Average rating</span> {averageRating} / 5.0 from {totalReviews} reviews
-          </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {allTestimonials.map((testimonial) => (
-            <TestimonialCard {...testimonial} />
+        <div class="flex justify-center items-center space-x-1 mb-3">
+          {Array.from({ length: Math.round(aggregateRating.ratingValue) }).map(() => (
+            <svg class="w-6 h-6 text-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+          ))}
+          {Array.from({ length: 5 - Math.round(aggregateRating.ratingValue) }).map(() => (
+            <svg class="w-6 h-6 text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
           ))}
         </div>
-
-        <div class="mt-16 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <p class="text-lg text-textMuted">Ready to share your experience?</p>
-          <a
-            href="https://g.page/joe-the-painter/review?rc"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center px-6 py-3 bg-primary text-surface rounded-md font-semibold hover:bg-primary-dark transition-all duration-150"
-            aria-label="Leave a review for Joe the Painter on Google (opens in new tab)"
-          >
-            Leave a Review on Google
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-          </a>
-        </div>
+        <p class="text-text-muted">Based on {aggregateRating.reviewCount} reviews</p>
       </div>
-    </section>
-  </main>
+    )}
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      {sortedTestimonials.map(testimonial => (
+        <TestimonialCard testimonial={testimonial.data} />
+      ))}
+    </div>
+
+    <div class="text-center mt-16">
+      <h2 class="text-3xl font-heading font-semibold text-text-dark mb-6">
+        Ready to Experience the Difference?
+      </h2>
+      <a href="/contact" class="btn btn-primary btn-lg">
+        Book Your Free Consultation Today &rarr;
+      </a>
+    </div>
+  </section>
+
+  <CtaBlock />
 </BaseLayout>

@@ -1,182 +1,36 @@
 ---
 import { getCollection } from 'astro:content';
-import BaseLayout from '@layouts/BaseLayout.astro';
-import BlogPostCard from '@components/blog/BlogPostCard.astro';
-import BlogSearch from '@components/blog/BlogSearch.astro';
-import BlogCategoryFilter from '@components/blog/BlogCategoryFilter.astro';
-import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import BlogPostCard from '@/components/BlogPostCard.astro';
+import CtaBlock from '@/components/sections/CtaBlock.astro';
 
 // Get all non-draft posts, sorted by date
-const allPosts = (await getCollection('blog', ({ data }) => !data.draft))
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-// Extract unique tags for categories
-const allTags = [...new Set(allPosts.flatMap(post => post.data.tags))];
-
-// Stringify all posts data for client-side filtering.
-// Only pass necessary data to avoid bloating the client-side script with full content.
-const initialPosts = JSON.stringify(allPosts.map(post => ({
-  slug: post.slug,
-  data: {
-    title: post.data.title,
-    description: post.data.description,
-    pubDate: post.data.pubDate, // Date object needs to be handled on client side if used for sorting/display
-    tags: post.data.tags,
-    image: post.data.image,
-    author: post.data.author,
-  },
-})));
-
-const pageTitle = "Joe's Insights & Articles";
-const pageDescription = "Stay informed with Joe the Painter's latest articles on painting, home maintenance, and contractor insights. Your trusted source for expert advice in San Diego County.";
+const pageSeo = {
+  title: "Joe the Painter Blog | Painting Tips & Home Maintenance Insights",
+  description: "Explore Joe the Painter's blog for expert tips on interior and exterior painting, handyman advice, color selection guides, and home maintenance insights for San Diego homeowners.",
+  keywords: ["painting blog", "home maintenance tips", "san diego painter advice", "diy painting", "contractor insights"],
+  ogImage: "/images/social-share-blog.jpg" // Placeholder for blog index OG
+};
 ---
 
-<BaseLayout title={pageTitle} description={pageDescription}>
-  <main class="container mx-auto px-4 py-12 md:py-16 lg:py-20 max-w-7xl">
-    <h1 class="text-4xl lg:text-5xl font-heading font-bold text-neutral-800 mb-6 lg:mb-8">
-      {pageTitle}
+<BaseLayout seo={pageSeo}>
+  <section class="container mx-auto px-4 py-16 md:py-24">
+    <h1 class="text-center text-4xl md:text-5xl font-heading font-bold text-text-dark mb-12">
+      Joe's Insights: Blog & Resources
     </h1>
-    <p class="text-lg text-neutral-500 font-body mb-10 max-w-2xl">
-      {pageDescription}
+    <p class="text-center text-lg md:text-xl text-text-muted max-w-3xl mx-auto mb-16">
+      Stay informed with expert tips, advice, and inspiration from Joe the Painter. From choosing the perfect paint color to essential home maintenance, we share our decades of knowledge with you.
     </p>
 
-    <div class="flex flex-col md:flex-row gap-6 mb-12 items-start">
-      <div class="w-full md:w-1/3 lg:w-1/4">
-        <BlogSearch id="blog-search-input" />
-      </div>
-      <div class="w-full md:flex-1">
-        <BlogCategoryFilter id="blog-category-filter" allCategories={allTags} client:load />
-      </div>
-    </div>
-
-    <section id="blog-posts-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {allPosts.map((post) => (
-        <div data-post-slug={post.slug} data-post-tags={post.data.tags.join(',')} data-post-title={post.data.title.toLowerCase()} data-post-description={post.data.description.toLowerCase()}>
-          <BlogPostCard post={post} />
-        </div>
+    <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+      {posts.map((post) => (
+        <BlogPostCard post={post} />
       ))}
-    </section>
-
-    <div id="no-results-message" class="hidden text-center py-16 text-neutral-500 text-lg">
-      <p>No blog posts found matching your criteria.</p>
-      <p class="mt-2">Try a different search term or category.</p>
     </div>
-  </main>
+  </section>
+
+  <CtaBlock />
 </BaseLayout>
-
-<script is:inline>
-  // Parse the stringified JSON data passed from the Astro frontmatter
-  const allPostsData = JSON.parse(`${initialPosts}`);
-  const blogPostsContainer = document.getElementById('blog-posts-container');
-  const blogSearchInput = document.getElementById('blog-search-input');
-  const blogCategoryFilter = document.getElementById('blog-category-filter');
-  const noResultsMessage = document.getElementById('no-results-message');
-
-  let currentSearchTerm = '';
-  let activeCategory = 'All';
-
-  // Function to render posts based on current filters
-  function renderFilteredPosts() {
-    const postElements = blogPostsContainer.querySelectorAll('[data-post-slug]');
-    let resultsFound = false;
-
-    postElements.forEach(postEl => {
-      const postSlug = postEl.dataset.postSlug;
-      const postData = allPostsData.find(p => p.slug === postSlug);
-
-      if (postData) {
-        const matchesSearch = !currentSearchTerm ||
-                              postData.data.title.toLowerCase().includes(currentSearchTerm) ||
-                              postData.data.description.toLowerCase().includes(currentSearchTerm) ||
-                              postData.data.tags.some(tag => tag.toLowerCase().includes(currentSearchTerm));
-
-        const matchesCategory = activeCategory === 'All' || postData.data.tags.includes(activeCategory);
-
-        if (matchesSearch && matchesCategory) {
-          postEl.classList.remove('hidden');
-          resultsFound = true;
-        } else {
-          postEl.classList.add('hidden');
-        }
-      }
-    });
-
-    // Show/hide no results message
-    if (noResultsMessage) {
-      if (resultsFound) {
-        noResultsMessage.classList.add('hidden');
-      } else {
-        noResultsMessage.classList.remove('hidden');
-      }
-    }
-
-    // Update URL parameters for persistence (optional, but good UX)
-    const url = new URL(window.location.href);
-    if (currentSearchTerm) {
-      url.searchParams.set('q', currentSearchTerm);
-    } else {
-      url.searchParams.delete('q');
-    }
-    if (activeCategory !== 'All') {
-      url.searchParams.set('category', activeCategory);
-    } else {
-      url.searchParams.delete('category');
-    }
-    window.history.replaceState({}, '', url);
-  }
-
-  // Event Listener for Search Input
-  blogSearchInput?.addEventListener('input', (event) => {
-    currentSearchTerm = (event.target as HTMLInputElement).value.toLowerCase();
-    renderFilteredPosts();
-  });
-
-  // Event Listener for Category Filters
-  blogCategoryFilter?.addEventListener('click', (event) => {
-    const target = event.target as HTMLElement;
-    if (target.tagName === 'BUTTON' && target.dataset.category) {
-      activeCategory = target.dataset.category;
-
-      // Update active state visually
-      blogCategoryFilter.querySelectorAll('button').forEach(button => {
-        if (button.dataset.category === activeCategory) {
-          button.classList.add('bg-primary', 'text-white', 'shadow-md', 'hover:bg-primary-dark');
-          button.classList.remove('bg-neutral-100', 'text-neutral-800', 'hover:bg-neutral-200');
-          button.setAttribute('aria-pressed', 'true');
-        } else {
-          button.classList.remove('bg-primary', 'text-white', 'shadow-md', 'hover:bg-primary-dark');
-          button.classList.add('bg-neutral-100', 'text-neutral-800', 'hover:bg-neutral-200');
-          button.setAttribute('aria-pressed', 'false');
-        }
-      });
-      renderFilteredPosts();
-    }
-  });
-
-  // Initialize filters from URL on page load
-  document.addEventListener('DOMContentLoaded', () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const urlSearch = urlParams.get('q');
-    const urlCategory = urlParams.get('category');
-
-    if (urlSearch) {
-      currentSearchTerm = urlSearch.toLowerCase();
-      (blogSearchInput as HTMLInputElement).value = urlSearch;
-    }
-    if (urlCategory) {
-      activeCategory = urlCategory;
-    }
-
-    // Manually trigger click on category button to set visual state and filter
-    if (blogCategoryFilter) {
-      const initialCategoryButton = blogCategoryFilter.querySelector(`button[data-category="${activeCategory}"]`) as HTMLButtonElement;
-      if (initialCategoryButton) {
-        initialCategoryButton.click(); // This will also call renderFilteredPosts
-      } else {
-        renderFilteredPosts(); // If no matching category, just render with search
-      }
-    } else {
-      renderFilteredPosts(); // Fallback if filter component is not found
-    }
-  });
-</script>

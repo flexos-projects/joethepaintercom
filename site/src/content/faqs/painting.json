@@ -1,21 +1,17 @@
 {
-  "category": "Painting",
+  "category": "Painting FAQs",
   "questions": [
     {
-      "question": "What kind of paint brands do you use?",
-      "answer": "We exclusively use premium-quality paints from trusted brands like **Sherwin-Williams** and **Benjamin Moore**. We select specific products based on your project needs, surface type, and desired finish, prioritizing durability, color retention, and environmental safety (low-VOC options available)."
+      "question": "What type of paint do you use?",
+      "answer": "We primarily use high-quality, professional-grade paints from trusted brands like Sherwin-Williams and Benjamin Moore. The specific type (e.g., latex, oil-based, low-VOC) will be chosen based on the surface, desired finish, and environmental considerations for your project."
     },
     {
-      "question": "How do you prepare surfaces for painting?",
-      "answer": "Meticulous preparation is the cornerstone of a lasting finish. Our process includes thorough cleaning, scraping loose paint, sanding, patching holes and cracks, repairing drywall, and applying high-quality primers where necessary. We also protect all non-painted surfaces (flooring, furniture, landscaping) with masking and drop cloths."
+      "question": "Do I need to prepare my home before painting?",
+      "answer": "While we ask clients to remove small, delicate items and clear pathways, Joe the Painter handles all the heavy lifting for preparation. This includes moving and covering large furniture, protecting floors, patching, sanding, and priming surfaces to ensure a flawless finish. Your convenience is our priority!"
     },
     {
-      "question": "Do I need to move furniture before interior painting?",
-      "answer": "While we appreciate clients moving small, delicate, or valuable items, Joe the Painter will handle the moving and covering of larger furniture and flooring to protect them throughout the painting process. We ensure everything is returned to its original place upon completion."
-    },
-    {
-      "question": "How long does a typical painting project take?",
-      "answer": "The duration of a painting project varies greatly depending on the size of the area, the complexity of the work, and the extent of surface preparation required. During your free consultation, Joe will provide a detailed timeline specific to your project, ensuring clear expectations."
+      "question": "How long does a painting project typically take?",
+      "answer": "The duration varies greatly depending on the scope of work, size of the area, and complexity. During your free consultation, Joe will provide a detailed timeline and keep you informed every step of the way to minimize disruption."
     }
   ]
 }

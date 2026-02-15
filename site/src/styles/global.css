@@ -2,110 +2,206 @@
 @tailwind components;
 @tailwind utilities;
 
-/* --- Custom Font Faces --- */
-
-/* Lora - Headings */
-@font-face {
-  font-family: 'Lora';
-  src: url('/fonts/Lora-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-display: swap;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Lora';
-  src: url('/fonts/Lora-Medium.woff2') format('woff2');
-  font-weight: 500;
-  font-display: swap;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Lora';
-  src: url('/fonts/Lora-SemiBold.woff2') format('woff2');
-  font-weight: 600;
-  font-display: swap;
-  font-style: normal;
-}
-
+/* Custom font imports */
 @font-face {
   font-family: 'Lora';
   src: url('/fonts/Lora-Bold.woff2') format('woff2');
   font-weight: 700;
-  font-display: swap;
   font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Lora';
+  src: url('/fonts/Lora-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Lora';
+  src: url('/fonts/Lora-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Lora';
+  src: url('/fonts/Lora-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
-/* Inter - Body */
 @font-face {
   font-family: 'Inter';
   src: url('/fonts/Inter-Regular.woff2') format('woff2');
   font-weight: 400;
-  font-display: swap;
   font-style: normal;
+  font-display: swap;
 }
-
 @font-face {
   font-family: 'Inter';
   src: url('/fonts/Inter-Medium.woff2') format('woff2');
-  font-weight: 50-0;
-  font-display: swap;
+  font-weight: 500;
   font-style: normal;
+  font-display: swap;
 }
-
 @font-face {
   font-family: 'Inter';
   src: url('/fonts/Inter-SemiBold.woff2') format('woff2');
   font-weight: 600;
-  font-display: swap;
   font-style: normal;
+  font-display: swap;
 }
-
 @font-face {
   font-family: 'Inter';
   src: url('/fonts/Inter-Bold.woff2') format('woff2');
   font-weight: 700;
-  font-display: swap;
   font-style: normal;
+  font-display: swap;
 }
 
-/* --- Base Styles --- */
+/* Global styles */
 html {
   scroll-behavior: smooth;
-  -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+  @apply text-text-dark antialiased; /* Apply base text color and anti-aliasing */
 }
 
 body {
-  font-family: theme('fontFamily.body');
-  color: theme('colors.neutral.900');
-  background-color: theme('colors.neutral.50');
-  line-height: theme('lineHeight.base');
-  @apply antialiased; /* Smoother font rendering */
+  @apply bg-background; /* Apply global background color */
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: theme('fontFamily.heading');
-  color: theme('colors.neutral.900');
-  line-height: theme('lineHeight.tight');
+/* Base text styles */
+p {
+  @apply text-base leading-relaxed mb-4;
 }
-
-h1 { @apply text-5xl md:text-6xl font-bold; }
-h2 { @apply text-4xl md:text-5xl font-bold; }
-h3 { @apply text-3xl md:text-4xl font-semibold; }
-h4 { @apply text-2xl md:text-3xl font-semibold; }
 
 a {
-  @apply text-primary-dark hover:text-primary transition-colors duration-150 ease-in-out;
-  text-decoration: none;
+  @apply text-primary hover:underline transition-colors duration-200; /* Default link styling */
 }
 
-/* Accessibility: Focus state for interactive elements */
-*:focus-visible {
-  @apply outline-none ring-2 ring-primary-light ring-offset-2;
+/* Ensure headings use the correct font family */
+h1, h2, h3, h4, h5, h6 {
+  @apply font-heading text-text-dark;
 }
 
-/* Reduced motion preference */
+/* Responsive heading scaling based on design system */
+h1 {
+  @apply text-5xl font-bold leading-tight;
+}
+@screen md {
+  h1 { @apply text-6xl; }
+}
+
+h2 {
+  @apply text-4xl font-bold leading-tight;
+}
+@screen md {
+  h2 { @apply text-5xl; }
+}
+
+h3 {
+  @apply text-3xl font-semibold leading-snug;
+}
+@screen md {
+  h3 { @apply text-4xl; }
+}
+
+h4 {
+  @apply text-2xl font-semibold leading-snug;
+}
+@screen md {
+  h4 { @apply text-3xl; }
+}
+
+/* Styles for the Prose component, if used (e.g., in blog posts) */
+.prose {
+  @apply max-w-none; /* Override default max-width to allow full container width */
+  color: var(--colors-text); /* Ensure prose uses our text color */
+}
+.prose h1, .prose h2, .prose h3, .prose h4 {
+  color: var(--colors-text); /* Ensure headings within prose use our text color */
+  @apply font-heading; /* Use heading font for prose headings */
+}
+.prose a {
+  @apply text-primary hover:underline;
+}
+.prose ul, .prose ol {
+  @apply list-inside;
+}
+.prose ul {
+  @apply list-disc;
+}
+.prose ol {
+  @apply list-decimal;
+}
+.prose li {
+  @apply mb-2;
+}
+.prose strong {
+  @apply font-semibold text-text-dark;
+}
+
+/* Custom utility for active navigation links */
+.nav-link.active {
+  @apply text-primary border-b-2 border-primary;
+}
+
+.mobile-nav-link.active {
+  @apply text-primary;
+}
+
+/* Custom CSS variables for color palette */
+:root {
+  --colors-primary: #0047AB;
+  --colors-primary-light: #3B82F6; /* Using info blue as a lighter primary variant for focus rings */
+  --colors-primary-dark: #003B8D;
+  --colors-primary-darker: #002A6B; /* Further darker for active states */
+  --colors-primary-rgb: 0, 71, 171; /* For transparent overlays */
+
+  --colors-secondary: #6B7280;
+  --colors-accent: #E5B80B;
+  --colors-accent-dark: #CC9E00;
+  --colors-accent-darker: #997A00; /* Further darker for active states */
+
+  --colors-background: #F9FAFB;
+  --colors-surface: #FFFFFF;
+  --colors-text: #1F2937;
+  --colors-text-muted: #6B7280;
+  --colors-text-subtle: #9CA3AF;
+  --colors-border: #E5E7EB;
+
+  --colors-error: #EF4444;
+  --colors-success: #10B981;
+  --colors-warning: #F59E0B;
+  --colors-info: #3B82F6;
+}
+
+/* Ensure accessibility for focus-visible ring color */
+.focus-visible\:ring-primary-light {
+  --tw-ring-color: var(--colors-primary-light);
+}
+
+/* Utility to hide content visually but keep for screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Global transitions for hover/focus states */
+* {
+  --tw-transition-duration: 300ms;
+  --tw-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Accessibility: Respect prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;

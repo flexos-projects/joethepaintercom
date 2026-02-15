@@ -1,10 +1,9 @@
 ---
-id: "client-testimonial-1"
-clientName: "Sarah M."
-location: "Carlsbad, CA"
-quote: "Joe painted our entire interior, and we couldn't be happier! His attention to detail is unmatched, and he was incredibly professional and tidy. Our home feels brand new. We've already recommended him to all our friends!"
+clientName: "Sarah P."
+location: "Homeowner, Carlsbad"
+quote: "Joe painted our entire home interior, and we couldn't be happier! His attention to detail is unmatched, and he was incredibly professional and tidy. It truly felt like a master craftsman was working on our home. The results are stunning!"
 projectType: "Interior Painting"
 rating: 5
-published: true
----
+date: 2024-01-25
+featured: true
 ---

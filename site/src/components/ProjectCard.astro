@@ -1,48 +1,40 @@
 ---
 import { Image } from 'astro:assets';
-import Button from './ui/Button.astro';
+import type { CollectionEntry } from 'astro:content';
 
 interface Props {
-  title: string;
-  location: string;
-  shortDescription: string;
-  imageUrl: string;
-  imageAlt: string;
-  href: string; // Link to the full project page
+  project: CollectionEntry<'projects'>;
 }
 
-const { title, location, shortDescription, imageUrl, imageAlt, href } = Astro.props;
+const { project } = Astro.props;
 ---
 
-<a href={href} class="block group bg-surface rounded-lg shadow-md overflow-hidden transition-all-colors-transform hover:shadow-lg hover:-translate-y-1 h-full" aria-label={`View project: ${title} in ${location}`}>
-  <div class="relative w-full h-48 overflow-hidden">
+<article class="bg-surface rounded-lg shadow-md overflow-hidden flex flex-col h-full group hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+  <div class="relative w-full h-56 overflow-hidden">
     <Image
-      src={imageUrl}
-      alt={imageAlt}
+      src={project.data.featuredImage.src}
+      alt={project.data.featuredImage.alt}
       width={600}
-      height={384}
-      class="w-full h-full object-cover transition-transform duration-normal ease-default group-hover:scale-105"
+      height={336}
+      class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
       loading="lazy"
     />
   </div>
-  <div class="p-6 flex flex-col justify-between h-[calc(100%-12rem)]">
-    <div>
-      <h3 class="font-heading text-xl font-semibold text-text mb-2 group-hover:text-primary transition-colors">
-        {title}
-      </h3>
-      <p class="text-sm text-textMuted mb-3">{location}</p>
-      <p class="text-base text-textMuted leading-relaxed">
-        {shortDescription}
-      </p>
-    </div>
-    <div class="mt-4">
-      <Button variant="ghost" size="sm" class="!justify-start !p-0" aria-hidden="true" tabindex="-1">
+  <div class="p-6 flex-grow flex flex-col">
+    <h3 class="text-xl font-heading font-semibold mb-2 text-text-dark leading-tight">
+      <a href={`/projects/${project.slug}`} class="hover:text-primary transition-colors duration-200">
+        {project.data.title}
+      </a>
+    </h3>
+    <p class="text-sm text-text-muted mb-3">{project.data.location}</p>
+    <p class="text-text-muted text-base flex-grow">
+      {project.data.shortDescription}
+    </p>
+    <div class="mt-6">
+      <a href={`/projects/${project.slug}`} class="text-primary font-medium hover:underline flex items-center group">
         View Project
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
-        </svg>
-      </Button>
+        <svg class="w-4 h-4 ml-1 transform translate-x-0 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+      </a>
     </div>
   </div>
-</a>
----
+</article>

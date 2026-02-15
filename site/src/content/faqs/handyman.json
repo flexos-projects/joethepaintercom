@@ -1,0 +1,17 @@
+{
+  "category": "Handyman Services FAQs",
+  "questions": [
+    {
+      "question": "What handyman services do you offer?",
+      "answer": "Joe offers a wide range of handy services, including drywall repair, minor carpentry, fence repair, fixture installation (lights, fans), pressure washing, deck staining, and general property maintenance. If you have a specific repair or maintenance need, please don't hesitate to ask during your consultation!"
+    },
+    {
+      "question": "Can you combine handyman services with a painting project?",
+      "answer": "Absolutely! This is one of Joe's unique strengths. We can seamlessly integrate essential repairs (like drywall patching or wood rot replacement) before beginning a painting project, ensuring a perfect, lasting finish without the hassle of coordinating multiple contractors."
+    },
+    {
+      "question": "Do you provide materials for handyman jobs?",
+      "answer": "For most handyman tasks, Joe can source and provide necessary materials (e.g., drywall compound, specific fixtures) at an agreed-upon cost, or you can provide them yourself. This will be discussed and clarified during the initial consultation."
+    }
+  ]
+}

@@ -1,88 +1,117 @@
 ---
-/**
- * FAQ Page
- * Displays a comprehensive list of Frequently Asked Questions,
- * categorized by General Business, Painting, and Handy Services.
- * Utilizes the Accordion component for an interactive Q&A experience.
- */
-
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import Accordion from '@/components/ui/Accordion.astro';
 import { getCollection } from 'astro:content';
-import { markdownToHtml } from '@/utils/markdown'; // Utility to convert markdown answers to HTML
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CtaBlock from '@/components/sections/CtaBlock.astro';
+import { generateFAQPageSchema } from '@/utils/seo';
 
-// Fetch FAQ content from the 'faqs' content collection
-const allFaqs = await getCollection('faqs');
+const generalFaqs = await getCollection('faqs', ({ id }) => id === 'general');
+const paintingFaqs = await getCollection('faqs', ({ id }) => id === 'painting');
+const handymanFaqs = await getCollection('faqs', ({ id }) => id === 'handyman');
 
-// Categorize FAQs
-const generalFaqs = allFaqs.filter(faq => faq.data.category === 'General Business').flatMap(collection => collection.data.questions);
-const paintingFaqs = allFaqs.filter(faq => faq.data.category === 'Painting').flatMap(collection => collection.data.questions);
-const handyFaqs = allFaqs.filter(faq => faq.data.category === 'Handy Services').flatMap(collection => collection.data.questions);
+// Combine all questions for the FAQPage schema
+const allQuestions = [
+  ...(generalFaqs[0]?.data.questions || []),
+  ...(paintingFaqs[0]?.data.questions || []),
+  ...(handymanFaqs[0]?.data.questions || []),
+];
 
-// Page SEO metadata
-const pageTitle = "Frequently Asked Questions | Joe the Painter: Your San Diego Craftsman Since 2001";
-const pageDescription = "Find answers to common questions about Joe the Painter's reliable painting and handyman services, process, and business practices in San Diego County.";
+const pageSeo = {
+  title: "Frequently Asked Questions | Joe the Painter",
+  description: "Find answers to common questions about Joe the Painter's licensed painting and handyman services, estimates, service areas, and more in San Diego County.",
+  keywords: ["FAQ painter san diego", "handyman questions", "licensed contractor faq", "painting process", "service area"],
+  ogImage: "/images/social-share-faq.jpg" // Placeholder for FAQ image
+};
 ---
 
-<BaseLayout title={pageTitle} description={pageDescription}>
-  <section class="max-w-4xl mx-auto px-4 py-16 md:py-24">
-    <h1 class="text-4xl md:text-5xl font-heading font-bold text-neutral-800 text-center mb-12">
+<BaseLayout seo={pageSeo}>
+  <Fragment slot="head-schema">
+    <script type="application/ld+json">
+      {JSON.stringify(generateFAQPageSchema(allQuestions))}
+    </script>
+  </Fragment>
+
+  <section class="container mx-auto px-4 py-16 md:py-24">
+    <h1 class="text-center text-4xl md:text-5xl font-heading font-bold text-text-dark mb-12">
       Frequently Asked Questions
     </h1>
+    <p class="text-center text-lg md:text-xl text-text-muted max-w-3xl mx-auto mb-16">
+      Have questions about our painting or handyman services? We've compiled a list of common inquiries to provide you with quick and helpful answers.
+    </p>
 
-    <!-- General Business FAQs Section -->
-    <div class="mb-16">
-      <h2 class="text-3xl md:text-4xl font-heading font-bold text-neutral-800 mb-8">
-        General Business FAQs
-      </h2>
-      {generalFaqs.length > 0 ? (
-        generalFaqs.map((faq, index) => (
-          <Accordion
-            question={faq.question}
-            answerHtml={markdownToHtml(faq.answer)}
-            questionId={`general-faq-${index}`}
-          />
-        ))
-      ) : (
-        <p class="text-neutral-500">No general FAQs available at this time. Please check back later!</p>
+    <div class="max-w-4xl mx-auto space-y-16">
+      {generalFaqs.length > 0 && (
+        <div>
+          <h2 class="text-3xl font-heading font-semibold text-text-dark mb-8 text-center">
+            {generalFaqs[0].data.category}
+          </h2>
+          <div class="space-y-4">
+            {generalFaqs[0].data.questions.map((faq) => (
+              <details class="bg-surface p-6 rounded-lg shadow-sm group">
+                <summary class="flex justify-between items-center cursor-pointer text-xl font-medium text-text-dark">
+                  {faq.question}
+                  <svg class="w-6 h-6 transform transition-transform duration-200 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </summary>
+                <p class="mt-4 text-text-muted leading-relaxed">
+                  {faq.answer}
+                </p>
+              </details>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {paintingFaqs.length > 0 && (
+        <div>
+          <h2 class="text-3xl font-heading font-semibold text-text-dark mb-8 text-center">
+            {paintingFaqs[0].data.category}
+          </h2>
+          <div class="space-y-4">
+            {paintingFaqs[0].data.questions.map((faq) => (
+              <details class="bg-surface p-6 rounded-lg shadow-sm group">
+                <summary class="flex justify-between items-center cursor-pointer text-xl font-medium text-text-dark">
+                  {faq.question}
+                  <svg class="w-6 h-6 transform transition-transform duration-200 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </summary>
+                <p class="mt-4 text-text-muted leading-relaxed">
+                  {faq.answer}
+                </p>
+              </details>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {handymanFaqs.length > 0 && (
+        <div>
+          <h2 class="text-3xl font-heading font-semibold text-text-dark mb-8 text-center">
+            {handymanFaqs[0].data.category}
+          </h2>
+          <div class="space-y-4">
+            {handymanFaqs[0].data.questions.map((faq) => (
+              <details class="bg-surface p-6 rounded-lg shadow-sm group">
+                <summary class="flex justify-between items-center cursor-pointer text-xl font-medium text-text-dark">
+                  {faq.question}
+                  <svg class="w-6 h-6 transform transition-transform duration-200 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </summary>
+                <p class="mt-4 text-text-muted leading-relaxed">
+                  {faq.answer}
+                </p>
+              </details>
+            ))}
+          </div>
+        </div>
       )}
     </div>
 
-    <!-- Painting Services FAQs Section -->
-    <div class="mb-16">
-      <h2 class="text-3xl md:text-4xl font-heading font-bold text-neutral-800 mb-8">
-        Painting Services FAQs
+    <div class="text-center mt-16">
+      <h2 class="text-3xl font-heading font-semibold text-text-dark mb-6">
+        Didn't Find Your Answer?
       </h2>
-      {paintingFaqs.length > 0 ? (
-        paintingFaqs.map((faq, index) => (
-          <Accordion
-            question={faq.question}
-            answerHtml={markdownToHtml(faq.answer)}
-            questionId={`painting-faq-${index}`}
-          />
-        ))
-      ) : (
-        <p class="text-neutral-500">No painting services FAQs available at this time. Please check back later!</p>
-      )}
-    </div>
-
-    <!-- Handy Services FAQs Section -->
-    <div>
-      <h2 class="text-3xl md:text-4xl font-heading font-bold text-neutral-800 mb-8">
-        Handy Services FAQs
-      </h2>
-      {handyFaqs.length > 0 ? (
-        handyFaqs.map((faq, index) => (
-          <Accordion
-            question={faq.question}
-            answerHtml={markdownToHtml(faq.answer)}
-            questionId={`handy-faq-${index}`}
-          />
-        ))
-      ) : (
-        <p class="text-neutral-500">No handy services FAQs available at this time. Please check back later!</p>
-      )}
+      <a href="/contact" class="btn btn-primary btn-lg">
+        Contact Joe Directly &rarr;
+      </a>
     </div>
   </section>
+
+  <CtaBlock />
 </BaseLayout>
----

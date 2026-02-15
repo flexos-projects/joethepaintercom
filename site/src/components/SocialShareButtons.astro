@@ -1,59 +1,61 @@
 ---
-import type { HTMLAttributes } from 'astro/types';
-import Icon from './ui/Icon.astro'; // Assuming an Icon component for SVGs
-
-interface Props extends HTMLAttributes<'div'> {
+interface Props {
   title: string;
-  url: URL;
-  twitterHandle?: string; // Optional Twitter handle for mentions
+  url: string;
+  text: string;
 }
 
-const { title, url, twitterHandle, ...attrs } = Astro.props;
+const { title, url, text } = Astro.props;
 
+const encodedUrl = encodeURIComponent(url);
 const encodedTitle = encodeURIComponent(title);
-const encodedUrl = encodeURIComponent(url.toString());
-const twitterText = encodedTitle + (twitterHandle ? ` by @${twitterHandle}` : '');
+const encodedText = encodeURIComponent(text);
 
-const shareLinks = [
-  {
-    name: 'Twitter',
-    icon: 'twitter', // Assuming 'twitter' icon exists
-    href: `https://twitter.com/intent/tweet?text=${twitterText}&url=${encodedUrl}`,
-    label: `Share "${title}" on Twitter`,
-  },
-  {
-    name: 'Facebook',
-    icon: 'facebook', // Assuming 'facebook' icon exists
-    href: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
-    label: `Share "${title}" on Facebook`,
-  },
-  {
-    name: 'LinkedIn',
-    icon: 'linkedin', // Assuming 'linkedin' icon exists
-    href: `https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedTitle}&summary=${encodedTitle}&source=${encodedUrl}`,
-    label: `Share "${title}" on LinkedIn`,
-  },
-  {
-    name: 'Email',
-    icon: 'mail', // Assuming 'mail' icon exists
-    href: `mailto:?subject=${encodedTitle}&body=Check out this article from Joe the Painter: ${encodedUrl}`,
-    label: `Share "${title}" via Email`,
-  },
-];
+const twitterShareUrl = `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedText}`;
+const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+const linkedinShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}&title=${encodedTitle}&summary=${encodedText}`;
+const emailShareUrl = `mailto:?subject=${encodedTitle}&body=${encodedText}%0A${encodedUrl}`;
 ---
 
-<div {...attrs} class="flex flex-wrap gap-x-4 gap-y-2 justify-center lg:justify-start">
-  <span class="font-body text-neutral-800 font-medium text-lg sr-only">Share this article:</span>
-  {shareLinks.map((link) => (
-    <a
-      href={link.href}
-      target="_blank"
-      rel="noopener noreferrer"
-      class="flex items-center gap-1.5 text-neutral-500 hover:text-primary transition-colors duration-300 group"
-      aria-label={link.label}
-    >
-      <Icon name={link.icon} class="w-6 h-6 group-hover:scale-105 transition-transform duration-150" />
-      <span class="font-body text-sm font-medium sr-only">{link.name}</span>
-    </a>
-  ))}
+<div class="flex flex-wrap gap-4 justify-center sm:justify-start">
+  <a
+    href={twitterShareUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Share on Twitter"
+    class="btn btn-secondary btn-sm flex items-center gap-2"
+  >
+    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22.46 6c-.84.37-1.75.62-2.67.73.96-.58 1.7-1.5 2.04-2.58-.9.54-1.9.93-2.95 1.15-1.0-.99-2.42-1.61-3.96-1.61-3.09 0-5.6 2.51-5.6 5.6 0 .44.05.87.14 1.28-4.66-.23-8.79-2.47-11.56-5.88-.48.82-.76 1.77-.76 2.79 0 1.95.99 3.66 2.5 4.68-.92-.03-1.79-.28-2.55-.7v.07c0 2.72 1.94 4.98 4.51 5.5-.47.13-.97.2-1.48.2-.36 0-.71-.03-1.06-.1.72 2.25 2.81 3.89 5.29 3.93-1.93 1.51-4.36 2.41-7 2.41-.46 0-.91-.03-1.36-.08 2.5 1.6 5.46 2.54 8.66 2.54 9.19 0 14.2-7.61 14.2-14.2 0-.22-.01-.43-.01-.64.97-.7 1.8-1.58 2.46-2.6z"/></svg>
+    Share on Twitter
+  </a>
+  <a
+    href={facebookShareUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Share on Facebook"
+    class="btn btn-secondary btn-sm flex items-center gap-2"
+  >
+    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.25 6 14 6c1.65 0 2.47.12 2.85.17v2.43h-1.42c-1.53 0-1.87.7-1.87 1.92V12h3.29l-.53 3H14v6.95c5.03-.58 9-4.75 9-9.95z"/></svg>
+    Share on Facebook
+  </a>
+  <a
+    href={linkedinShareUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Share on LinkedIn"
+    class="btn btn-secondary btn-sm flex items-center gap-2"
+  >
+    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22.23 0H1.77C.8 0 0 .77 0 1.73v20.54c0 .96.8 1.73 1.77 1.73h20.46c.97 0 1.77-.77 1.77-1.73V1.73c0-.96-.8-1.73-1.77-1.73zM7.06 20.48H3.54V9.12h3.52v11.36zM5.3 7.5c-1.17 0-2.1-.94-2.1-2.1s.93-2.1 2.1-2.1 2.1.94 2.1 2.1-.93 2.1-2.1 2.1zm15.18 12.98h-3.52V14.5c0-1.6-.58-2.69-1.99-2.69-1.09 0-1.74.74-2.03 1.45-.1.25-.13.59-.13.93v5.29h-3.52s.05-10.32 0-11.36h3.52v1.61c.47-.75 1.34-1.82 3.17-1.82 2.31 0 4.04 1.5 4.04 4.74v6.83z"/></svg>
+    Share on LinkedIn
+  </a>
+  <a
+    href={emailShareUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Share via Email"
+    class="btn btn-secondary btn-sm flex items-center gap-2"
+  >
+    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 2l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z"/></svg>
+    Share via Email
+  </a>
 </div>

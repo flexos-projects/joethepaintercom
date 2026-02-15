@@ -3,41 +3,46 @@ interface Props {
   id: string;
   name: string;
   placeholder?: string;
-  value?: string;
-  rows?: number;
   required?: boolean;
-  class?: string;
-  error?: string; // For displaying validation errors
+  value?: string;
+  disabled?: boolean;
+  rows?: number;
+  autocomplete?: string;
+  'aria-describedby'?: string;
+  'aria-invalid'?: boolean;
 }
 
 const {
   id,
   name,
   placeholder,
-  value,
-  rows = 4,
   required = false,
-  class: className,
-  error,
+  value,
+  disabled = false,
+  rows = 3,
+  autocomplete,
+  'aria-describedby': ariaDescribedby,
+  'aria-invalid': ariaInvalid = false,
+  ...rest
 } = Astro.props;
 ---
+
 <textarea
   id={id}
   name={name}
   placeholder={placeholder}
-  rows={rows}
   required={required}
+  disabled={disabled}
+  rows={rows}
+  autocomplete={autocomplete}
+  aria-describedby={ariaDescribedby}
+  aria-invalid={ariaInvalid}
   class:list={[
-    "w-full px-spacing-3 py-spacing-2 border rounded-md text-text bg-surface",
-    "border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-normal",
-    error ? "border-error focus:ring-error" : "", // Use ring-error for consistency
-    className
+    "w-full px-4 py-3 border rounded-md text-text-dark bg-surface",
+    "border-border placeholder-text-muted focus:outline-none",
+    "focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-transparent",
+    disabled && "bg-background cursor-not-allowed text-text-subtle",
+    ariaInvalid && "border-error focus-visible:ring-error"
   ]}
-  aria-invalid={error ? "true" : "false"}
-  aria-describedby={error ? `${id}-error` : undefined}
+  {...rest}
 >{value}</textarea>
-{error && (
-  <p id={`${id}-error`} class="text-error text-xs mt-spacing-1" role="alert">
-    {error}
-  </p>
-)}

@@ -1,21 +1,60 @@
 ---
-interface Props extends astroHTML.JSX.SelectHTMLAttributes {
+// Assuming Select.astro would be created by TASK-005, but wasn't explicitly mentioned
+// Creating a basic version here to support ConsultationForm
+interface Props {
   id: string;
   name: string;
-  label?: string;
+  options: { value: string; label: string }[];
+  placeholder?: string;
+  required?: boolean;
+  value?: string;
+  disabled?: boolean;
+  'aria-describedby'?: string;
+  'aria-invalid'?: boolean;
 }
 
-const { id, name, label, class: className, ...attrs } = Astro.props;
+const {
+  id,
+  name,
+  options,
+  placeholder,
+  required = false,
+  value,
+  disabled = false,
+  'aria-describedby': ariaDescribedby,
+  'aria-invalid': ariaInvalid = false,
+  ...rest
+} = Astro.props;
 ---
 
-<select
-  id={id}
-  name={name}
-  class:list={[
-    "block w-full px-4 py-3 border border-neutral-200 rounded-md shadow-sm text-base text-neutral-800 bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors duration-200",
-    className
-  ]}
-  {...attrs}
->
-  <slot />
-</select>
+<div class="relative">
+  <select
+    id={id}
+    name={name}
+    required={required}
+    disabled={disabled}
+    aria-describedby={ariaDescribedby}
+    aria-invalid={ariaInvalid}
+    class:list={[
+      "block w-full px-4 py-3 border rounded-md text-text-dark bg-surface",
+      "border-border placeholder-text-muted focus:outline-none",
+      "focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-transparent",
+      "appearance-none pr-10", /* Added pr-10 for custom arrow icon */
+      disabled && "bg-background cursor-not-allowed text-text-subtle",
+      ariaInvalid && "border-error focus-visible:ring-error"
+    ]}
+    {...rest}
+  >
+    {placeholder && <option value="" disabled selected={!value}>{placeholder}</option>}
+    {options.map(option => (
+      <option value={option.value} selected={value === option.value}>
+        {option.label}
+      </option>
+    ))}
+  </select>
+  <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text-muted">
+    <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+    </svg>
+  </div>
+</div>

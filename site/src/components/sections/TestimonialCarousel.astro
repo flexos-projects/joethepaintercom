@@ -1,0 +1,45 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import TestimonialCard from '@/components/TestimonialCard.astro';
+
+interface Props {
+  testimonials: CollectionEntry<'testimonials'>[];
+}
+
+const { testimonials } = Astro.props;
+
+// Filter for featured testimonials, if any, otherwise use all
+const featuredTestimonials = testimonials.filter(t => t.data.featured).slice(0, 5);
+const testimonialsToDisplay = featuredTestimonials.length > 0 ? featuredTestimonials : testimonials.slice(0, 5); // Fallback to first 5 if no featured
+
+// Simple client-side JS for carousel, or use a library
+// For this task, we'll just display them in a responsive grid as a "carousel" placeholder
+// Actual interactive carousel would need client:load or a JS framework.
+---
+
+{testimonialsToDisplay.length > 0 && (
+  <section class="bg-surface py-16 md:py-24">
+    <div class="container mx-auto px-4">
+      <h2 class="text-center text-4xl font-heading font-bold text-text-dark mb-12">
+        Hear From Our Satisfied Clients
+      </h2>
+      <p class="text-center text-lg text-text-muted max-w-3xl mx-auto mb-16">
+        Our commitment to quality and personal service shines through in every project. See what homeowners and businesses in San Diego County have to say about working with Joe the Painter.
+      </p>
+
+      {/* This is a static grid, acting as a visual 'carousel' for this task.
+          A true carousel would involve client-side JS. */}
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {testimonialsToDisplay.map(testimonial => (
+          <TestimonialCard testimonial={testimonial.data} />
+        ))}
+      </div>
+
+      <div class="text-center mt-16">
+        <a href="/testimonials" class="btn btn-secondary btn-lg">
+          Read All Testimonials &rarr;
+        </a>
+      </div>
+    </div>
+  </section>
+)}

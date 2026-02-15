@@ -1,86 +1,34 @@
 ---
-import BaseLayout from '@layouts/BaseLayout.astro';
-import ProjectCard from '@components/ProjectCard.astro';
-import Button from '@components/ui/Button.astro';
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProjectCard from '@/components/ProjectCard.astro';
+import CtaBlock from '@/components/sections/CtaBlock.astro';
 
-const projects = [
-  {
-    title: 'Encinitas Coastal Home Exterior Refresh',
-    location: 'Encinitas, CA',
-    shortDescription: 'A complete exterior repaint and minor stucco repairs for a stunning coastal home, enhancing its curb appeal and protection against the ocean climate.',
-    imageUrl: '/images/projects/encinitas-exterior.webp',
-    imageAlt: 'Freshly painted light blue coastal home exterior in Encinitas',
-    href: '/projects/encinitas-coastal-home-exterior-refresh',
-  },
-  {
-    title: 'Modern Carlsbad Condo Interior Transformation',
-    location: 'Carlsbad, CA',
-    shortDescription: 'Interior painting and expert cabinet refinishing transformed this modern condominium into a brighter, more inviting living space.',
-    imageUrl: '/images/projects/carlsbad-condo-interior.webp',
-    imageAlt: 'Bright, modern living room after interior painting and cabinet refinishing in Carlsbad condo',
-    href: '/projects/modern-carlsbad-condo-interior-transformation',
-  },
-  {
-    title: 'Vista Commercial Office Professional Update',
-    location: 'Vista, CA',
-    shortDescription: 'Comprehensive interior painting and drywall repair for a small business office, creating a clean and highly professional atmosphere for clients and staff.',
-    imageUrl: '/images/projects/vista-office.webp',
-    imageAlt: 'Clean, professional office interior after painting and drywall repairs in Vista',
-    href: '/projects/vista-commercial-office-professional-update',
-  },
-  {
-    title: 'Rancho Santa Fe Luxury Estate Exterior & Interior',
-    location: 'Rancho Santa Fe, CA',
-    shortDescription: 'Extensive interior and exterior painting for a sprawling luxury estate, executed with the meticulous detail and precision required for high-end properties.',
-    imageUrl: '/images/projects/rancho-santa-fe-estate.webp',
-    imageAlt: 'Grand entrance of a luxury estate with fresh, elegant exterior paint in Rancho Santa Fe',
-    href: '/projects/rancho-santa-fe-luxury-estate-exterior-interior',
-  },
-  {
-    title: 'San Marcos Kitchen Cabinet Refinishing & Modernization',
-    location: 'San Marcos, CA',
-    shortDescription: 'A complete kitchen cabinet refinishing project, transforming a dated kitchen into a contemporary, bright, and highly functional culinary space.',
-    imageUrl: '/images/projects/san-marcos-cabinets.webp',
-    imageAlt: 'Modern kitchen with newly refinished white cabinets and updated hardware in San Marcos',
-    href: '/projects/san-marcos-kitchen-cabinet-refinishing-modernization',
-  },
-  {
-    title: 'Oceanside Coastal Deck Restoration & Staining',
-    location: 'Oceanside, CA',
-    shortDescription: 'Full restoration of a weathered wooden deck, including pressure washing, minor repairs, and application of a durable, weather-resistant stain and sealant.',
-    imageUrl: '/images/projects/oceanside-deck.webp',
-    imageAlt: 'Beautifully restored wooden deck with fresh stain overlooking the ocean in Oceanside',
-    href: '/projects/oceanside-coastal-deck-restoration-staining',
-  },
-];
+const projects = await getCollection('projects', ({ data }) => data.published);
+
+const pageSeo = {
+  title: "Our Work: Painting & Handy Projects in San Diego County",
+  description: "Explore Joe the Painter's portfolio of completed painting and handyman projects across San Diego County. See before-and-after transformations and the quality craftsmanship.",
+  keywords: ["painting portfolio", "handyman projects", "before after painting", "san diego projects", "joe the painter work"],
+  ogImage: "/images/social-share-portfolio.jpg" // Placeholder for a generic portfolio image
+};
 ---
 
-<BaseLayout
-  title="Our Work"
-  description="Explore Joe the Painter's portfolio of meticulous painting and reliable handyman projects across San Diego County. See before & after transformations."
->
-  <main id="main-content">
-    <section class="bg-background py-16 md:py-24" aria-labelledby="portfolio-title">
-      <div class="container mx-auto px-4 text-center">
-        <h1 id="portfolio-title" class="font-heading text-5xl md:text-6xl font-bold text-text mb-6">
-          Our Work: A Legacy of Craftsmanship
-        </h1>
-        <p class="text-lg md:text-xl text-textMuted mb-12 leading-relaxed max-w-3xl mx-auto">
-          Browse through a selection of our recently completed painting and handyman projects. Each one is a testament to Joe's meticulous attention to detail and unwavering commitment to quality.
-        </p>
+<BaseLayout seo={pageSeo}>
+  <section class="container mx-auto px-4 py-16 md:py-24">
+    <h1 class="text-center text-4xl md:text-5xl font-heading font-bold text-text-dark mb-12">
+      Our Work: Transformations & Craftsmanship
+    </h1>
+    <p class="text-center text-lg md:text-xl text-text-muted max-w-3xl mx-auto mb-16">
+      Browse a selection of our recent painting and handyman projects across San Diego County. See the meticulous detail and lasting quality that Joe the Painter brings to every home and business.
+    </p>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projects.map((project) => (
-            <ProjectCard {...project} />
-          ))}
-        </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      {projects.map(project => (
+        <ProjectCard project={project} />
+      ))}
+    </div>
+  </section>
 
-        <div class="mt-16">
-          <Button href="/contact" variant="primary" size="lg">
-            Ready to Start Your Project?
-          </Button>
-        </div>
-      </div>
-    </section>
-  </main>
+  <CtaBlock />
 </BaseLayout>

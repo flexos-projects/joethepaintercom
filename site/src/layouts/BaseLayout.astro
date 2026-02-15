@@ -1,66 +1,74 @@
 ---
-import type { PageMeta } from '@/types/page-meta';
-import { SITE_NAME, SITE_URL } from '@/utils/constants';
+import { getMetaTags, generateOrganizationSchema, generateWebSiteSchema, generateWebPageSchema, defaultOgImage, defaultSiteTitle, defaultSiteDescription } from '@/utils/seo';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import type { CollectionEntry } from 'astro:content';
 
 interface Props {
-  meta: PageMeta;
+  seo: {
+    title?: string;
+    description?: string;
+    keywords?: string[];
+    ogImage?: string;
+    twitterImage?: string;
+  };
 }
 
-const { meta } = Astro.props;
+const { seo: pageSeo } = Astro.props;
 
-// Construct canonical URL
-const canonicalURL = new URL(Astro.url.pathname, Astro.site || SITE_URL).href;
+const { title, description, canonicalURL, ogImage, twitterImage, keywords } = getMetaTags(Astro, pageSeo);
 
-// Default image for Open Graph and Twitter cards
-const defaultOgImage = new URL('/images/social-share-default.jpg', Astro.site || SITE_URL).href;
+const organizationSchema = generateOrganizationSchema(Astro);
+const websiteSchema = generateWebSiteSchema(Astro);
+const webpageSchema = generateWebPageSchema(Astro, { title: pageSeo.title || defaultSiteTitle, description: pageSeo.description || defaultSiteDescription });
 
-// Import global styles
-import '@/styles/global.css';
+const allSchemas = [organizationSchema, websiteSchema, webpageSchema];
 ---
 
-<!DOCTYPE html>
-<html lang="en" class="h-full">
+<!doctype html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href={canonicalURL} />
+    <link rel="canonical" href={String(canonicalURL)} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
     <!-- Dynamic Page-Specific Meta Tags -->
-    <title>{meta.title} | {SITE_NAME}</title>
-    <meta name="description" content={meta.description} />
-    {meta.keywords && <meta name="keywords" content={meta.keywords} />}
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {keywords && <meta name="keywords" content={keywords} />}
 
     <!-- Open Graph / Social Media Tags -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={canonicalURL} />
-    <meta property="og:title" content={`${meta.title} | ${SITE_NAME}`} />
-    <meta property="og:description" content={meta.description} />
-    <meta property="og:image" content={meta.ogImage || defaultOgImage} />
+    <meta property="og:url" content={String(canonicalURL)} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
 
     <!-- Twitter Card Tags -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content={canonicalURL} />
-    <meta name="twitter:title" content={`${meta.title} | ${SITE_NAME}`} />
-    <meta name="twitter:description" content={meta.description} />
-    <meta name="twitter:image" content={meta.ogImage || defaultOgImage} />
-    <!-- If a Twitter account is created -->
-    <!-- <meta name="twitter:creator" content="@JoeThePainterSD" /> -->
+    <meta name="twitter:url" content={String(canonicalURL)} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={twitterImage} />
+    <meta name="twitter:creator" content="@JoeThePainterSD" /> <!-- Placeholder, update if account exists -->
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
-    <!-- Preload critical fonts for LCP optimization -->
-    <!-- Lora Bold for primary headings -->
-    <link rel="preload" href="/fonts/Lora-Bold.woff2" as="font" type="font/woff2" crossorigin />
-    <!-- Inter Regular for body text -->
-    <link rel="preload" href="/fonts/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin />
-    <!-- Inter Semibold for navigation and CTAs -->
-    <link rel="preload" href="/fonts/Inter-SemiBold.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Base JSON-LD Schema -->
+    <script type="application/ld+json">
+      {JSON.stringify(allSchemas)}
+    </script>
+    
+    <!-- Page-specific JSON-LD Schema -->
+    <slot name="head-schema" />
   </head>
-  <body class="flex flex-col min-h-full">
-    <slot />
+  <body class="bg-background text-text-dark font-body min-h-screen flex flex-col">
+    <Header />
+    <main class="flex-grow">
+      <slot />
+    </main>
+    <Footer />
   </body>
 </html>

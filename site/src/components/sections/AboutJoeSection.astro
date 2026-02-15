@@ -1,47 +1,32 @@
 ---
+import Button from '@/components/ui/Button.astro';
 import { Image } from 'astro:assets';
-import Button from '../ui/Button.astro';
-// Assuming joe-profile.jpg is located in public/images/joe-profile.jpg
-import joeProfile from '../../public/images/joe-profile.jpg'; 
 
-interface Props {
-  heading: string;
-  description: string;
-  ctaText: string;
-  ctaHref: string;
-}
-
-const { heading, description, ctaText, ctaHref } = Astro.props;
-
-const CSLB_LINK = "https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=802167";
+// Placeholder image for Joe's section. Replace with actual image asset.
+import joeActionShot from '@/assets/images/joe-action-shot.webp';
 ---
 
-<section class="bg-background py-16 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-    <div class="flex justify-center md:justify-start">
+<section class="bg-surface py-16 md:py-24">
+  <div class="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
+    <div class="relative w-full h-72 md:h-96 rounded-lg shadow-lg overflow-hidden">
       <Image
-        src={joeProfile}
-        alt="Professional headshot of Joe the Painter, a friendly and experienced contractor."
-        width={400}
-        height={400}
-        class="rounded-full w-64 h-64 md:w-80 md:h-80 object-cover shadow-lg border-4 border-accent"
+        src={joeActionShot}
+        alt="Joe the Painter working on a project with precision"
+        width={700}
+        height={500}
+        class="w-full h-full object-cover object-center"
+        loading="lazy"
       />
     </div>
     <div class="text-center md:text-left">
-      <h2 class="font-heading text-4xl font-bold text-text mb-4 md:text-5xl">
-        {heading}
+      <h2 class="text-4xl font-heading font-bold text-text-dark mb-6">
+        Meet Joe: Your Trusted Craftsman
       </h2>
-      <p class="font-body text-lg text-text-muted mb-6 leading-relaxed">
-        {description}
+      <p class="text-lg text-text-muted mb-8 max-w-xl mx-auto md:mx-0">
+        With over 25 years as a licensed contractor, Joe the Painter brings unparalleled expertise and a personal touch to every project. Experience the peace of mind that comes from working directly with a dedicated professional.
       </p>
-      <p class="font-body text-base text-text-muted mb-6">
-        <strong class="text-accent">Serving San Diego County Since 2001</strong><br />
-        <a href={CSLB_LINK} target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary-dark font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-light">
-          CA Lic. # 802167 <span class="sr-only">(Verify License on CSLB website)</span>
-        </a>
-      </p>
-      <Button href={ctaHref} variant="primary" size="lg">
-        {ctaText}
+      <Button href="/about" size="lg" variant="primary">
+        Learn More About Joe
       </Button>
     </div>
   </div>
