@@ -1,0 +1,136 @@
+{
+  "projectId": "joethepaintercom-kibm3",
+  "generatedAt": "2026-02-15T03:16:18.492Z",
+  "specs": [
+    {
+      "file": "01-vision.md",
+      "title": "01-vision.md: Vision and Brand Strategy for Joe the Painter",
+      "sections": [
+        "01-vision.md: Vision and Brand Strategy for Joe the Painter",
+        "Executive Summary",
+        "Business Understanding",
+        "Brand Identity",
+        "Target Audiences",
+        "Strategic Positioning",
+        "Value Proposition",
+        "Messaging Framework",
+        "Competitive Position",
+        "Success Metrics"
+      ],
+      "wordCount": 2781,
+      "valid": true
+    },
+    {
+      "file": "02-features.md",
+      "title": "Website Feature Specifications: JOE THE PAINTER - Rebirth",
+      "sections": [
+        "Website Feature Specifications: JOE THE PAINTER - Rebirth",
+        "Feature Philosophy",
+        "Feature Categories",
+        "Feature: Global Navigation System",
+        "Feature: Hero Section with Core Value Proposition",
+        "Feature: \"Book a Free Consultation\" CTA System",
+        "Feature: About Joe & Our Legacy Section",
+        "Feature: Dedicated Services Pages (Painting & Handy Services)",
+        "Feature: Project Portfolio / Gallery",
+        "Feature: Testimonials & Social Proof Display",
+        "Feature: Contact Page with Form",
+        "Feature: Mobile Responsiveness",
+        "Feature: SEO Foundation & Structured Data",
+        "Feature: Web Accessibility (WCAG AA Compliance)",
+        "Feature: Performance Optimization",
+        "Feature: Hyper-Local Service Area Pages",
+        "Feature: Blog / Resource Center",
+        "Feature: Interactive Before/After Sliders",
+        "Feature: FAQs Section (per service/general)",
+        "Feature: \"Joe's Process\" Page/Section",
+        "Feature: Newsletter Signup",
+        "Feature: Social Media Integration (Links Only)",
+        "Feature: Interactive Service Area Map"
+      ],
+      "wordCount": 5315,
+      "valid": true
+    },
+    {
+      "file": "03-pages.md",
+      "title": "03-pages.md",
+      "sections": [],
+      "wordCount": 0,
+      "valid": false
+    },
+    {
+      "file": "04-content-schema.md",
+      "title": "Content Schema for Joe the Painter: A Rebirth",
+      "sections": [
+        "Content Schema for Joe the Painter: A Rebirth",
+        "Content Strategy Overview",
+        "Common Content Types",
+        "Collection: Service",
+        "Collection: Project",
+        "Collection: Testimonial"
+      ],
+      "wordCount": 3123,
+      "valid": true
+    },
+    {
+      "file": "05-flows.md",
+      "title": "User Flow and Journey Specifications: Joe the Painter - A Rebirth",
+      "sections": [
+        "User Flow and Journey Specifications: Joe the Painter - A Rebirth",
+        "Conversion Philosophy",
+        "User Journeys",
+        "Journey: First-time Homeowner → Free Consultation (Primary Conversion)",
+        "Journey: Returning Visitor → Re-engage/Re-hire",
+        "Journey: Information Seeker → Nurture/Soft Lead",
+        "Journey: Mobile-Specific Journeys",
+        "CTA Strategy",
+        "Form Experiences",
+        "Form: Free Consultation Request",
+        "Form: Quick Question",
+        "Micro-interactions"
+      ],
+      "wordCount": 4032,
+      "valid": true
+    },
+    {
+      "file": "06-design.md",
+      "title": "06-design.md: The Craftsman's Palette – Visual Design System Specification",
+      "sections": [
+        "06-design.md: The Craftsman's Palette – Visual Design System Specification",
+        "Creative Direction",
+        "Color System",
+        "Typography",
+        "Spacing System",
+        "Layout System",
+        "Effects",
+        "Component Styles",
+        "Motion"
+      ],
+      "wordCount": 3113,
+      "valid": false
+    },
+    {
+      "file": "07-technical.md",
+      "title": "Technical Requirements & Architecture Specification: Joe the Painter Rebirth",
+      "sections": [
+        "Technical Requirements & Architecture Specification: Joe the Painter Rebirth",
+        "Stack",
+        "Project Structure",
+        "Configuration Files",
+        "Performance",
+        "SEO",
+        "Accessibility",
+        "Browser Support",
+        "Integrations",
+        "Deployment",
+        "Pre-Launch Checklist"
+      ],
+      "wordCount": 3477,
+      "valid": false
+    }
+  ],
+  "totals": {
+    "sections": 71,
+    "words": 21841
+  }
+}
