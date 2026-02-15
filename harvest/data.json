@@ -1,0 +1,63 @@
+{
+  "business": {
+    "legalName": "JOE THE PAINTER",
+    "brandName": "JOE THE PAINTER",
+    "tagline": "Prompt, Professional, and Affordable",
+    "industry": "Painting and Handyman Services",
+    "businessType": "Sole Proprietorship"
+  },
+  "contact": {
+    "primary": {
+      "phone": "+1 (760) 580-8173",
+      "email": "joe@joethepainter.com"
+    }
+  },
+  "locations": [
+    {
+      "name": "Central and North San Diego County Service Area",
+      "type": "Service Area",
+      "address": {
+        "city": "San Diego County",
+        "state": "CA",
+        "country": "USA"
+      },
+      "phone": "+1 (760) 580-8173"
+    }
+  ],
+  "team": [
+    {
+      "name": "Joe",
+      "role": "Owner/Operator",
+      "title": "Licensed Paint Contractor",
+      "bioFacts": [
+        "Licensed Paint Contractor (CA Lic. # 802167)",
+        "Provides handy services",
+        "Goal is to help maintain home or small business and assist with projects",
+        "Company based on the belief that customers' needs are of the utmost importance",
+        "High percentage of business are repeat customers",
+        "Known for superior craftsmanship, attention to detail, clear communication, honesty and integrity"
+      ],
+      "photoAvailable": false
+    }
+  ],
+  "services": [
+    {
+      "id": "service-paint-contractor",
+      "name": "Paint Contractor Services",
+      "category": "Residential and Small Business Painting",
+      "description": "Professional painting services for residential and small business properties, including interior and exterior painting. Known for prompt, professional, affordable, and high-quality craftsmanship with a customer-focused approach.",
+      "pricing": "Free Consultation available"
+    },
+    {
+      "id": "service-handy-services",
+      "name": "Handy Services",
+      "category": "General Home or Small Business Maintenance and Projects",
+      "description": "Assistance with various home or small business maintenance and general projects, provided by a licensed paint contractor, ensuring reliability and skill."
+    }
+  ],
+  "proof": {
+    "certifications": [
+      "CA Lic. # 802167"
+    ]
+  }
+}
