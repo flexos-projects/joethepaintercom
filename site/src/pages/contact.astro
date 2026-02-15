@@ -1,255 +1,113 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
-import ConsultationForm from '@components/ConsultationForm.astro'; // Assuming this component exists from TASK-009
-import Input from '@components/ui/Input.astro'; // From TASK-005
-import Label from '@components/ui/Label.astro'; // From TASK-005
-import Button from '@components/ui/Button.astro'; // From TASK-004
+import ConsultationForm from '@components/ConsultationForm.astro';
 
-const pageTitle = "Contact Joe the Painter | Free Consultation & Inquiries";
-const pageDescription = "Reach out to Joe the Painter for a free consultation, project estimates, or any questions about painting and handyman services in San Diego County. Your trusted local craftsman.";
+// Page metadata
+const pageTitle = "Contact Joe the Painter | Your San Diego Craftsman Since 2001";
+const pageDescription = "Reach out to Joe the Painter for a free consultation or any questions about painting and handyman services in San Diego County. Call, email, or fill out our form today!";
+const pageCanonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-// Quick Question form submission endpoint. This will be an actual Formspree endpoint (TASK-024).
-const QUICK_QUESTION_FORM_ENDPOINT = "https://formspree.io/f/yourendpoint"; // Placeholder, to be replaced with actual ID
-
-// Note: reCAPTCHA integration is handled in TASK-025, assumed to be part of the Formspree integration or a separate component.
+const meta = {
+  title: pageTitle,
+  description: pageDescription,
+  canonical: pageCanonicalURL,
+  ogImage: '/images/social-share-default.jpg', // Default social share image
+};
 ---
 
-<BaseLayout title={pageTitle} description={pageDescription}>
-  <section class="container mx-auto px-4 py-16 md:py-24">
-    <div class="max-w-4xl mx-auto text-center mb-12">
+<BaseLayout {...meta}>
+  <main class="container mx-auto px-4 py-12 md:py-16 lg:py-20 max-w-4xl">
+    <section class="text-center mb-12 md:mb-16">
       <h1 class="font-heading text-4xl md:text-5xl font-bold text-text-dark mb-4">
-        Let's Connect About Your Project
+        Contact Joe the Painter
       </h1>
-      <p class="font-body text-lg text-text-muted">
-        Whether you're ready for a free consultation or have a quick question,
-        Joe is here to provide direct, expert communication.
+      <p class="font-body text-lg text-text-muted max-w-2xl mx-auto">
+        Ready to transform your home or have a question about your next project?
+        Reach out directly to Joe for a personalized, no-obligation discussion.
+        We're here to provide expert advice and meticulous craftsmanship.
       </p>
-    </div>
+    </section>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-      <!-- Contact Information & CTA -->
-      <div class="bg-surface p-8 rounded-lg shadow-md flex flex-col justify-between">
-        <div>
-          <h2 class="font-heading text-3xl font-semibold text-text-dark mb-6">
-            Get in Touch Directly
-          </h2>
-          <p class="font-body text-base text-text-muted mb-6">
-            Reach out to Joe directly for personalized service and expert advice.
-            He's committed to clear communication from your first call to project completion.
-          </p>
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
+      <div class="bg-surface-light p-6 md:p-8 rounded-lg shadow-md text-center md:text-left">
+        <h2 class="font-heading text-2xl font-semibold text-text-dark mb-4">
+          Get In Touch Directly
+        </h2>
+        <p class="font-body text-base text-text-muted mb-6">
+          Joe personally handles all inquiries and is committed to clear communication.
+          Choose your preferred method to connect:
+        </p>
 
-          <div class="space-y-6 mb-8">
-            <div>
-              <h3 class="font-body text-xl font-medium text-text-dark mb-2">
-                Phone
-              </h3>
-              <a
-                href="tel:+17605808173"
-                class="font-body text-primary text-lg font-semibold hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
-                aria-label="Call Joe the Painter at 760-580-8173"
+        <div class="space-y-6">
+          <div class="flex flex-col items-center md:items-start">
+            <h3 class="font-body text-xl font-medium text-text-dark mb-2">
+              Call Joe
+            </h3>
+            <a
+              href="tel:+17605808173"
+              class="font-body text-lg text-primary hover:text-primary-dark font-semibold transition-colors duration-fast flex items-center group"
+              aria-label="Call Joe at 760-580-8173"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6 mr-3 text-primary group-hover:text-primary-dark transition-colors duration-fast"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
               >
-                +1 (760) 580-8173
-              </a>
-            </div>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                />
+              </svg>
+              +1 (760) 580-8173
+            </a>
+          </div>
 
-            <div>
-              <h3 class="font-body text-xl font-medium text-text-dark mb-2">
-                Email
-              </h3>
-              <a
-                href="mailto:joe@joethepainter.com"
-                class="font-body text-primary text-lg font-semibold hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
-                aria-label="Email Joe the Painter at joe@joethepainter.com"
+          <div class="flex flex-col items-center md:items-start">
+            <h3 class="font-body text-xl font-medium text-text-dark mb-2">
+              Email Joe
+            </h3>
+            <a
+              href="mailto:joe@joethepainter.com"
+              class="font-body text-lg text-primary hover:text-primary-dark font-semibold transition-colors duration-fast flex items-center group"
+              aria-label="Email Joe at joe@joethepainter.com"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6 mr-3 text-primary group-hover:text-primary-dark transition-colors duration-fast"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
               >
-                joe@joethepainter.com
-              </a>
-            </div>
-
-            <div>
-              <h3 class="font-body text-xl font-medium text-text-dark mb-2">
-                Service Area
-              </h3>
-              <p class="font-body text-lg text-text-muted">
-                Proudly serving Central & North San Diego County.
-              </p>
-            </div>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-2 6V7a2 2 0 00-2-2H5a2 2 0 00-2 2v7m14 0l-7 7-7-7"
+                />
+              </svg>
+              joe@joethepainter.com
+            </a>
           </div>
         </div>
-
-        <div class="mt-auto pt-8 border-t border-border">
-          <p class="font-body text-base text-text-muted mb-4">
-            Ready to transform your space?
-          </p>
-          <Button
-            href="/consultation"
-            variant="primary"
-            size="lg"
-            class="w-full"
-            aria-label="Book a Free Consultation"
-          >
-            Book Your Free Consultation
-          </Button>
-        </div>
       </div>
 
-      <!-- Free Consultation Form -->
-      <div class="bg-surface p-8 rounded-lg shadow-md">
-        <h2 class="font-heading text-3xl font-semibold text-text-dark mb-6">
-          Request a Free Consultation
+      <div class="bg-surface-light p-6 md:p-8 rounded-lg shadow-md">
+        <h2 class="font-heading text-2xl font-semibold text-text-dark mb-4">
+          Book Your Free Consultation
         </h2>
-        <p class="font-body text-base text-text-muted mb-8">
-          Tell Joe about your project needs, and he'll personally get in touch to discuss details and provide a no-obligation estimate.
+        <p class="font-body text-base text-text-muted mb-6">
+          Fill out the form below to request a free, no-obligation consultation.
+          Joe will get back to you personally to discuss your project needs.
         </p>
-        <ConsultationForm /> {/* This component will handle its own Formspree endpoint and reCAPTCHA */}
+        <ConsultationForm />
       </div>
-    </div>
-
-    {/* Quick Question Section */}
-    <div class="max-w-2xl mx-auto mt-20 bg-surface p-8 rounded-lg shadow-md">
-      <h2 class="font-heading text-3xl font-semibold text-text-dark mb-6 text-center">
-        Have a Quick Question?
-      </h2>
-      <p class="font-body text-base text-text-muted mb-8 text-center">
-        If you're not ready for a full consultation but have a general inquiry, send Joe a quick message here.
-      </p>
-      <form
-        action={QUICK_QUESTION_FORM_ENDPOINT}
-        method="POST"
-        class="space-y-6"
-        data-form-type="quick-question"
-        aria-label="Quick Question Form"
-      >
-        <div>
-          <Label for="quick-name">Your Name</Label>
-          <Input type="text" id="quick-name" name="name" required aria-required="true" />
-          <p id="quick-name-error" class="text-error text-sm mt-1 hidden" aria-live="polite"></p>
-        </div>
-        <div>
-          <Label for="quick-email">Your Email</Label>
-          <Input type="email" id="quick-email" name="email" required aria-required="true" />
-          <p id="quick-email-error" class="text-error text-sm mt-1 hidden" aria-live="polite"></p>
-        </div>
-        <div>
-          <Label for="quick-message">Your Message</Label>
-          <textarea
-            id="quick-message"
-            name="message"
-            rows={5}
-            class="w-full px-4 py-3 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-text-dark placeholder-text-muted bg-surface"
-            required
-            aria-required="true"
-            minlength="10"
-          ></textarea>
-          <p id="quick-message-error" class="text-error text-sm mt-1 hidden" aria-live="polite"></p>
-        </div>
-        {/* reCAPTCHA integration (TASK-025) would go here, often provided by the form service */}
-        <div class="text-sm text-text-muted">
-          This site is protected by reCAPTCHA and the Google
-          <a href="https://policies.google.com/privacy" class="text-primary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded" target="_blank" rel="noopener noreferrer">Privacy Policy</a> and
-          <a href="https://policies.google.com/terms" class="text-primary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded" target="_blank" rel="noopener noreferrer">Terms of Service</a> apply.
-        </div>
-        <Button
-          type="submit"
-          variant="primary"
-          size="lg"
-          class="w-full"
-          aria-label="Send my quick question to Joe"
-        >
-          Send My Message
-        </Button>
-      </form>
-    </div>
-  </section>
-
-  <script is:inline>
-    document.addEventListener('DOMContentLoaded', () => {
-      const form = document.querySelector('form[data-form-type="quick-question"]');
-
-      if (form) {
-        const nameInput = form.querySelector('#quick-name');
-        const emailInput = form.querySelector('#quick-email');
-        const messageTextarea = form.querySelector('#quick-message');
-        const submitButton = form.querySelector('button[type="submit"]');
-
-        const nameError = form.querySelector('#quick-name-error');
-        const emailError = form.querySelector('#quick-email-error');
-        const messageError = form.querySelector('#quick-message-error');
-
-        const validateField = (inputElement, errorElement, errorMessage, validationFn) => {
-          if (!validationFn(inputElement.value.trim())) {
-            inputElement.classList.add('border-error');
-            inputElement.setAttribute('aria-invalid', 'true');
-            errorElement.textContent = errorMessage;
-            errorElement.classList.remove('hidden');
-            return false;
-          } else {
-            inputElement.classList.remove('border-error');
-            inputElement.removeAttribute('aria-invalid');
-            errorElement.textContent = '';
-            errorElement.classList.add('hidden');
-            return true;
-          }
-        };
-
-        const validateName = (value) => value.length >= 2;
-        const validateEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-        const validateMessage = (value) => value.length >= 10 && value.length <= 1000;
-
-        const performValidation = (event) => {
-          event.preventDefault(); // Prevent default submission for client-side control
-
-          let isValid = true;
-
-          // Validate Name
-          if (!validateField(nameInput, nameError, 'Please enter your name (at least 2 characters).', validateName)) {
-            isValid = false;
-          }
-
-          // Validate Email
-          if (!validateField(emailInput, emailError, 'Please enter a valid email address.', validateEmail)) {
-            isValid = false;
-          }
-
-          // Validate Message
-          if (!validateField(messageTextarea, messageError, 'Please enter your message (at least 10 characters, max 1000).', validateMessage)) {
-            isValid = false;
-          }
-
-          if (!isValid) {
-            // Focus on the first invalid field
-            form.querySelector('.border-error')?.focus();
-            return;
-          }
-
-          // If valid, proceed with simulated submission (actual submission handled by Formspree via 'action' attribute)
-          // For demo purposes, we simulate success message here.
-          const originalButtonText = submitButton.textContent;
-          submitButton.textContent = 'Sending...';
-          submitButton.disabled = true;
-          submitButton.classList.add('cursor-not-allowed');
-
-          setTimeout(() => {
-            // In a real scenario, after successful Formspree submission, you'd redirect or display a static success message.
-            // Here, we replace the form content with a success message.
-            form.innerHTML = `
-              <div class="text-center py-8">
-                <p class="font-heading text-2xl font-semibold text-success mb-4">Thank You!</p>
-                <p class="font-body text-base text-text-dark">Your message has been sent to Joe.</p>
-                <p class="font-body text-sm text-text-muted mt-2">He aims to respond to all inquiries within 2 business days.</p>
-              </div>
-            `;
-          }, 1000); // Simulate network delay
-        };
-
-        // Add event listeners for blur validation
-        nameInput.addEventListener('blur', () => validateField(nameInput, nameError, 'Please enter your name (at least 2 characters).', validateName));
-        emailInput.addEventListener('blur', () => validateField(emailInput, emailError, 'Please enter a valid email address.', validateEmail));
-        messageTextarea.addEventListener('blur', () => validateField(messageTextarea, messageError, 'Please enter your message (at least 10 characters, max 1000).', validateMessage));
-
-        // Add event listener for form submission
-        form.addEventListener('submit', performValidation);
-      }
-    });
-  </script>
+    </section>
+  </main>
 </BaseLayout>
-```
+---
