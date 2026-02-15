@@ -1,37 +1,35 @@
 ---
-/**
- * Generic Section Component
- * Provides consistent padding, container width, and optional background/centering.
- */
 interface Props {
   id?: string;
   title?: string;
+  description?: string;
+  background?: 'light' | 'dark' | 'none';
   centered?: boolean;
-  background?: 'background' | 'dark' | 'none'; // Using design tokens for background
 }
 
-const { id, title, centered = false, background = 'none' } = Astro.props;
+const { id, title, description, background = 'none', centered = false } = Astro.props;
 
-let sectionClasses = 'py-spacing-12 md:py-spacing-16 lg:py-spacing-20'; // Use spacing tokens
+const sectionClasses = {
+  light: 'bg-background text-text',
+  dark: 'bg-text text-surface',
+  none: 'bg-surface text-text',
+};
 
-if (background === 'background') {
-  sectionClasses += ' bg-background'; // Use background color token
-} else if (background === 'dark') {
-  sectionClasses += ' bg-text text-white'; // Dark background with light text
-}
+const titleClasses = centered ? 'text-center' : '';
+const descriptionClasses = centered ? 'text-center max-w-3xl mx-auto' : '';
 ---
 
-<section id={id} class:list={[sectionClasses]}>
-  <div class="container mx-auto px-spacing-4">
+<section id={id} class={`py-spacing-24 md:py-spacing-32 ${sectionClasses[background]}`}>
+  <div class="container mx-auto px-spacing-4 max-w-layout-max">
     {title && (
-      <h2
-        class:list={[
-          'font-heading text-4xl md:text-5xl font-bold mb-spacing-8',
-          centered ? 'text-center mx-auto max-w-3xl' : ''
-        ]}
-      >
+      <h2 class={`font-typography-heading text-typography-4xl font-typography-bold mb-spacing-8 ${titleClasses}`}>
         {title}
       </h2>
+    )}
+    {description && (
+      <p class={`text-typography-lg leading-typography-relaxed text-textMuted mb-spacing-12 ${descriptionClasses}`}>
+        {description}
+      </p>
     )}
     <slot />
   </div>

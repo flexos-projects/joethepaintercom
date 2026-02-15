@@ -1,0 +1,40 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+  stepNumber: number;
+  title: string;
+  description: string;
+  image?: {
+    src: string;
+    alt: string;
+  };
+}
+
+const { stepNumber, title, description, image } = Astro.props;
+---
+
+<div class="flex flex-col items-center text-center p-spacing-6 bg-surface rounded-borderRadius-lg shadow-shadow-md h-full">
+  <div class="w-spacing-12 h-spacing-12 bg-primary text-white rounded-borderRadius-full flex items-center justify-center text-typography-2xl font-typography-bold mb-spacing-6">
+    {stepNumber}
+  </div>
+  {image && (
+    <div class="mb-spacing-6 w-full max-w-[150px] h-[100px] flex items-center justify-center overflow-hidden rounded-borderRadius-md">
+      <Image
+        src={image.src}
+        alt={image.alt}
+        width={150}
+        height={100}
+        loading="lazy"
+        decoding="async"
+        class="object-cover w-full h-full"
+      />
+    </div>
+  )}
+  <h3 class="font-typography-heading text-typography-2xl font-typography-semibold text-text mb-spacing-3">
+    {title}
+  </h3>
+  <p class="text-textMuted text-typography-base leading-typography-relaxed flex-grow">
+    {description}
+  </p>
+</div>

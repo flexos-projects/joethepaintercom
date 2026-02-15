@@ -1,0 +1,88 @@
+---
+import Section from './Section.astro';
+import Button from '../ui/Button.astro';
+import ProcessStepCard from '../ui/ProcessStepCard.astro';
+
+interface Props {
+  isHomepage?: boolean;
+}
+
+const { isHomepage = false } = Astro.props;
+
+const processSteps = [
+  {
+    stepNumber: 1,
+    title: "Your Vision, Our Conversation",
+    description: "Every project starts with a free, no-obligation consultation to understand your goals and provide a transparent estimate.",
+    image: {
+      src: "/images/process/consultation.webp",
+      alt: "Joe consulting with a client on project vision"
+    }
+  },
+  {
+    stepNumber: 2,
+    title: "Meticulous Preparation & Protection",
+    description: "The foundation of a lasting finish. We meticulously prepare surfaces and protect your property, ensuring a clean and safe environment.",
+    image: {
+      src: "/images/process/prep.webp",
+      alt: "Joe masking walls and furniture before painting"
+    }
+  },
+  {
+    stepNumber: 3,
+    title: "Expert Craftsmanship in Action",
+    description: "With 25+ years of hands-on experience, Joe applies mastery to every task, from precision painting to skilled repairs, minimizing disruption.",
+    image: {
+      src: "/images/process/painting.webp",
+      alt: "Joe painting an interior wall with a roller"
+    }
+  },
+  {
+    stepNumber: 4,
+    title: "Quality Assurance & Final Walkthrough",
+    description: "Joe conducts a thorough quality check and a final walkthrough with you, ensuring every detail meets his high standards and your complete satisfaction.",
+    image: {
+      src: "/images/process/cleanup.webp",
+      alt: "Joe cleaning up painting supplies after a job"
+    }
+  },
+  {
+    stepNumber: 5,
+    title: "Lasting Results & Ongoing Trust",
+    description: "Our work is built to last, and our relationship with clients too. We stand by our craftsmanship, proud to be your trusted San Diego County partner.",
+    image: {
+      src: "/images/process/followup.webp",
+      alt: "Happy client shaking hands with Joe after project completion"
+    }
+  }
+];
+
+const homepageSteps = processSteps.slice(0, 4); // Display first 4 steps on homepage
+---
+
+<Section
+  id="our-process"
+  title={isHomepage ? "Our Proven Process for Your Peace of Mind" : "Joe's Process: From Consultation to Completion"}
+  description={isHomepage ? "Experience clarity, quality, and seamless execution with Joe's meticulous approach, refined over two decades." : "Every painting and handyman project with Joe the Painter follows a transparent, client-centric workflow designed to deliver exceptional results with unwavering personal accountability."}
+  centered
+  background="light"
+>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-spacing-8">
+    {(isHomepage ? homepageSteps : processSteps).map((step) => (
+      <ProcessStepCard
+        stepNumber={step.stepNumber}
+        title={step.title}
+        description={step.description}
+        image={step.image}
+      />
+    ))}
+  </div>
+
+  {isHomepage && (
+    <div class="mt-spacing-16 text-center">
+      <Button href="/process" variant="primary" size="lg">
+        See Joe's Full Process
+      </Button>
+    </div>
+  )}
+</Section>

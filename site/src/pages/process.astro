@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProcessSection from '../components/sections/ProcessSection.astro';
+import CTABanner from '../components/sections/CTABanner.astro';
+
+const pageTitle = "Joe's Process: From Consultation to Completion";
+const pageDescription = "Understand Joe the Painter's meticulous, transparent process for every painting and handyman project. Experience clarity, quality, and peace of mind from start to finish.";
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <main>
+    <ProcessSection />
+
+    <CTABanner
+      headline="Ready to Experience the Craftsman's Guarantee?"
+      description="Let's discuss your vision and bring it to life with unparalleled quality and personal attention. Schedule your free consultation today."
+      ctaText="Book Your Free Consultation"
+      ctaHref="/consultation"
+      background="primary"
+    />
+  </main>
+</BaseLayout>
