@@ -1,0 +1,186 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Button from '@components/ui/Button.astro';
+import Accordion from '@components/Accordion.astro'; // Assuming this exists from TASK-028
+
+// Directly fetch the 'handy-services' entry from the content collection
+const serviceEntry = (await getCollection('service')).find(s => s.id === 'handy-services');
+
+if (!serviceEntry) {
+  // If the service entry is not found, redirect to 404. This should ideally not happen.
+  return Astro.redirect('/404');
+}
+
+const { data: service } = serviceEntry;
+
+const cslbUrl = 'https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=802167';
+
+// Map service.faqs to accordion items, assuming RichText is a string containing HTML/Markdown
+const accordionItems = service.faqs?.map(faq => ({
+  question: faq.question,
+  answer: faq.answer,
+})) || [];
+
+// Helper to render RichText content from content collection fields
+// Assumes the RichText field is a string containing HTML or Markdown that needs to be rendered.
+const renderRichText = (richTextContent: any) => {
+  return <Fragment set:html={richTextContent} />;
+};
+---
+
+<BaseLayout title={service.seo.title} description={service.seo.description}>
+  <main class="min-h-screen bg-neutral-50 text-neutral-800">
+    <!-- Hero Section -->
+    <section class="relative py-16 md:py-24 lg:py-32 overflow-hidden">
+      <div class="absolute inset-0 z-0">
+        <Image
+          src={service.featuredImage.src}
+          alt={service.featuredImage.alt}
+          widths={[480, 768, 1024, 1280, 1920]}
+          sizes="(max-width: 768px) 100vw, 100vw"
+          class="w-full h-full object-cover brightness-75"
+          loading="eager"
+          quality={80}
+        />
+        <div class="absolute inset-0 bg-primary opacity-70"></div>
+      </div>
+      <div class="relative z-10 max-w-7xl mx-auto px-4 text-white text-center">
+        <h1 class="font-heading text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+          {service.title}
+        </h1>
+        <p class="font-body text-lg md:text-xl max-w-3xl mx-auto mb-8">
+          {service.shortDescription}
+        </p>
+        <Button variant="primary" size="lg" href="/consultation">
+          {service.ctaText}
+        </Button>
+      </div>
+    </section>
+
+    <!-- Main Content Introduction -->
+    <section class="py-16 md:py-20 bg-white">
+      <div class="max-w-5xl mx-auto px-4 text-center">
+        <div class="prose prose-lg max-w-none text-neutral-800 mx-auto">
+          {renderRichText(service.longDescription)}
+        </div>
+      </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="py-16 md:py-20 bg-neutral-50">
+      <div class="max-w-7xl mx-auto px-4">
+        <h2 class="font-heading text-4xl font-bold text-center mb-12 text-neutral-800">
+          Why Choose Joe for Handy Services?
+        </h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {service.benefits.map((benefit) => (
+            <div class="bg-white rounded-lg shadow-md p-6 text-center border border-neutral-200">
+              <svg class="w-10 h-10 mx-auto mb-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <h3 class="font-body text-xl font-semibold text-neutral-800">
+                {benefit}
+              </h3>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Joe's Process Steps -->
+    {service.processSteps && service.processSteps.length > 0 && (
+      <section class="py-16 md:py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4">
+          <h2 class="font-heading text-4xl font-bold text-center mb-12 text-neutral-800">
+            Our Handy Service Process
+          </h2>
+          <div class="space-y-12">
+            {service.processSteps.map((step, index) => (
+              <div class="flex flex-col md:flex-row items-center md:items-start gap-8 lg:gap-12">
+                <div class={`flex-shrink-0 w-full md:w-1/3 text-center ${index % 2 === 1 ? 'md:order-2' : ''}`}>
+                  {step.image && (
+                    <Image
+                      src={step.image.src}
+                      alt={step.image.alt}
+                      widths={[300, 500, 800]}
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      class="rounded-lg shadow-md w-full h-auto object-cover"
+                      loading="lazy"
+                      quality={70}
+                    />
+                  )}
+                </div>
+                <div class={`flex-1 ${index % 2 === 1 ? 'md:order-1' : ''}`}>
+                  <span class="inline-block bg-primary text-white font-body font-semibold text-sm px-4 py-2 rounded-full mb-4">
+                    Step {index + 1}
+                  </span>
+                  <h3 class="font-heading text-3xl font-bold text-neutral-800 mb-4">
+                    {step.title}
+                  </h3>
+                  <p class="font-body text-lg text-neutral-800">
+                    {step.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Gallery Section -->
+    {service.galleryImages && service.galleryImages.length > 0 && (
+      <section class="py-16 md:py-20 bg-neutral-50">
+        <div class="max-w-7xl mx-auto px-4">
+          <h2 class="font-heading text-4xl font-bold text-center mb-12 text-neutral-800">
+            Handy Projects Gallery
+          </h2>
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {service.galleryImages.map((img) => (
+              <div class="rounded-lg shadow-md overflow-hidden border border-neutral-200">
+                <Image
+                  src={img.src}
+                  alt={img.alt}
+                  widths={[300, 500, 800]}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  class="w-full h-64 object-cover"
+                  loading="lazy"
+                  quality={70}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Service-Specific FAQs -->
+    {accordionItems.length > 0 && (
+      <section class="py-16 md:py-20 bg-white">
+        <div class="max-w-4xl mx-auto px-4">
+          <h2 class="font-heading text-4xl font-bold text-center mb-12 text-neutral-800">
+            Handy Services FAQs
+          </h2>
+          <Accordion items={accordionItems} />
+        </div>
+      </section>
+    )}
+
+    <!-- Call to Action Section -->
+    <section class="py-20 bg-primary text-white text-center">
+      <div class="max-w-4xl mx-auto px-4">
+        <h2 class="font-heading text-4xl md:text-5xl font-bold mb-6">
+          Ready for Reliable Handy Solutions?
+        </h2>
+        <p class="font-body text-lg md:text-xl mb-8">
+          Let Joe handle your home repairs and maintenance with expertise and care.
+        </p>
+        <Button variant="accent" size="lg" href="/consultation">
+          {service.ctaText}
+        </Button>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

@@ -1,0 +1,202 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { Image } from 'astro:assets';
+import Button from '@components/ui/Button.astro';
+import Accordion from '@components/ui/Accordion.astro'; // Assuming this component exists or will be created following specs
+
+// Fetch all painting services from the content collection
+const paintingServices = await getCollection('service', ({ data }) => data.published && data.category === 'Painting');
+
+// Extract specific painting service entries by their IDs for this page
+const interiorPaintingService = paintingServices.find(service => service.id === 'interior-painting');
+const exteriorPaintingService = paintingServices.find(service => service.id === 'exterior-painting');
+// Other painting services like 'cabinet-refinishing' or 'commercial-painting' would be fetched similarly
+// and rendered as additional sections if available in the content collection.
+
+const pageTitle = "Painting Services | Joe the Painter: Your Home, My Craft.";
+const pageDescription = "Explore Joe the Painter's meticulous interior, exterior, cabinet refinishing, and commercial painting services in San Diego County. Quality craftsmanship guaranteed for your home or business.";
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <main class="container mx-auto px-4 py-16 lg:py-24">
+    <section class="text-center mb-16 lg:mb-20">
+      <h1 class="font-heading text-4xl lg:text-5xl font-bold text-text-dark mb-6">
+        Painting Services
+      </h1>
+      <p class="text-lg lg:text-xl text-text-muted max-w-3xl mx-auto mb-8">
+        From refreshing interiors to protecting exteriors, Joe the Painter delivers flawless results with meticulous attention to detail and over two decades of licensed experience. Your vision, expertly realized.
+      </p>
+      <Button variant="primary" size="lg" href="/consultation">
+        Request Your Free Painting Consultation
+      </Button>
+    </section>
+
+    {interiorPaintingService && (
+      <section id="interior-painting" class="mb-20 lg:mb-24 scroll-mt-24">
+        <div class="bg-surface rounded-2xl shadow-lg p-8 lg:p-12">
+          <div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <div class="order-2 lg:order-1">
+              <h2 class="font-heading text-3xl lg:text-4xl font-bold text-text-dark mb-6">
+                {interiorPaintingService.data.title}
+              </h2>
+              <div class="prose prose-lg max-w-none text-text-dark mb-8">
+                <Fragment set:html={interiorPaintingService.data.longDescription} />
+              </div>
+
+              <h3 class="font-heading text-2xl font-semibold text-text-dark mb-4">Benefits:</h3>
+              <ul role="list" class="list-disc list-inside text-lg text-text-muted space-y-2 mb-8">
+                {interiorPaintingService.data.benefits.map(benefit => (
+                  <li key={benefit}>{benefit}</li>
+                ))}
+              </ul>
+
+              <Button variant="outline" href="/consultation">
+                {interiorPaintingService.data.ctaText}
+              </Button>
+            </div>
+            <div class="order-1 lg:order-2">
+              <Image
+                src={interiorPaintingService.data.featuredImage.src}
+                alt={interiorPaintingService.data.featuredImage.alt}
+                widths={[300, 600, 900, 1200]}
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                class="w-full h-auto rounded-xl shadow-md"
+                loading="eager"
+              />
+              {interiorPaintingService.data.featuredImage.caption && (
+                <p class="text-sm text-text-muted mt-2 text-center">
+                  {interiorPaintingService.data.featuredImage.caption}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {interiorPaintingService.data.processSteps && interiorPaintingService.data.processSteps.length > 0 && (
+            <div class="mt-16 lg:mt-20 border-t border-border pt-16 lg:pt-20">
+              <h3 class="font-heading text-3xl font-bold text-text-dark text-center mb-10">
+                Our Process for {interiorPaintingService.data.title}
+              </h3>
+              <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {interiorPaintingService.data.processSteps.map((step, index) => (
+                  <div key={index} class="flex flex-col items-center text-center">
+                    <div class="relative w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center text-3xl font-bold mb-4 shadow-md">
+                      {index + 1}
+                    </div>
+                    <h4 class="font-heading text-xl font-semibold text-text-dark mb-2">{step.title}</h4>
+                    <p class="text-text-muted text-base">{step.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {interiorPaintingService.data.faqs && interiorPaintingService.data.faqs.length > 0 && (
+            <div class="mt-16 lg:mt-20 border-t border-border pt-16 lg:pt-20 max-w-3xl mx-auto">
+              <h3 class="font-heading text-3xl font-bold text-text-dark text-center mb-10">
+                FAQs about {interiorPaintingService.data.title}
+              </h3>
+              <div class="space-y-4">
+                {interiorPaintingService.data.faqs.map(faq => (
+                  <Accordion key={faq.question} title={faq.question}>
+                    <Fragment set:html={faq.answer} />
+                  </Accordion>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+    )}
+
+    {exteriorPaintingService && (
+      <section id="exterior-painting" class="mb-20 lg:mb-24 scroll-mt-24">
+        <div class="bg-surface rounded-2xl shadow-lg p-8 lg:p-12">
+          <div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <div class="order-2">
+              <h2 class="font-heading text-3xl lg:text-4xl font-bold text-text-dark mb-6">
+                {exteriorPaintingService.data.title}
+              </h2>
+              <div class="prose prose-lg max-w-none text-text-dark mb-8">
+                <Fragment set:html={exteriorPaintingService.data.longDescription} />
+              </div>
+
+              <h3 class="font-heading text-2xl font-semibold text-text-dark mb-4">Benefits:</h3>
+              <ul role="list" class="list-disc list-inside text-lg text-text-muted space-y-2 mb-8">
+                {exteriorPaintingService.data.benefits.map(benefit => (
+                  <li key={benefit}>{benefit}</li>
+                ))}
+              </ul>
+
+              <Button variant="outline" href="/consultation">
+                {exteriorPaintingService.data.ctaText}
+              </Button>
+            </div>
+            <div class="order-1">
+              <Image
+                src={exteriorPaintingService.data.featuredImage.src}
+                alt={exteriorPaintingService.data.featuredImage.alt}
+                widths={[300, 600, 900, 1200]}
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                class="w-full h-auto rounded-xl shadow-md"
+                loading="lazy"
+              />
+              {exteriorPaintingService.data.featuredImage.caption && (
+                <p class="text-sm text-text-muted mt-2 text-center">
+                  {exteriorPaintingService.data.featuredImage.caption}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {exteriorPaintingService.data.processSteps && exteriorPaintingService.data.processSteps.length > 0 && (
+            <div class="mt-16 lg:mt-20 border-t border-border pt-16 lg:pt-20">
+              <h3 class="font-heading text-3xl font-bold text-text-dark text-center mb-10">
+                Our Process for {exteriorPaintingService.data.title}
+              </h3>
+              <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {exteriorPaintingService.data.processSteps.map((step, index) => (
+                  <div key={index} class="flex flex-col items-center text-center">
+                    <div class="relative w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center text-3xl font-bold mb-4 shadow-md">
+                      {index + 1}
+                    </div>
+                    <h4 class="font-heading text-xl font-semibold text-text-dark mb-2">{step.title}</h4>
+                    <p class="text-text-muted text-base">{step.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {exteriorPaintingService.data.faqs && exteriorPaintingService.data.faqs.length > 0 && (
+            <div class="mt-16 lg:mt-20 border-t border-border pt-16 lg:pt-20 max-w-3xl mx-auto">
+              <h3 class="font-heading text-3xl font-bold text-text-dark text-center mb-10">
+                FAQs about {exteriorPaintingService.data.title}
+              </h3>
+              <div class="space-y-4">
+                {exteriorPaintingService.data.faqs.map(faq => (
+                  <Accordion key={faq.question} title={faq.question}>
+                    <Fragment set:html={faq.answer} />
+                  </Accordion>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+    )}
+
+    {/* Final CTA Section */}
+    <section class="text-center py-16 lg:py-20 bg-primary-dark text-white rounded-2xl shadow-xl">
+      <h2 class="font-heading text-3xl lg:text-4xl font-bold mb-6">
+        Ready for a Flawless Finish?
+      </h2>
+      <p class="text-lg text-white max-w-2xl mx-auto mb-10">
+        Let's discuss your painting vision. Joe provides personalized service and unparalleled craftsmanship for every project.
+      </p>
+      <Button variant="accent" size="lg" href="/consultation">
+        Book Your Free Painting Consultation
+      </Button>
+    </section>
+  </main>
+</BaseLayout>
