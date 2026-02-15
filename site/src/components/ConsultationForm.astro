@@ -2,7 +2,7 @@
 import Button from '@/components/ui/Button.astro';
 import Input from '@/components/ui/Input.astro';
 import Label from '@/components/ui/Label.astro';
-import Select from '@/components/ui/Select.astro'; // Assuming a Select component exists or will be created
+import Select from '@/components/ui/Select.astro';
 import Textarea from '@/components/ui/Textarea.astro';
 
 interface Props {
@@ -149,7 +149,7 @@ const RECAPTCHA_SITE_KEY = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY;
     const showMessage = (message, type = 'info') => {
       statusMessage.textContent = message;
       statusMessage.classList.remove('hidden', 'bg-error', 'bg-success', 'bg-warning', 'bg-info');
-      statusMessage.classList.add(`bg-${type}`, `text-${type === 'success' ? 'success-dark' : type}-dark`); // Assuming semantic dark text colors
+      statusMessage.classList.add(`bg-${type}`, 'text-neutral-800');
       statusMessage.style.display = 'block'; // Ensure it's visible
     };
 
@@ -260,8 +260,7 @@ const RECAPTCHA_SITE_KEY = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY;
         if (response.ok) {
           showMessage('Thank You! Your Free Consultation Request Has Been Received. Joe will be in touch within 1 business day.', 'success');
           form.reset(); // Clear form fields on success
-          // Optional: Redirect to a thank you page
-          // window.location.href = '/thank-you';
+          window.location.href = '/thank-you'; // Redirect to a thank you page as per flow
         } else {
           showMessage(result.message || 'Oops! Something went wrong on our end. Please try again or call Joe directly at (760) 580-8173.', 'error');
         }
@@ -282,6 +281,7 @@ const RECAPTCHA_SITE_KEY = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY;
     form.elements[`${formId}-projectType`]?.addEventListener('change', (e) => validateField(e.target, document.getElementById(`${formId}-projectType-error`)));
     form.elements[`${formId}-serviceLocation`]?.addEventListener('blur', (e) => validateField(e.target, document.getElementById(`${formId}-serviceLocation-error`), 3));
     form.elements[`${formId}-projectDetails`]?.addEventListener('blur', (e) => validateField(e.target, document.getElementById(`${formId}-projectDetails-error`), 10, 500));
-    form.elements.preferredContact.forEach(radio => radio.addEventListener('change', () => validateField(form.elements.preferredContact, document.getElementById(`${formId}-preferredContact-error`))));
+    // Handle radio buttons blur/change events
+    form.querySelectorAll(`input[name="preferredContact"]`).forEach(radio => radio.addEventListener('change', () => validateField(form.elements.preferredContact, document.getElementById(`${formId}-preferredContact-error`))));
   });
 </script>
