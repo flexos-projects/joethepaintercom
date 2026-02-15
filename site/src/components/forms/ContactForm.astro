@@ -1,0 +1,160 @@
+---
+import { useState } from 'astro/jsx-runtime';
+import Button from '@/components/ui/Button.astro';
+import Input from '@/components/ui/Input.astro';
+import { validateContactForm } from '@/utils/formValidation';
+import type { ContactFormData, ContactFormErrors, FormSubmissionResponse } from '@/types/forms';
+
+// Client-side script for form interactivity
+const ContactFormScript = () => {
+  const [formData, setFormData] = useState<ContactFormData>({
+    yourName: '',
+    yourEmail: '',
+    yourMessage: '',
+  });
+  const [formErrors, setFormErrors] = useState<ContactFormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
+
+  const handleChange = (e: Event) => {
+    const target = e.target as HTMLInputElement | HTMLTextAreaElement;
+    setFormData({ ...formData, [target.name]: target.value });
+    // Clear error for the field being edited
+    if (formErrors[target.name as keyof ContactFormErrors]) {
+      setFormErrors({ ...formErrors, [target.name]: undefined });
+    }
+  };
+
+  const handleSubmit = async (e: Event) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitMessage(null);
+    setIsSuccess(null);
+
+    const errors = validateContactForm(formData);
+    setFormErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      setSubmitMessage('Please correct the errors in the form.');
+      setIsSuccess(false);
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/submit-form', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ...formData, _formType: 'contact' }), // Add form type for backend
+      });
+
+      const result: FormSubmissionResponse = await response.json();
+
+      if (result.success) {
+        setSubmitMessage(result.message);
+        setIsSuccess(true);
+        setFormData({ yourName: '', yourEmail: '', yourMessage: '' }); // Clear form
+        setTimeout(() => setSubmitMessage(null), 5000); // Hide message after 5 seconds
+      } else {
+        setSubmitMessage(result.message);
+        setIsSuccess(false);
+        if (result.errors) {
+          setFormErrors(prevErrors => ({ ...prevErrors, ...result.errors }));
+        }
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+      setSubmitMessage('An unexpected error occurred. Please try again.');
+      setIsSuccess(false);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} class="space-y-6">
+      <h3 class="text-2xl font-heading font-semibold text-text-dark mb-4">Quick Question</h3>
+      {submitMessage && (
+        <div
+          role="alert"
+          class={`px-4 py-3 rounded-md text-sm font-medium ${isSuccess ? 'bg-success-green/10 text-success-green' : 'bg-error-red/10 text-error-red'}`}
+        >
+          {submitMessage}
+        </div>
+      )}
+
+      <div>
+        <Input
+          id="yourName"
+          name="yourName"
+          type="text"
+          label="Your Name"
+          placeholder="Jane Doe"
+          required
+          value={formData.yourName}
+          onChange={handleChange}
+          errorMessage={formErrors.yourName}
+          minlength={2}
+        />
+      </div>
+
+      <div>
+        <Input
+          id="yourEmail"
+          name="yourEmail"
+          type="email"
+          label="Your Email"
+          placeholder="jane.doe@example.com"
+          required
+          value={formData.yourEmail}
+          onChange={handleChange}
+          errorMessage={formErrors.yourEmail}
+        />
+      </div>
+
+      <div>
+        <Input
+          id="yourMessage"
+          name="yourMessage"
+          type="textarea"
+          label="Your Message"
+          placeholder="I have a quick question about..."
+          rows={5}
+          required
+          value={formData.yourMessage}
+          onChange={handleChange}
+          errorMessage={formErrors.yourMessage}
+          minlength={10}
+          maxlength={1000}
+        />
+      </div>
+
+      <Button type="submit" size="md" variant="secondary" disabled={isSubmitting} class="w-full">
+        {isSubmitting ? (
+          <span class="flex items-center">
+            <svg class="animate-spin h-5 w-5 mr-3 text-surface-light" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Sending...
+          </span>
+        ) : (
+          'Send My Message'
+        )}
+      </Button>
+    </form>
+  );
+};
+---
+
+<ContactFormScript client:load />
+
+<script>
+  // This script is for client-side hydration for React components in Astro
+  // Astro will automatically handle this with `client:load` on the component.
+  // No need for explicit inline script here.
+</script>
+---

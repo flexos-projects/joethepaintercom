@@ -1,32 +1,32 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
-import Button from '@components/ui/Button.astro';
-
-const meta = {
-  title: 'Thank You | Joe the Painter',
-  description: 'Your Free Consultation Request has been received. Joe will contact you within 1 business day to discuss your project and schedule your consultation.',
-  robots: 'noindex, nofollow', // Prevent indexing of thank you page
-};
+import Button from '@/components/ui/Button.astro';
 ---
 
-<BaseLayout {...meta}>
-  <main class="container mx-auto px-4 py-16 md:py-24 min-h-[calc(100vh-theme(spacing.24)*2)] flex items-center justify-center">
-    <section class="max-w-3xl text-center bg-surface rounded-lg shadow-lg p-8 md:p-12">
-      <div class="text-success text-6xl md:text-7xl mb-6" aria-hidden="true">✓</div>
-      <h1 class="font-heading text-4xl md:text-5xl font-bold text-text-dark mb-4">
-        Thank You! Your Request is Confirmed.
+<BaseLayout
+  title="Thank You for Your Inquiry!"
+  description="Your free consultation request with Joe the Painter has been received. We will be in touch shortly to discuss your project."
+>
+  <main class="container mx-auto px-4 py-16 md:py-24 max-w-4xl text-center min-h-[calc(100vh-theme(spacing.24)-theme(spacing.20))] flex flex-col justify-center items-center">
+    <div class="bg-surface-light p-8 md:p-12 rounded-lg shadow-xl border border-border-light">
+      <div class="text-success-green text-6xl md:text-7xl mb-6" role="img" aria-label="Success checkmark">
+        ✓
+      </div>
+      <h1 class="text-4xl md:text-5xl font-heading font-bold text-text-dark mb-4">
+        Thank You! Your Request Has Been Received.
       </h1>
-      <p class="text-lg md:text-xl text-text-muted mb-8">
-        Joe personally reviews every request and will be in touch within <strong class="text-primary">1 business day</strong> to discuss your project and schedule your free consultation. We appreciate your patience!
+      <p class="text-lg text-text-muted mb-8 max-w-2xl mx-auto">
+        Joe personally reviews every inquiry and will be in touch within **1 business day** to discuss your project and schedule your free consultation. We appreciate your patience!
       </p>
-      <div class="space-y-4 sm:space-y-0 sm:space-x-4 flex flex-col sm:flex-row justify-center">
+      <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
         <Button href="/" variant="primary" size="lg">
           Return to Homepage
         </Button>
-        <Button href="/blog" variant="ghost" size="lg">
-          Explore Joe's Tips
+        <Button href="/our-work" variant="outline" size="lg">
+          Explore Our Work
         </Button>
       </div>
-    </section>
+    </div>
   </main>
 </BaseLayout>
+---

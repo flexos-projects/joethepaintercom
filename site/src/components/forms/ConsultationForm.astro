@@ -1,0 +1,271 @@
+---
+import { useState } from 'astro/jsx-runtime';
+import Button from '@/components/ui/Button.astro';
+import Input from '@/components/ui/Input.astro';
+import { validateConsultationForm } from '@/utils/formValidation';
+import type { ConsultationFormData, ConsultationFormErrors, FormSubmissionResponse } from '@/types/forms';
+
+// Client-side script for form interactivity
+const ConsultationFormScript = () => {
+  const [formData, setFormData] = useState<ConsultationFormData>({
+    fullName: '',
+    emailAddress: '',
+    phoneNumber: '',
+    projectType: '',
+    serviceLocation: '',
+    projectDetails: '',
+    preferredContact: '',
+    howDidYouHear: '',
+  });
+  const [formErrors, setFormErrors] = useState<ConsultationFormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
+
+  const handleChange = (e: Event) => {
+    const target = e.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+    setFormData({ ...formData, [target.name]: target.value });
+    // Clear error for the field being edited
+    if (formErrors[target.name as keyof ConsultationFormErrors]) {
+      setFormErrors({ ...formErrors, [target.name]: undefined });
+    }
+  };
+
+  const handleRadioChange = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    setFormData({ ...formData, preferredContact: target.value as ConsultationFormData['preferredContact'] });
+    if (formErrors.preferredContact) {
+      setFormErrors({ ...formErrors, preferredContact: undefined });
+    }
+  };
+
+  const handleSubmit = async (e: Event) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitMessage(null);
+    setIsSuccess(null);
+
+    const errors = validateConsultationForm(formData);
+    setFormErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      setSubmitMessage('Please correct the errors in the form.');
+      setIsSuccess(false);
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/submit-form', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ...formData, _formType: 'consultation' }), // Add form type for backend
+      });
+
+      const result: FormSubmissionResponse = await response.json();
+
+      if (result.success) {
+        setSubmitMessage(result.message);
+        setIsSuccess(true);
+        // Redirect to thank-you page on success
+        window.location.href = '/thank-you';
+      } else {
+        setSubmitMessage(result.message);
+        setIsSuccess(false);
+        if (result.errors) {
+          setFormErrors(prevErrors => ({ ...prevErrors, ...result.errors }));
+        }
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+      setSubmitMessage('An unexpected error occurred. Please try again.');
+      setIsSuccess(false);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} class="space-y-6">
+      {submitMessage && (
+        <div
+          role="alert"
+          class={`px-4 py-3 rounded-md text-sm font-medium ${isSuccess ? 'bg-success-green/10 text-success-green' : 'bg-error-red/10 text-error-red'}`}
+        >
+          {submitMessage}
+        </div>
+      )}
+
+      <div>
+        <Input
+          id="fullName"
+          name="fullName"
+          type="text"
+          label="Full Name"
+          placeholder="John Doe"
+          required
+          value={formData.fullName}
+          onChange={handleChange}
+          errorMessage={formErrors.fullName}
+          minlength={2}
+        />
+      </div>
+
+      <div>
+        <Input
+          id="emailAddress"
+          name="emailAddress"
+          type="email"
+          label="Email Address"
+          placeholder="john.doe@example.com"
+          required
+          value={formData.emailAddress}
+          onChange={handleChange}
+          errorMessage={formErrors.emailAddress}
+        />
+      </div>
+
+      <div>
+        <Input
+          id="phoneNumber"
+          name="phoneNumber"
+          type="tel"
+          label="Phone Number"
+          placeholder="(760) 555-1234"
+          required
+          value={formData.phoneNumber}
+          onChange={handleChange}
+          errorMessage={formErrors.phoneNumber}
+        />
+      </div>
+
+      <div>
+        <Input
+          id="projectType"
+          name="projectType"
+          type="select"
+          label="Project Type"
+          required
+          value={formData.projectType}
+          onChange={handleChange}
+          errorMessage={formErrors.projectType}
+          options={[
+            { value: '', label: 'Select a project type...' },
+            { value: 'Painting Services', label: 'Painting Services' },
+            { value: 'Handy Services', label: 'Handy Services' },
+            { value: 'Both Painting & Handy Services', label: 'Both Painting & Handy Services' },
+          ]}
+        />
+      </div>
+
+      <div>
+        <Input
+          id="serviceLocation"
+          name="serviceLocation"
+          type="text"
+          label="Service Location (City/Zip)"
+          placeholder="San Diego, CA"
+          required
+          value={formData.serviceLocation}
+          onChange={handleChange}
+          errorMessage={formErrors.serviceLocation}
+          minlength={3}
+        />
+      </div>
+
+      <div>
+        <Input
+          id="projectDetails"
+          name="projectDetails"
+          type="textarea"
+          label="Project Details"
+          placeholder="Describe your project, e.g., 'Exterior house paint for a 3-bedroom home, minor drywall repair needed.'"
+          rows={5}
+          required
+          value={formData.projectDetails}
+          onChange={handleChange}
+          errorMessage={formErrors.projectDetails}
+          minlength={10}
+          maxlength={500}
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-text-dark mb-2">
+          Preferred Contact Method <span class="text-error-red ml-1">*</span>
+        </label>
+        <div class="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
+          <label class="inline-flex items-center">
+            <input
+              type="radio"
+              name="preferredContact"
+              value="Phone Call"
+              checked={formData.preferredContact === 'Phone Call'}
+              onChange={handleRadioChange}
+              class="form-radio h-4 w-4 text-primary-blue focus:ring-primary-blue border-border-light"
+              aria-invalid={formErrors.preferredContact ? 'true' : 'false'}
+            />
+            <span class="ml-2 text-text-dark">Phone Call</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input
+              type="radio"
+              name="preferredContact"
+              value="Email"
+              checked={formData.preferredContact === 'Email'}
+              onChange={handleRadioChange}
+              class="form-radio h-4 w-4 text-primary-blue focus:ring-primary-blue border-border-light"
+              aria-invalid={formErrors.preferredContact ? 'true' : 'false'}
+            />
+            <span class="ml-2 text-text-dark">Email</span>
+          </label>
+        </div>
+        {formErrors.preferredContact && (
+          <p class="mt-1 text-sm text-error-red" id="preferredContact-error">
+            {formErrors.preferredContact}
+          </p>
+        )}
+      </div>
+
+      <div>
+        <Input
+          id="howDidYouHear"
+          name="howDidYouHear"
+          type="text"
+          label="How Did You Hear About Joe?"
+          placeholder="e.g., Google, Friend's referral, Yelp"
+          value={formData.howDidYouHear}
+          onChange={handleChange}
+          errorMessage={formErrors.howDidYouHear}
+          required={false}
+        />
+      </div>
+
+      <Button type="submit" size="lg" variant="primary" disabled={isSubmitting} class="w-full">
+        {isSubmitting ? (
+          <span class="flex items-center">
+            <svg class="animate-spin h-5 w-5 mr-3 text-surface-light" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Sending Request...
+          </span>
+        ) : (
+          'Request My Free Consultation'
+        )}
+      </Button>
+    </form>
+  );
+};
+---
+
+<ConsultationFormScript client:load />
+
+<script>
+  // This script is for client-side hydration for React components in Astro
+  // Astro will automatically handle this with `client:load` on the component.
+  // No need for explicit inline script here.
+</script>
+---

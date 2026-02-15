@@ -1,90 +1,67 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
-import Button from '@components/ui/Button.astro';
-import ConsultationForm from '@components/ConsultationForm.astro';
-import Modal from '@components/Modal.astro';
-import { useState } from 'astro/hooks';
-
-// This is a client-side component, so we need to use client:load or similar
-// For simplicity in this example, we'll assume the modal state is managed client-side
-// using a framework component if this were a mixed-content island.
-// For Astro-only, we'll use a useState-like pattern, recognizing it compiles to JS.
-
-// Mock useState for Astro component (pure Astro doesn't have hooks directly like React)
-// In a real Astro project, if this were a client-side component, you'd use a framework like React or Vue
-// For a purely static Astro page, you'd manage this with inline JS or a simple class toggle.
-// Since the Modal component itself has inline JS to manage focus/escape,
-// we'll simulate the state management for the `isOpen` prop.
-// For a fully functional Astro-only solution, this would typically be a page redirect or a full-page overlay.
-
-// For this task, we'll use a simple global variable and event listeners
-// to toggle the modal, as useState is for framework components.
-// The Modal component itself handles its internal accessibility (focus trap, escape).
+import ConsultationForm from '@/components/forms/ConsultationForm.astro';
+import ContactForm from '@/components/forms/ContactForm.astro';
+import Button from '@/components/ui/Button.astro';
 ---
 
 <BaseLayout
-  title="Contact Joe"
-  description="Get in touch with Joe the Painter for a free consultation. Phone, email, or use our easy online form for painting and handyman services in San Diego County."
+  title="Contact Joe the Painter for a Free Consultation"
+  description="Get in touch with Joe the Painter for meticulous painting and reliable handy services in San Diego County. Request a free consultation or ask a quick question."
 >
-  <main id="main-content">
-    <section class="bg-background py-16 md:py-24" aria-labelledby="contact-title">
-      <div class="container mx-auto px-4 max-w-4xl text-center">
-        <h1 id="contact-title" class="font-heading text-5xl md:text-6xl font-bold text-text mb-6">
-          Contact Joe the Painter
-        </h1>
-        <p class="text-lg md:text-xl text-textMuted mb-12 leading-relaxed">
-          Ready to start your project or have a question? Reach out today for a free consultation. We're here to help!
-        </p>
-      </div>
+  <main class="container mx-auto px-4 py-16 md:py-24 max-w-7xl">
+    <section class="text-center mb-12 md:mb-16">
+      <h1 class="text-5xl font-heading font-bold text-text-dark mb-4 md:text-6xl">
+        Let's Discuss Your Project
+      </h1>
+      <p class="text-lg text-text-muted max-w-3xl mx-auto">
+        Ready to transform your home or business? Joe provides free, no-obligation consultations to understand your needs and offer expert advice. Reach out today!
+      </p>
     </section>
 
-    <section class="bg-surface py-16 md:py-24" aria-labelledby="contact-info-heading">
-      <div class="container mx-auto px-4 max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-12">
-        <div class="text-center md:text-left">
-          <h2 id="contact-info-heading" class="font-heading text-3xl md:text-4xl font-bold text-text mb-6">
-            Get in Touch Directly
-          </h2>
-          <p class="text-lg text-textMuted mb-8 leading-relaxed">
-            Prefer to speak with Joe directly or send an email? We're always happy to hear from you.
-          </p>
-          <div class="space-y-6">
-            <div class="flex items-center justify-center md:justify-start">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
-              <div>
-                <p class="text-textMuted text-sm">Call Joe:</p>
-                <a href="tel:+17605808173" class="text-2xl font-bold text-primary hover:underline transition-all-colors-transform" aria-label="Call Joe at (760) 580-8173">
-                  (760) 580-8173
-                </a>
-              </div>
-            </div>
-            <div class="flex items-center justify-center md:justify-start">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-16 0V6a2 2 0 012-2h10a2 2 0 012 2v2m-16 0l7.89 5.26a2 2 0 002.22 0L21 8m-16 0V6a2 2 0 012-2h10a2 2 0 012 2v2" />
-              </svg>
-              <div>
-                <p class="text-textMuted text-sm">Email Joe:</p>
-                <a href="mailto:joe@joethepainter.com" class="text-2xl font-bold text-primary hover:underline transition-all-colors-transform" aria-label="Email Joe at joe@joethepainter.com">
-                  joe@joethepainter.com
-                </a>
-              </div>
-            </div>
-          </div>
+    <section class="grid md:grid-cols-2 gap-12 lg:gap-16 items-start">
+      <div class="bg-surface-light p-8 rounded-lg shadow-md border border-border-light">
+        <h2 class="text-3xl font-heading font-semibold text-text-dark mb-6">
+          Request Your Free Consultation
+        </h2>
+        <ConsultationForm />
+      </div>
+
+      <div class="space-y-10">
+        <div class="bg-surface-light p-8 rounded-lg shadow-md border border-border-light">
+          <ContactForm />
         </div>
 
-        <div class="bg-background rounded-lg shadow-lg p-6 md:p-8">
-          <ConsultationForm formId="consultation-contact-page" onSuccess="/thank-you" client:load />
+        <div class="bg-primary-blue text-surface-light p-8 rounded-lg shadow-md">
+          <h2 class="text-3xl font-heading font-semibold mb-4">Direct Contact</h2>
+          <p class="text-lg mb-6">
+            Prefer to speak directly with Joe? Feel free to call or email.
+          </p>
+          <div class="space-y-4">
+            <a
+              href="tel:+17605808173"
+              class="flex items-center text-lg font-medium hover:underline focus:underline transition-all duration-fast"
+              aria-label="Call Joe the Painter"
+            >
+              <svg class="w-6 h-6 mr-3 text-accent-gold" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.1-.25c1.15.38 2.37.58 3.63.58a1 1 0 011 1v3.5a1 1 0 01-1 1C10.74 21 3 13.26 3 4.5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.26.2 2.48.58 3.63a1 1 0 01-.25 1.1l-2.2 2.2z" />
+              </svg>
+              +1 (760) 580-8173
+            </a>
+            <a
+              href="mailto:joe@joethepainter.com"
+              class="flex items-center text-lg font-medium hover:underline focus:underline transition-all duration-fast"
+              aria-label="Email Joe the Painter"
+            >
+              <svg class="w-6 h-6 mr-3 text-accent-gold" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+              </svg>
+              joe@joethepainter.com
+            </a>
+          </div>
         </div>
       </div>
     </section>
   </main>
 </BaseLayout>
-
-<script is:inline>
-  // This script simulates the modal logic for Astro-only components.
-  // In a real application, you might use a framework component for client-side interactivity.
-  // For this task, we assume direct navigation to the contact page for the form.
-  // If a modal was triggered from other pages, the Modal.astro component's script would handle it.
-</script>
 ---
