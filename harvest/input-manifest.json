@@ -1,0 +1,16 @@
+{
+  "projectId": "joethepaintercom-kibm3",
+  "firecrawl": {
+    "source": "https://storage.googleapis.com/flexpertsdev-pb6ym6.appspot.com/projects/joethepaintercom-kibm3/scrape/firecrawl.json",
+    "localPath": "joethepaintercom-kibm3/harvest/firecrawl.json",
+    "pageCount": 1
+  },
+  "screenshots": [
+    {
+      "original": "https://storage.googleapis.com/flexpertsdev-pb6ym6.appspot.com/projects/joethepaintercom-kibm3/scrape/screenshots/screenshot-0.png",
+      "firebase": "https://storage.googleapis.com/flexpertsdev-pb6ym6.appspot.com/projects/joethepaintercom-kibm3/inputs/screenshots/screenshot-0.png",
+      "filename": "screenshot-0.png"
+    }
+  ],
+  "downloadedAt": "2026-02-15T03:08:31.410Z"
+}
