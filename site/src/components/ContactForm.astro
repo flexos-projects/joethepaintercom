@@ -13,7 +13,7 @@ interface Props {
 const { id = 'contact-form', formspreeEndpoint, onSuccess = '/thank-you-contact' } = Astro.props;
 
 // Use environment variable for Formspree endpoint, or provide a default if not set for dev
-const endpoint = formspreeEndpoint || import.meta.env.FORMSPREE_ENDPOINT_URL || 'https://formspree.io/f/yourcontactformid';
+const endpoint = formspreeEndpoint || import.meta.env.FORMSPREE_ENDPOINT_URL || 'https://formspree.io/f/yourformid';
 const recaptchaSiteKey = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY;
 ---
 
@@ -42,7 +42,7 @@ const recaptchaSiteKey = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY;
 
   <div>
     <Label for={`${id}-message`} required>Your Message</Label>
-    <Textarea id={`${id}-message`} name="message" rows={5} placeholder="I'd like to ask about..." required />
+    <Textarea id={`${id}-message`} name="message" rows={5} placeholder="Ask anything you'd like!" required />
   </div>
 
   <Button type="submit" variant="primary" size="lg" class="w-full">

@@ -8,39 +8,39 @@ export default {
       // --- Colors ---
       colors: {
         primary: {
-          DEFAULT: 'var(--color-primary)', // #0047AB
-          hover: '#003B8D', // Explicit hover state from design.md
-          active: '#002A6B', // Explicit active state from design.md
+          DEFAULT: '#0047AB', // Primary Blue from 06-design.md
+          hover: '#003B8D', // Explicit hover state from 06-design.md
+          active: '#002A6B', // Explicit active state from 06-design.md
         },
         secondary: {
-          DEFAULT: 'var(--color-secondary)', // #6B7280
-          hover: '#5A616E', // Explicit hover state from design.md
-          active: '#4D535E', // Explicit active state from design.md
+          DEFAULT: '#6B7280', // Secondary Gray from 06-design.md
+          hover: '#5A616E', // Explicit hover state from 06-design.md
+          active: '#4D535E', // Explicit active state from 06-design.md
         },
         accent: {
-          DEFAULT: 'var(--color-accent)', // #E5B80B
-          light: '#FFD700', // Brighter variant for highlights
-          dark: '#B38B00', // Deeper variant for subtle contrast
+          DEFAULT: '#E5B80B', // Accent Gold from 06-design.md
+          light: '#FFD700', // Brighter variant for highlights from 06-design.md
+          dark: '#B38B00', // Deeper variant for subtle contrast from 06-design.md
         },
-        background: 'var(--color-background)',
-        surface: 'var(--color-surface)',
-        text: 'var(--color-text)',
-        textMuted: 'var(--color-text-muted)',
-        textSubtle: 'var(--color-text-subtle)',
-        border: 'var(--color-border)',
-        error: 'var(--color-error)',
-        success: 'var(--color-success)',
-        warning: 'var(--color-warning)',
-        info: 'var(--color-info)',
+        background: '#F9FAFB', // Background White from 06-design.md
+        surface: '#FFFFFF', // Surface Light from 06-design.md
+        text: '#1F2937', // Text Dark from 06-design.md
+        textMuted: '#6B7280', // Text Muted from 06-design.md
+        textSubtle: '#9CA3AF', // Text Subtle from 06-design.md
+        border: '#E5E7EB', // Border Light from 06-design.md
+        error: '#EF4444', // Error from 06-design.md
+        success: '#10B981', // Success from 06-design.md
+        warning: '#F59E0B', // Warning from 06-design.md
+        info: '#3B82F6', // Info from 06-design.md
         white: '#FFFFFF', // Explicit white
         black: '#000000', // Explicit black
       },
 
       // --- Typography ---
       fontFamily: {
-        heading: ['var(--font-family-heading)', ...defaultTheme.fontFamily.serif],
-        body: ['var(--font-family-body)', ...defaultTheme.fontFamily.sans],
-        mono: ['var(--font-family-mono)', ...defaultTheme.fontFamily.mono],
+        heading: ['Lora', 'Georgia', 'serif'], // Heading font family from 06-design.md
+        body: ['Inter', 'system-ui', 'sans-serif'], // Body font family from 06-design.md
+        mono: ['Space Mono', 'monospace'], // Mono font family from 06-design.md
       },
       fontSize: {
         'xs': 'var(--font-size-xs)',
@@ -107,12 +107,10 @@ export default {
 
       // --- Shadows ---
       boxShadow: {
-        'sm': 'var(--shadow-sm)',
-        'md': 'var(--shadow-md)',
-        'lg': 'var(--shadow-lg)',
-        'xl': 'var(--shadow-xl)',
-        '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)', // Default Tailwind 2xl
-        'inner': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)', // Default Tailwind inner
+        'sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)', // Shadow sm from 06-design.md
+        'md': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)', // Shadow md from 06-design.md
+        'lg': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)', // Shadow lg from 06-design.md
+        'xl': '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)', // Shadow xl from 06-design.md
         'none': 'none',
         'outline': '0 0 0 3px rgba(0, 71, 171, 0.5)', // Custom focus outline using primary blue
       },
@@ -123,17 +121,17 @@ export default {
         'spacing': 'margin, padding',
       },
       transitionTimingFunction: {
-        'DEFAULT': 'var(--easing-default)',
-        'ease-in': 'var(--easing-in)',
-        'ease-out': 'var(--easing-out)',
-        'ease-in-out': 'var(--easing-default)', // Re-map to default easing
-        'bounce': 'var(--easing-bounce)',
+        'DEFAULT': 'cubic-bezier(0.4, 0, 0.2, 1)', // default easing from tokens.json
+        'ease-in': 'cubic-bezier(0.4, 0, 1, 1)', // ease-in from tokens.json
+        'ease-out': 'cubic-bezier(0, 0, 0.2, 1)', // ease-out from tokens.json
+        'ease-in-out': 'cubic-bezier(0.4, 0, 0.2, 1)', // Re-map to default easing as per 06-design.md
+        'bounce': 'cubic-bezier(0.34, 1.56, 0.64, 1)', // bounce from tokens.json
       },
       transitionDuration: {
-        'DEFAULT': 'var(--transition-normal)',
-        'fast': 'var(--transition-fast)',
-        'normal': 'var(--transition-normal)',
-        'slow': 'var(--transition-slow)',
+        'DEFAULT': '300ms', // normal duration from tokens.json
+        'fast': '150ms', // fast duration from tokens.json
+        'normal': '300ms', // normal duration from tokens.json
+        'slow': '500ms', // slow duration from tokens.json
       },
 
       // --- Breakpoints ---
