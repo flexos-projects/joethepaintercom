@@ -1,249 +1,253 @@
 ---
 /**
- * Modal
- * A reusable, accessible modal component with focus trapping and keyboard navigation.
+ * Modal.astro
+ *
+ * A reusable, accessible modal component that can display any content.
+ * It handles opening/closing, focus trapping, and background scroll locking.
+ *
+ * @component
+ * @example
+ * <Modal id="myModal" title="Example Modal Title">
+ *   <p>This is the modal content.</p>
+ *   <Button data-modal-close="myModal">Close</Button>
+ * </Modal>
+ * <Button data-modal-target="myModal">Open Modal</Button>
  */
 
-import type { HTMLAttributes } from 'astro/types';
-import Button from './ui/Button.astro';
-import Icon from './ui/Icon.astro';
+// Type imports
+import { type HTMLAttributes, type AstroBuiltinAttributes } from 'astro/types';
 
-interface Props extends HTMLAttributes<'dialog'> {
-  /** A unique ID for the modal, used for accessibility attributes. */
-  id: string;
-  /** Whether the modal is currently open. */
-  isOpen: boolean;
-  /** Function to call when the modal should close. */
-  onClose: () => void;
-  /** Title for the modal, used for accessibility and display. */
+// Component imports
+import Button from './ui/Button.astro'; // Assuming TASK-004 output
+import type { Props as ButtonProps } from './ui/Button.astro'; // Import ButtonProps for type safety
+import { getUniqueId } from '../utils/uniqueId'; // Assuming a utility for generating unique IDs
+
+// Props interface with JSDoc comments
+interface Props extends AstroBuiltinAttributes<'div'> {
+  /** Unique ID for the modal. If not provided, a unique ID will be generated. */
+  id?: string;
+  /** The title of the modal, displayed prominently. Used for `aria-labelledby`. */
   title: string;
-  /** Optional description for the modal. */
-  description?: string;
-  /** Max width for the modal content. Tailwind utility class, e.g., 'max-w-md'. */
-  maxWidth?: string;
-  /** Controls if the backdrop closes the modal. */
-  closeOnBackdropClick?: boolean;
+  /** Controls the initial server-rendered visibility of the modal. */
+  isOpenInitially?: boolean;
+  /** Whether to display a close button in the modal header. */
+  showCloseButton?: boolean;
+  /** `aria-label` for the close button. */
+  closeButtonLabel?: string;
+  /** Visual variant for the close button. */
+  closeButtonVariant?: ButtonProps['variant'];
 }
 
+// Destructure props with defaults
 const {
-  id,
-  isOpen,
-  onClose,
+  id: propId,
   title,
-  description,
-  maxWidth = 'max-w-2xl',
-  closeOnBackdropClick = true,
+  isOpenInitially = false,
+  showCloseButton = true,
+  closeButtonLabel = 'Close modal',
+  closeButtonVariant = 'ghost',
   class: className,
   ...attrs
 } = Astro.props;
 
-const dialogId = `${id}-dialog`;
-const titleId = `${id}-title`;
-const descriptionId = description ? `${id}-description` : undefined;
+// Ensure the modal has a unique ID
+const modalId = propId || getUniqueId('modal');
+const dialogId = `${modalId}-dialog`;
+const titleId = `${modalId}-title`;
 ---
 
 <div
-  id={id}
+  id={modalId}
   class:list={[
-    'fixed',
-    'inset-0',
-    'z-[1000]', // High z-index to ensure it's on top
-    'flex',
-    'items-center',
-    'justify-center',
-    'p-4',
-    'transition-opacity',
-    'duration-300',
-    'ease-out',
-    'motion-reduce:transition-none',
-    isOpen ? 'opacity-100 visible' : 'opacity-0 invisible',
-    className,
+    'fixed inset-0 z-50 flex items-center justify-center bg-neutral-900/70 transition-all duration-300 ease-in-out',
+    isOpenInitially ? 'opacity-100 visible' : 'opacity-0 invisible',
+    className
   ]}
-  role="dialog"
+  aria-hidden={!isOpenInitially}
   aria-modal="true"
+  role="dialog"
   aria-labelledby={titleId}
-  aria-describedby={descriptionId}
   tabindex="-1"
+  data-modal-component={modalId}
   {...attrs}
 >
-  <!-- Backdrop -->
-  <div
-    class:list={[
-      'absolute',
-      'inset-0',
-      'bg-black/50', // Uses color token black with opacity
-      'transition-opacity',
-      'duration-300',
-      'ease-out',
-      'motion-reduce:transition-none',
-      isOpen ? 'opacity-100' : 'opacity-0',
-    ]}
-    onclick={closeOnBackdropClick ? `document.getElementById('${id}')._instance.close();` : ''}
-    aria-hidden="true"
-  ></div>
-
-  <!-- Modal Content -->
   <div
     id={dialogId}
-    class:list={[
-      'relative',
-      'bg-surface',
-      'rounded-lg',
-      'shadow-xl',
-      'p-6',
-      'md:p-8',
-      'w-full',
-      maxWidth,
-      'transform',
-      'transition-all',
-      'duration-300',
-      'ease-out',
-      'motion-reduce:transition-none',
-      isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0',
-    ]}
-    role="document"
+    class="relative bg-white rounded-lg shadow-xl max-w-lg w-11/12 mx-4 p-8 transform transition-all duration-300 ease-in-out"
+    class:list={[isOpenInitially ? 'scale-100 opacity-100' : 'scale-95 opacity-0']}
+    tabindex="-1"
   >
-    <!-- Close Button -->
-    <Button
-      variant="ghost"
-      size="sm"
-      class="absolute top-3 right-3 text-textMuted hover:text-text"
-      aria-label="Close modal"
-      onclick={`document.getElementById('${id}')._instance.close();`}
-    >
-      <Icon name="close" class="w-6 h-6" />
-    </Button>
-
-    <!-- Title and Description -->
-    <h2 id={titleId} class="font-heading text-2xl md:text-3xl font-bold text-text mb-2 pr-10">
-      {title}
-    </h2>
-    {description && (
-      <p id={descriptionId} class="font-body text-base text-textMuted mb-6 pr-10">
-        {description}
-      </p>
-    )}
-
-    <!-- Main Content Slot -->
+    <div class="flex justify-between items-start mb-6">
+      <h2 id={titleId} class="font-heading text-3xl text-neutral-800 font-bold">
+        {title}
+      </h2>
+      {showCloseButton && (
+        <Button
+          variant={closeButtonVariant}
+          size="sm"
+          aria-label={closeButtonLabel}
+          data-modal-close={modalId}
+          class="text-neutral-500 hover:text-primary focus:ring-2 focus:ring-primary"
+        >
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </Button>
+      )}
+    </div>
     <slot />
   </div>
 </div>
 
-<script define:vars={{ id, isOpen, onClose }} is:inline>
-  // This script handles modal behavior for accessibility and interaction.
-  // It provides focus trapping, keyboard control, and body scroll locking.
-
-  const modalElement = document.getElementById(id);
-  if (!modalElement) return;
-
-  const dialogElement = modalElement.querySelector('[role="document"]');
-  const focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-  let firstFocusableElement;
-  let lastFocusableElement;
-  let previouslyFocusedElement;
-
-  function trapFocus(event) {
-    if (event.key === 'Tab') {
-      if (event.shiftKey) { // Shift + Tab
-        if (document.activeElement === firstFocusableElement) {
-          lastFocusableElement.focus();
-          event.preventDefault();
-        }
-      } else { // Tab
-        if (document.activeElement === lastFocusableElement) {
-          firstFocusableElement.focus();
-          event.preventDefault();
-        }
-      }
+<script is:inline>
+  /**
+   * Manages modal functionality including opening/closing, focus trapping,
+   * and background scroll locking for accessibility.
+   *
+   * @param {string} modalId The unique ID of the modal element.
+   */
+  const setupModal = (modalId) => {
+    const modal = document.getElementById(modalId);
+    if (!modal) {
+      console.warn(`Modal with ID "${modalId}" not found. Cannot set up modal.`);
+      return;
     }
-  }
 
-  function handleKeyDown(event) {
-    if (event.key === 'Escape') {
-      event.stopPropagation(); // Prevent other escape listeners
-      modalElement._instance.close();
+    const dialog = modal.querySelector('[role="dialog"]');
+    if (!dialog) {
+      console.warn(`Dialog element not found within modal "${modalId}". Cannot set up modal.`);
+      return;
     }
-    trapFocus(event);
-  }
 
-  function getFocusableElements() {
-    const focusables = Array.from(dialogElement.querySelectorAll(focusableElements)).filter(
-      (el) => !el.hasAttribute('disabled') && !el.getAttribute('aria-hidden') === 'true'
-    );
-    firstFocusableElement = focusables[0];
-    lastFocusableElement = focusables[focusables.length - 1];
-  }
+    let currentFocusElement = null; // Stores the element that triggered the modal
 
-  function openModal() {
-    // Only proceed if modal is not already open (based on its visibility class)
-    if (modalElement.classList.contains('invisible')) {
-      previouslyFocusedElement = document.activeElement; // Store element that triggered modal
-      modalElement.classList.remove('opacity-0', 'invisible');
-      modalElement.classList.add('opacity-100', 'visible');
-      document.body.style.overflow = 'hidden'; // Disable scroll on body
+    /** Shows the modal, traps focus, and locks background scroll. */
+    const showModal = (triggerElement) => {
+      currentFocusElement = triggerElement;
 
-      // Add 'inert' to main content to prevent interaction/focus (if supported)
-      // Fallback to aria-hidden and tabindex for older browsers
-      // Assuming main content is typically within a <main> tag for this site
-      const mainContent = document.querySelector('main');
-      if (mainContent) {
-        if ('inert' in mainContent) {
-          mainContent.inert = true;
+      modal.classList.add('opacity-100', 'visible');
+      modal.classList.remove('opacity-0', 'invisible');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('overflow-hidden'); // Disable body scroll
+
+      // Force reflow to ensure CSS transitions apply correctly
+      void modal.offsetWidth;
+
+      setTimeout(() => {
+        // Find all tabbable elements within the modal dialog
+        const focusableElements = Array.from(dialog.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        ));
+
+        // Focus the first tabbable element, or the dialog itself as a fallback
+        const firstFocusable = focusableElements[0];
+        if (firstFocusable) {
+          firstFocusable.focus();
         } else {
-          mainContent.setAttribute('aria-hidden', 'true');
-          mainContent.querySelectorAll(focusableElements).forEach(el => el.setAttribute('tabindex', '-1'));
+          dialog.focus(); // Fallback focus for empty modals or modals with no interactive elements
+        }
+      }, 300); // Wait for transition to complete before setting focus
+    };
+
+    /** Hides the modal, restores focus, and unlocks background scroll. */
+    const hideModal = () => {
+      modal.classList.add('opacity-0', 'invisible');
+      modal.classList.remove('opacity-100', 'visible');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('overflow-hidden'); // Re-enable body scroll
+
+      // Restore focus to the element that triggered the modal, if available
+      if (currentFocusElement && typeof currentFocusElement.focus === 'function') {
+        currentFocusElement.focus();
+      }
+      currentFocusElement = null; // Clear trigger reference
+    };
+
+    // --- Event Listeners ---
+
+    // Listen for clicks on elements that target this modal to open it
+    document.querySelectorAll(`[data-modal-target="${modalId}"]`).forEach(btn => {
+      btn.addEventListener('click', (e) => showModal(e.currentTarget));
+    });
+
+    // Listen for clicks on elements within the modal that are designated to close it
+    document.querySelectorAll(`[data-modal-close="${modalId}"]`).forEach(btn => {
+      btn.addEventListener('click', hideModal);
+    });
+
+    // Close the modal when clicking on the backdrop itself
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        hideModal();
+      }
+    });
+
+    // Close on Escape key press
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('visible')) {
+        hideModal();
+      }
+    });
+
+    // --- Focus Trapping ---
+    dialog.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') {
+        const focusableElements = Array.from(dialog.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        ));
+
+        if (focusableElements.length === 0) {
+          e.preventDefault(); // Prevent tab out if no focusable elements exist
+          return;
+        }
+
+        const firstFocusableElement = focusableElements[0];
+        const lastFocusableElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) { // Shift + Tab: Move focus backwards
+          if (document.activeElement === firstFocusableElement || document.activeElement === dialog) {
+            lastFocusableElement.focus();
+            e.preventDefault();
+          }
+        } else { // Tab: Move focus forwards
+          if (document.activeElement === lastFocusableElement || document.activeElement === dialog) {
+            firstFocusableElement.focus();
+            e.preventDefault();
+          }
         }
       }
-
-      // Find focusable elements and set initial focus
-      setTimeout(() => { // Allow modal to become visible before focusing
-        getFocusableElements();
-        if (firstFocusableElement) {
-          firstFocusableElement.focus();
-        } else {
-          // If no focusable elements, focus the modal content itself (dialogElement)
-          dialogElement.focus();
-        }
-        modalElement.addEventListener('keydown', handleKeyDown);
-      }, 300); // Match transition duration
-    }
-  }
-
-  function closeModal() {
-    // Only proceed if modal is actually open
-    if (modalElement.classList.contains('visible')) {
-      modalElement.classList.remove('opacity-100', 'visible');
-      modalElement.classList.add('opacity-0', 'invisible');
-      document.body.style.overflow = ''; // Re-enable scroll on body
-
-      // Remove 'inert' or aria-hidden from main content
-      const mainContent = document.querySelector('main');
-      if (mainContent) {
-        if ('inert' in mainContent) {
-          mainContent.inert = false;
-        } else {
-          mainContent.removeAttribute('aria-hidden');
-          mainContent.querySelectorAll(focusableElements).forEach(el => el.removeAttribute('tabindex'));
-        }
-      }
-
-      modalElement.removeEventListener('keydown', handleKeyDown);
-      if (previouslyFocusedElement && previouslyFocusedElement.focus) {
-        previouslyFocusedElement.focus(); // Return focus to original element
-      }
-    }
-  }
-
-  // Expose methods via a custom property on the element for external control
-  modalElement._instance = {
-    open: openModal,
-    close: onClose || closeModal, // Use prop.onClose if provided, else local closeModal
+    });
   };
 
-  // Initial state setup based on isOpen prop
-  if (isOpen) {
-    modalElement._instance.open();
-  } else {
-    modalElement._instance.close();
-  }
+  // Initialize all modals on the page when the DOM is fully loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-modal-component]').forEach(modalComponent => {
+      setupModal(modalComponent.id);
+    });
+  });
 </script>
+
+<style>
+  /* Responsive: full-screen overlay for optimal input experience on mobile */
+  /* This rule targets the modal dialog itself when the screen width is below md (768px) */
+  @media (max-width: theme('screens.md')) {
+    [data-modal-component] > div { /* Target the dialog directly within the fixed overlay */
+      max-width: none; /* Remove max-width constraint to allow full width */
+      width: 100%; /* Take full available width */
+      height: 100%; /* Take full available height */
+      margin: 0; /* Remove any horizontal margins */
+      border-radius: 0; /* Remove border radius for a full-screen look */
+      padding-top: theme('spacing.8'); /* Add some top padding for content */
+      padding-bottom: theme('spacing.8'); /* Add some bottom padding for content */
+      overflow-y: auto; /* Allow scrolling within the modal content if it overflows */
+    }
+  }
+
+  /* Reduced motion preference: Disable transitions for users who prefer less motion */
+  @media (prefers-reduced-motion: reduce) {
+    .transition-all,
+    .transition-transform {
+      transition: none !important;
+    }
+  }
+</style>

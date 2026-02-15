@@ -1,27 +1,38 @@
 ---
 /**
- * Consultation Page
- * A dedicated page for users to request a free consultation.
+ * consultation.astro
+ *
+ * Dedicated page for users to book a free consultation with Joe the Painter.
+ * It features a prominent consultation form and direct contact information.
  */
 
-import BaseLayout from '@layouts/BaseLayout.astro';
-import ConsultationForm from '@components/ConsultationForm.astro';
+// Component imports
+import BaseLayout from '../layouts/BaseLayout.astro'; // Assuming TASK-003 output
+import ConsultationForm from '../components/ConsultationForm.astro'; // Assuming TASK-009 output
 
-const pageTitle = 'Book Your Free Consultation';
-const pageDescription = 'Connect with Joe the Painter for a personalized project discussion and estimate. Meticulous painting and reliable repairs, personally delivered.';
+// Page metadata
+const pageTitle = "Book Your Free Consultation";
+const pageDescription = "Schedule a no-obligation consultation with Joe the Painter for your painting or handyman project in San Diego County. Get expert advice and a detailed estimate.";
 ---
 
 <BaseLayout title={pageTitle} description={pageDescription}>
-  <section class="container mx-auto px-4 py-12 md:py-16 lg:py-20 max-w-4xl">
-    <div class="text-center mb-8 md:mb-12">
-      <h1 class="font-heading text-4xl md:text-5xl font-bold text-text mb-4">
+  <section class="py-16 md:py-24 bg-neutral-50 text-neutral-800">
+    <div class="container mx-auto px-4 max-w-3xl">
+      <h1 class="font-heading text-4xl md:text-5xl font-bold text-center mb-6">
         {pageTitle}
       </h1>
-      <p class="font-body text-lg text-textMuted max-w-2xl mx-auto">
-        {pageDescription}
+      <p class="text-lg text-neutral-500 text-center mb-12 leading-relaxed">
+        Let's discuss your vision and bring your property to life. Fill out the form below to schedule your free, no-pressure consultation with Joe, your trusted San Diego craftsman.
       </p>
-    </div>
 
-    <ConsultationForm />
+      <div class="bg-white rounded-lg shadow-lg p-6 md:p-10 border border-neutral-200">
+        <ConsultationForm />
+      </div>
+
+      <div class="mt-12 text-center text-neutral-500 text-base">
+        <p>Prefer to talk directly? Call Joe at <a href="tel:+17605808173" class="text-primary hover:underline font-medium">(760) 580-8173</a></p>
+        <p class="mt-2">Or email him at <a href="mailto:joe@joethepainter.com" class="text-primary hover:underline font-medium">joe@joethepainter.com</a></p>
+      </div>
+    </div>
   </section>
 </BaseLayout>
