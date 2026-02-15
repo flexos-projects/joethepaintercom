@@ -1,0 +1,88 @@
+---
+/**
+ * Button Component
+ * A reusable button component with various styles, sizes, and accessibility features.
+ */
+
+// Type imports
+import type { HTMLAttributes } from 'astro/types';
+
+// Props interface with JSDoc comments
+interface Props extends HTMLAttributes<'button'> {
+  /** Visual variant of the button. */
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  /** Size preset for the button. */
+  size?: 'sm' | 'md' | 'lg';
+  /** If true, the button will be disabled. */
+  disabled?: boolean;
+  /** If provided, the button will render as an `<a>` tag with this href. */
+  href?: string;
+  /** An optional accessible label for the button, especially for icon-only buttons. */
+  ariaLabel?: string;
+}
+
+// Destructure with defaults
+const {
+  variant = 'primary',
+  size = 'md',
+  disabled = false,
+  href,
+  ariaLabel,
+  class: className,
+  ...attrs
+} = Astro.props;
+
+// Base styles applied to all buttons
+const baseStyles = 'inline-flex items-center justify-center font-body font-semibold text-center text-decoration-none cursor-pointer border border-transparent transition-all duration-fast ease-in-out rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2';
+
+// Size-specific styles
+const sizeClasses = {
+  sm: 'px-3 py-2 text-sm',
+  md: 'px-4 py-3 text-base',
+  lg: 'px-6 py-4 text-lg',
+};
+
+// Variant-specific styles, including disabled, hover, and active states
+const variantClasses = {
+  primary: disabled
+    ? 'bg-text-subtle text-surface cursor-not-allowed'
+    : 'bg-primary text-surface border-primary hover:bg-primary-dark hover:shadow-sm active:bg-primary-darker active:translate-y-px',
+  secondary: disabled
+    ? 'bg-text-subtle text-surface cursor-not-allowed'
+    : 'bg-secondary text-surface border-secondary hover:bg-secondary-dark hover:shadow-sm active:bg-secondary-darker active:translate-y-px',
+  outline: disabled
+    ? 'bg-transparent text-text-subtle border-text-subtle cursor-not-allowed'
+    : 'bg-transparent text-primary border-primary hover:bg-primary hover:text-surface hover:shadow-sm active:bg-primary-darker active:translate-y-px',
+  ghost: disabled
+    ? 'bg-transparent text-text-subtle cursor-not-allowed'
+    : 'bg-transparent text-primary border-transparent hover:bg-primary/[0.05] active:bg-primary/[0.1] active:translate-y-px',
+};
+
+// Determine the HTML element to render (button or a)
+const Element = href ? 'a' : 'button';
+---
+
+<Element
+  class:list={[
+    baseStyles,
+    sizeClasses[size],
+    variantClasses[variant],
+    className,
+  ]}
+  {...attrs}
+  {...href && { href }}
+  {...disabled && { 'aria-disabled': 'true', disabled: true }}
+  {...ariaLabel && { 'aria-label': ariaLabel }}
+>
+  <slot />
+</Element>
+
+<style>
+  /* Reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    .transition-all {
+      transition: none !important;
+    }
+  }
+</style>
+---

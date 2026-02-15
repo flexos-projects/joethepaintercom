@@ -7,120 +7,122 @@ export default {
     extend: {
       // --- Colors ---
       colors: {
-        // Semantic colors referencing CSS variables defined in src/styles/tokens.css
         primary: {
-          DEFAULT: 'var(--color-primary)', // #0047AB
-          hover: '#003B8D', // As per 06-design.md, Component Styles -> Buttons -> Primary Hover
-          active: '#002A6B', // As per 06-design.md, Component Styles -> Buttons -> Primary Active
+          DEFAULT: '#0047AB', // Primary Blue
+          dark: '#003B8D',    // Derived from Primary hover state in 06-design.md
+          darker: '#002A6B',  // Derived from Primary active state in 06-design.md
         },
-        secondary: 'var(--color-secondary)', // #6B7280
+        secondary: {
+          DEFAULT: '#6B7280', // Secondary Gray
+          dark: '#5A616E',    // Derived from Secondary hover state in 06-design.md
+          darker: '#4D535E',  // Derived from Secondary active state in 06-design.md
+        },
         accent: {
-          DEFAULT: 'var(--color-accent)', // #E5B80B
-          hover: '#F5C62C', // Derived from accent gold for consistent hover effect
-          active: '#D4A700', // Derived from accent gold for consistent active effect
+          DEFAULT: '#E5B80B', // Accent Gold
         },
-        background: 'var(--color-background)', // #F9FAFB
-        surface: 'var(--color-surface)',     // #FFFFFF
-        text: 'var(--color-text)',           // #1F2937 (Text Dark)
-        textMuted: 'var(--color-textMuted)', // #6B7280 (Text Muted)
-        textSubtle: 'var(--color-textSubtle)', // #9CA3AF
-        border: 'var(--color-border)',       // #E5E7EB
-        white: 'var(--color-surface)',       // Explicitly map white to surface for consistency
-        black: '#000000', // Pure black for specific high-contrast needs, not general text
-        
-        // Semantic feedback colors
-        success: 'var(--color-success)',
-        warning: 'var(--color-warning)',
-        error: 'var(--color-error)',
-        info: 'var(--color-info)',
+        background: '#F9FAFB', // Background White
+        surface: '#FFFFFF',    // Surface Light
+        text: '#1F2937',       // Text Dark
+        'text-muted': '#6B7280', // Text Muted (same as secondary.DEFAULT)
+        'text-subtle': '#9CA3AF', // Text Subtle
+        'border-light': '#E5E7EB', // Border Light
+        error: '#EF4444',      // Error
+        success: '#10B981',    // Success
+        warning: '#F59E0B',    // Warning
+        info: '#3B82F6',       // Info
+        // Keeping a full neutral scale for general utility where specific semantic colors aren't needed
+        neutral: {
+          50: '#F9FAFB',
+          100: '#F3F4F6',
+          200: '#E5E7EB',
+          300: '#D1D5DB',
+          400: '#9CA3AF',
+          500: '#6B7280',
+          600: '#4B5563',
+          700: '#374151',
+          800: '#1F2937',
+          900: '#111827',
+        },
+        white: '#FFFFFF',
+        black: '#000000',
       },
 
       // --- Typography ---
       fontFamily: {
-        heading: ['Lora', 'Georgia', 'serif'], // Elegant serif for headings
-        body: ['Inter', 'system-ui', 'sans-serif'], // Modern sans-serif for body
-        mono: ['Space Mono', 'monospace'], // For code snippets or specific data displays
+        heading: ['"Lora"', ...defaultTheme.fontFamily.serif], // Elegant serif for headings
+        body: ['"Inter"', ...defaultTheme.fontFamily.sans], // Modern sans-serif for body
+        mono: ['"Space Mono"', ...defaultTheme.fontFamily.mono], // Monospace for specific data displays
       },
       fontSize: {
-        'xs': ['var(--font-size-xs)', { lineHeight: 'var(--line-height-xs)' }],
-        'sm': ['var(--font-size-sm)', { lineHeight: 'var(--line-height-sm)' }],
-        'base': ['var(--font-size-base)', { lineHeight: 'var(--line-height-base)' }],
-        'lg': ['var(--font-size-lg)', { lineHeight: 'var(--line-height-lg)' }],
-        'xl': ['var(--font-size-xl)', { lineHeight: 'var(--line-height-xl)' }],
-        '2xl': ['var(--font-size-2xl)', { lineHeight: 'var(--line-height-2xl)' }],
-        '3xl': ['var(--font-size-3xl)', { lineHeight: 'var(--line-height-3xl)' }],
-        '4xl': ['var(--font-size-4xl)', { lineHeight: 'var(--line-height-4xl)' }],
-        '5xl': ['var(--font-size-5xl)', { lineHeight: 'var(--line-height-5xl)' }],
-        '6xl': ['var(--font-size-6xl)', { lineHeight: 'var(--line-height-6xl)' }],
+        'xs': ['0.75rem', { lineHeight: '1.5' }], // 12px
+        'sm': ['0.875rem', { lineHeight: '1.5' }], // 14px
+        'base': ['1rem', { lineHeight: '1.6' }], // 16px (default body)
+        'lg': ['1.125rem', { lineHeight: '1.6' }], // 18px
+        'xl': ['1.25rem', { lineHeight: '1.4' }], // 20px
+        '2xl': ['1.5rem', { lineHeight: '1.3' }], // 24px (H4)
+        '3xl': ['1.875rem', { lineHeight: '1.3' }], // 30px (H3)
+        '4xl': ['2.25rem', { lineHeight: '1.2' }], // 36px (H2)
+        '5xl': ['3rem', { lineHeight: '1.1' }], // 48px (H1)
+        '6xl': ['3.75rem', { lineHeight: '1.1' }], // 60px (Display/Hero H1)
       },
       fontWeight: {
-        normal: 'var(--font-weight-normal)',
-        medium: 'var(--font-weight-medium)',
-        semibold: 'var(--font-weight-semibold)',
-        bold: 'var(--font-weight-bold)',
+        normal: '400',
+        medium: '500',
+        semibold: '600',
+        bold: '700',
       },
 
       // --- Spacing (based on 4px grid) ---
       spacing: {
-        'px': 'var(--spacing-px)',
-        '0.5': 'var(--spacing-0-5)',
-        '1': 'var(--spacing-1)',
-        '2': 'var(--spacing-2)',
-        '3': 'var(--spacing-3)',
-        '4': 'var(--spacing-4)',
-        '5': 'var(--spacing-5)',
-        '6': 'var(--spacing-6)',
-        '8': 'var(--spacing-8)',
-        '10': 'var(--spacing-10)',
-        '12': 'var(--spacing-12)',
-        '16': 'var(--spacing-16)',
-        '20': 'var(--spacing-20)',
-        '24': 'var(--spacing-24)',
+        'px': '1px',
+        '0.5': '0.125rem', // 2px
+        '1': '0.25rem', // 4px
+        '2': '0.5rem', // 8px
+        '3': '0.75rem', // 12px
+        '4': '1rem', // 16px
+        '5': '1.25rem', // 20px
+        '6': '1.5rem', // 24px
+        '8': '2rem', // 32px
+        '10': '2.5rem', // 40px
+        '12': '3rem', // 48px
+        '16': '4rem', // 64px
+        '20': '5rem', // 80px
+        '24': '6rem', // 96px
       },
 
       // --- Border Radius ---
       borderRadius: {
-        'none': 'var(--border-radius-none)',
-        'sm': 'var(--border-radius-sm)',
-        'md': 'var(--border-radius-md)',
-        'lg': 'var(--border-radius-lg)',
-        'xl': 'var(--border-radius-xl)',
-        '2xl': 'var(--border-radius-2xl)',
-        'full': 'var(--border-radius-full)',
+        'none': '0',
+        'sm': '0.125rem', // 2px
+        'md': '0.375rem', // 6px (Standard button/input radius)
+        'lg': '0.5rem', // 8px (Card radius)
+        'xl': '0.75rem', // 12px
+        '2xl': '1rem', // 16px
+        'full': '9999px',
       },
 
       // --- Shadows ---
       boxShadow: {
-        'sm': 'var(--shadow-sm)',
-        'md': 'var(--shadow-md)',
-        'lg': 'var(--shadow-lg)',
-        'xl': 'var(--shadow-xl)',
+        'sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+        'md': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+        'lg': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+        'xl': '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
       },
 
       // --- Transitions ---
-      transitionProperty: {
-        'height': 'height',
-        'spacing': 'margin, padding',
-        'colors': 'color, background-color, border-color, text-decoration-color', // Include default Tailwind colors
-        'opacity': 'opacity',
-        'transform': 'transform',
-        'shadow': 'box-shadow',
-        'all': 'all', // Ensure 'transition-all' works as expected
+      transitionDuration: {
+        'fast': '150ms', // For quick feedback
+        'normal': '300ms', // For standard UI transitions
+        'slow': '500ms', // For more deliberate changes
       },
       transitionTimingFunction: {
-        'DEFAULT': 'var(--ease-default)', // As per 06-design.md, Motion -> Easing -> Default
-        'in': 'var(--ease-in)',
-        'out': 'var(--ease-out)',
-        'in-out': 'var(--ease-in-out)', 
-        'bounce': 'var(--ease-bounce)',
-      },
-      transitionDuration: {
-        'DEFAULT': 'var(--duration-normal)', // As per 06-design.md, Motion -> Timing -> Duration normal
-        'fast': 'var(--duration-fast)',
-        'normal': 'var(--duration-normal)',
-        'slow': 'var(--duration-slow)',
+        'in-out': 'cubic-bezier(0.4, 0, 0.2, 1)', // Default cubic-bezier
+        'in': 'cubic-bezier(0.4, 0, 1, 1)',
+        'out': 'cubic-bezier(0, 0, 0.2, 1)',
+        'bounce': 'cubic-bezier(0.34, 1.56, 0.64, 1)', // Use with caution
       },
     },
   },
   plugins: [],
 };
+---

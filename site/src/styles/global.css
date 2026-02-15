@@ -1,124 +1,72 @@
-```css
-/* Import Tailwind CSS directives */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Import custom design tokens as CSS variables */
-@import './tokens.css';
-
-/*
-  Global Styles & Typography Defaults
-  Applied using Tailwind's @apply for consistency with the design system.
-*/
-
-@layer base {
-  html {
-    /* Set default font family and background for the entire document */
-    font-family: var(--font-family-body);
-    background-color: var(--color-background-white);
-    color: var(--color-text);
-    scroll-behavior: smooth; /* Smooth scrolling for anchor links */
-    @apply text-base; /* Default text size */
-  }
-
-  body {
-    /* Ensure body takes full height and has consistent line height */
-    min-height: 100vh;
-    line-height: var(--line-height-base);
-    @apply text-text antialiased; /* Use antialiased for smoother fonts */
-  }
-
-  /* Headings - Lora, Georgia, serif */
-  h1 {
-    font-family: var(--font-family-heading);
-    font-weight: var(--font-weight-bold);
-    line-height: var(--line-height-5xl);
-    @apply text-5xl text-text;
-  }
-  @media (max-width: theme('screens.md')) {
-    h1 {
-      line-height: var(--line-height-4xl);
-      @apply text-4xl;
-    }
-  }
-
-  h2 {
-    font-family: var(--font-family-heading);
-    font-weight: var(--font-weight-bold);
-    line-height: var(--line-height-4xl);
-    @apply text-4xl text-text;
-  }
-  @media (max-width: theme('screens.md')) {
-    h2 {
-      line-height: var(--line-height-3xl);
-      @apply text-3xl;
-    }
-  }
-
-  h3 {
-    font-family: var(--font-family-heading);
-    font-weight: var(--font-weight-semibold);
-    line-height: var(--line-height-3xl);
-    @apply text-3xl text-text;
-  }
-  @media (max-width: theme('screens.md')) {
-    h3 {
-      line-height: var(--line-height-2xl);
-      @apply text-2xl;
-    }
-  }
-
-  h4 {
-    font-family: var(--font-family-body); /* Inter for H4 as per design spec */
-    font-weight: var(--font-weight-semibold);
-    line-height: var(--line-height-2xl);
-    @apply text-2xl text-text;
-  }
-  @media (max-width: theme('screens.md')) {
-    h4 {
-      line-height: var(--line-height-xl);
-      @apply text-xl;
-    }
-  }
-
-  h5 {
-    font-family: var(--font-family-body);
-    font-weight: var(--font-weight-medium);
-    line-height: var(--line-height-xl);
-    @apply text-xl text-text;
-  }
-
-  h6 {
-    font-family: var(--font-family-body);
-    font-weight: var(--font-weight-medium);
-    line-height: var(--line-height-lg);
-    @apply text-lg text-text;
-  }
-
-  p {
-    margin-bottom: var(--spacing-4); /* Consistent paragraph spacing */
-  }
-
-  a {
-    @apply text-primary hover:text-primary-dark transition-colors duration-normal ease-in-out;
-  }
-
-  /* Accessibility: Focus states */
-  *:focus-visible {
-    outline: 2px solid var(--color-primary-blue);
-    outline-offset: 2px;
-    border-radius: var(--border-radius-sm);
-  }
-
-  /* Performance: Respect prefers-reduced-motion */
-  @media (prefers-reduced-motion: reduce) {
-    * {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
-    }
-  }
+/* Custom CSS for fonts */
+@font-face {
+  font-family: 'Lora';
+  src: url('/fonts/Lora-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
 }
-```
+
+@font-face {
+  font-family: 'Lora';
+  src: url('/fonts/Lora-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Base body and heading styles, using Tailwind's @apply */
+body {
+  @apply font-body text-text bg-background antialiased;
+}
+
+h1, h2, h3 {
+  @apply font-heading text-text;
+}
+
+h1 {
+  @apply text-5xl font-bold leading-5xl md:text-6xl;
+}
+
+h2 {
+  @apply text-4xl font-bold leading-4xl md:text-5xl;
+}
+
+h3 {
+  @apply text-3xl font-semibold leading-3xl md:text-4xl;
+}
+
+h4 {
+  @apply text-2xl font-semibold leading-2xl md:text-3xl;
+}
+
+/* Ensure focus-visible is distinct */
+.focus-visible\:ring-2:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px theme('colors.primary'), 0 0 0 4px theme('colors.primary.light');
+}
+
+.focus-visible\:ring-offset-2:focus-visible {
+  outline-offset: 2px;
+}
+---
