@@ -1,0 +1,63 @@
+---
+/**
+ * BlogCategoryFilter
+ * A component to display and filter blog posts by category (tags).
+ */
+
+// Type imports
+import type { HTMLAttributes } from 'astro/types';
+
+// Props interface with JSDoc comments
+interface Props extends HTMLAttributes<'div'> {
+  /** Array of all available category strings */
+  allCategories: string[];
+  /** The currently active category string for highlighting */
+  activeCategory?: string;
+}
+
+// Destructure with defaults
+const {
+  allCategories,
+  activeCategory = 'All',
+  class: className,
+  ...attrs
+} = Astro.props;
+
+// Sort categories alphabetically, and ensure 'All' is first if present.
+const sortedCategories = ['All', ...allCategories.filter(cat => cat !== 'All').sort((a, b) => a.localeCompare(b))];
+---
+
+<div class:list={[
+  'flex flex-wrap gap-2 font-body text-sm',
+  className
+]} {...attrs}>
+  {sortedCategories.map((category) => {
+    const isActive = category === activeCategory;
+    return (
+      <button
+        type="button"
+        data-category={category}
+        aria-pressed={isActive}
+        class:list={[
+          'px-4 py-2 rounded-full transition-all duration-200 ease-in-out',
+          'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+          {
+            'bg-primary text-white shadow-md hover:bg-primary-dark': isActive,
+            'bg-neutral-100 text-neutral-800 hover:bg-neutral-200': !isActive,
+          }
+        ]}
+      >
+        {category}
+      </button>
+    );
+  })}
+</div>
+
+<style>
+  /* Reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    button {
+      transition: none;
+    }
+  }
+</style>
