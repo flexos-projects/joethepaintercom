@@ -8,32 +8,29 @@ export default {
       // --- Colors ---
       colors: {
         primary: {
-          blue: {
-            DEFAULT: '#0047AB', // Main brand color
-            light: '#3366CC',   // Lighter variant for accents or subtle backgrounds
-            dark: '#003B8D',    // Darker variant for hover/active states or contrast
-          },
+          DEFAULT: '#0047AB', // Primary Blue from 06-design.md & tokens.json
+          hover: '#003B8D',    // From 06-design.md Button Styles
+          active: '#002A6B',   // From 06-design.md Button Styles
         },
-        accent: {
-          gold: {
-            DEFAULT: '#E5B80B', // Warm, inviting golden ochre
-            light: '#FFD700',   // Brighter variant for highlights
-            dark: '#B38B00',    // Deeper variant for subtle contrast
-          },
+        secondary: {
+          DEFAULT: '#6B7280', // Secondary Gray from 06-design.md & tokens.json
+          hover: '#5A616E',    // From 06-design.md Button Styles
+          active: '#4D535E',   // From 06-design.md Button Styles
         },
-        background: '#F9FAFB', // Page background. Soft off-white to reduce eye strain from pure white.
-        surface: '#FFFFFF',    // Card backgrounds, modals, input fields. Crisp white for content areas.
+        accent: '#E5B80B',    // Accent Gold from 06-design.md & tokens.json
+        background: '#F9FAFB', // Background White from 06-design.md & tokens.json
+        surface: '#FFFFFF',    // Surface Light from 06-design.md & tokens.json
         text: {
-          dark: '#1F2937',     // Primary body text, main headings. High contrast for readability.
-          muted: '#6B7280',    // Secondary body text, captions, less emphasized information.
-          subtle: '#9CA3AF',   // Very subtle text, timestamps, disabled states.
+          dark: '#1F2937',     // Text Dark from 06-design.md & tokens.json
+          muted: '#6B7280',    // Text Muted from 06-design.md & tokens.json
+          subtle: '#9CA3AF',   // Text Subtle from 06-design.md & tokens.json
         },
-        border: '#E5E7EB',     // Dividers, subtle borders, outlines.
+        border: '#E5E7EB',     // Border Light from 06-design.md & tokens.json
         // Semantic feedback colors
-        success: '#10B981',    // Green for success messages
-        warning: '#F59E0B',    // Orange for warnings
-        error: '#EF4444',      // Red for errors
-        info: '#3B82F6',       // Blue for informational messages
+        success: '#10B981',    // Success from 06-design.md & tokens.json
+        warning: '#F59E0B',    // Warning from 06-design.md & tokens.json
+        error: '#EF4444',      // Error from 06-design.md & tokens.json
+        info: '#3B82F6',       // Info from 06-design.md & tokens.json
       },
 
       // --- Typography ---
@@ -43,17 +40,16 @@ export default {
         mono: ['"Space Mono"', ...defaultTheme.fontFamily.mono], // For code snippets or specific data displays
       },
       fontSize: {
-        'xs': ['0.75rem', { lineHeight: '1.5' }],    // 12px
-        'sm': ['0.875rem', { lineHeight: '1.5' }],   // 14px
-        'base': ['1rem', { lineHeight: '1.6' }],     // 16px (default body)
-        'lg': ['1.125rem', { lineHeight: '1.6' }],   // 18px
-        'xl': ['1.25rem', { lineHeight: '1.4' }],    // 20px
-        '2xl': ['1.5rem', { lineHeight: '1.3' }],    // 24px
-        '3xl': ['1.875rem', { lineHeight: '1.3' }],  // 30px
-        '4xl': ['2.25rem', { lineHeight: '1.2' }],   // 36px (h2)
-        '5xl': ['3rem', { lineHeight: '1.1' }],      // 48px (h1)
-        '6xl': ['3.75rem', { lineHeight: '1.1' }],   // 60px (hero h1)
-        '7xl': ['4.5rem', { lineHeight: '1.1' }],    // 72px (display hero)
+        'xs': ['0.75rem', { lineHeight: '1.5' }],    // 12px (matches 06-design.md)
+        'sm': ['0.875rem', { lineHeight: '1.5' }],   // 14px (matches 06-design.md)
+        'base': ['1rem', { lineHeight: '1.6' }],     // 16px (matches 06-design.md)
+        'lg': ['1.125rem', { lineHeight: '1.6' }],   // 18px (matches 06-design.md)
+        'xl': ['1.25rem', { lineHeight: '1.4' }],    // 20px (matches 06-design.md)
+        '2xl': ['1.5rem', { lineHeight: '1.3' }],    // 24px (matches 06-design.md)
+        '3xl': ['1.875rem', { lineHeight: '1.3' }],  // 30px (matches 06-design.md)
+        '4xl': ['2.25rem', { lineHeight: '1.2' }],   // 36px (matches 06-design.md)
+        '5xl': ['3rem', { lineHeight: '1.1' }],      // 48px (matches 06-design.md)
+        '6xl': ['3.75rem', { lineHeight: '1.1' }],   // 60px (matches 06-design.md)
       },
       fontWeight: {
         normal: '400',
@@ -97,9 +93,6 @@ export default {
         'md': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
         'lg': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
         'xl': '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
-        '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-        'inner': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
-        'none': 'none',
         'outline': '0 0 0 3px rgba(0, 71, 171, 0.3)', // Custom focus outline using primary blue
       },
 
@@ -119,7 +112,6 @@ export default {
       transitionDuration: {
         'DEFAULT': '300ms',
         '150': '150ms', // fast
-        '200': '200ms',
         '300': '300ms', // normal
         '500': '500ms', // slow
       },

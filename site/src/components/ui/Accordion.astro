@@ -3,7 +3,7 @@ import type { HTMLAttributes } from 'astro/types';
 
 interface FAQItem {
   question: string;
-  answer: string; // RichText would be better here, but for now simple string
+  answer: string; // This field is expected to contain RichText (HTML string) as per 04-content-schema.md
 }
 
 interface Props extends HTMLAttributes<'div'> {
@@ -35,7 +35,7 @@ const { items, id = 'accordion-default', ...attrs } = Astro.props;
         </svg>
       </summary>
       <div id={`${id}-content-${index}`} role="region" class="px-5 pb-5 text-text-muted text-base">
-        <p>{item.answer}</p>
+        <div class="prose prose-sm max-w-none" set:html={item.answer} />
       </div>
     </details>
   ))}

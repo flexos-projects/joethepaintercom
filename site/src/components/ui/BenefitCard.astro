@@ -12,14 +12,12 @@ const { title, description, icon, ...attrs } = Astro.props;
 
 <div {...attrs} class="flex flex-col items-center text-center p-6 bg-surface rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out h-full">
   {icon && (
-    <div class="mb-4 text-primary-blue-dark">
-      <!-- Placeholder for actual SVG icon component -->
+    <div class="mb-4 text-primary">
       <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
         {icon === 'check' && <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>}
-        {icon === 'star' && <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.975 2.888a1 1 0 00-.364 1.118l1.519 4.674c.3.921-.755 1.688-1.538 1.118l-3.975-2.888a1 1 0 00-1.176 0l-3.975 2.888c-.783.57-1.838-.197-1.538-1.118l1.519-4.674a1 1 0 00-.364-1.118L2.923 10.09c-.783-.57-.381-1.81.588-1.81h4.915a1 1 0 00.95-.69l1.519-4.674z"></path>}
-        {icon === 'handyman' && <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m12 4a2 2 0 100-4m0 4a2 2 0 110-4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m12 4a2 2 0 100-4m0 4a2 2 0 110-4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4M12 18h.01M12 12h.01M12 6h.01M6 18h.01M6 12h.01M6 6h.01M18 18h.01M18 12h.01M18 6h.01"></path>}
+        {icon === 'star' && <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.975 2.888a1 0 00-.364 1.118l1.519 4.674c.3.921-.755 1.688-1.538 1.118l-3.975-2.888a1 0 00-1.176 0l-3.975 2.888c-.783.57-1.838-.197-1.538-1.118l1.519-4.674a1 0 00-.364-1.118L2.923 10.09c-.783-.57-.381-1.81.588-1.81h4.915a1 0 00.95-.69l1.519-4.674z"></path>}
+        {icon === 'handyman' && <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 0 100 4m0-4a2 0 110 4m-6 8a2 0 100-4m0 4a2 0 110-4m-6 8a2 0 100-4m0 4a2 0 110-4m12 4a2 0 100-4m0 4a2 0 110-4m-6 8a2 0 100-4m0 4a2 0 110-4m-6 8a2 0 100-4m0 4a2 0 110-4M12 18h.01M12 12h.01M12 6h.01M6 18h.01M6 12h.01M6 6h.01M18 18h.01M18 12h.01M18 6h.01"></path>}
         {icon === 'wrench' && <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>}
-        {/* Add more icon paths as needed */}
       </svg>
     </div>
   )}

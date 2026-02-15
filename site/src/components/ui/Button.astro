@@ -18,20 +18,34 @@ const {
   ...attrs
 } = Astro.props;
 
-const baseClasses = 'inline-flex items-center justify-center text-center font-body font-semibold cursor-pointer border transition-all duration-200 ease-in-out rounded-md focus-visible:ring-offset-2 focus-visible:ring-primary-blue';
+// Base styling properties mapped from 06-design.md -> Component Styles -> Buttons -> Base Styling
+// font-family: Inter; font-weight: 600; text-align: center; text-decoration: none; cursor: pointer;
+// border: 1px solid transparent; transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+// border-radius: var(--border-radius-md);
+const baseClasses = 'inline-flex items-center justify-center text-center font-body font-semibold cursor-pointer border transition-all duration-200 ease-in-out rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2';
 
+// Variant specific styles mapped from 06-design.md -> Component Styles -> Buttons -> Variants
 const variantClasses = {
-  primary: 'bg-primary-blue text-white border-primary-blue hover:bg-primary-blue-dark hover:border-primary-blue-dark active:scale-[0.98]',
-  secondary: 'bg-secondary-gray text-white border-secondary-gray hover:bg-neutral-600 hover:border-neutral-600 active:scale-[0.98]',
-  accent: 'bg-accent-gold text-text-dark border-accent-gold hover:bg-accent-gold-dark hover:border-accent-gold-dark active:scale-[0.98]',
-  outline: 'bg-transparent text-primary-blue border-primary-blue hover:bg-primary-blue hover:text-white active:scale-[0.98]',
-  ghost: 'bg-transparent text-primary-blue border-transparent hover:bg-primary-blue-light hover:bg-opacity-10 active:scale-[0.98]',
+  // Primary: Default: bg-primary text-surface border-primary. Hover: bg-primary-dark border-primary-dark.
+  primary: 'bg-primary text-surface border-primary hover:bg-primary-dark hover:border-primary-dark active:scale-[0.98]',
+  // Secondary: Default: bg-secondary text-surface border-secondary. Hover: bg-secondary-dark border-secondary-dark.
+  secondary: 'bg-secondary text-surface border-secondary hover:bg-secondary-dark hover:border-secondary-dark active:scale-[0.98]',
+  // Accent: Default: bg-accent text-text border-accent. Hover: bg-accent-dark border-accent-dark.
+  accent: 'bg-accent text-text border-accent hover:bg-accent-dark hover:border-accent-dark active:scale-[0.98]',
+  // Outline: Default: bg-transparent text-primary border-primary. Hover: bg-primary text-surface.
+  outline: 'bg-transparent text-primary border-primary hover:bg-primary hover:text-surface active:scale-[0.98]',
+  // Ghost: Default: bg-transparent text-primary border-transparent. Hover: bg-primary/5.
+  ghost: 'bg-transparent text-primary border-transparent hover:bg-primary/5 active:scale-[0.98]',
 }[variant];
 
+// Size specific styles mapped from 06-design.md -> Component Styles -> Buttons -> Sizes
+// sm: padding: var(--spacing-2) var(--spacing-3); font-size: var(--font-size-sm);
+// md: padding: var(--spacing-3) var(--spacing-4); font-size: var(--font-size-base);
+// lg: padding: var(--spacing-4) var(--spacing-6); font-size: var(--font-size-lg);
 const sizeClasses = {
-  sm: 'px-4 py-2 text-sm',
-  md: 'px-6 py-3 text-base',
-  lg: 'px-8 py-4 text-lg',
+  sm: 'px-3 py-2 text-sm',
+  md: 'px-4 py-3 text-base',
+  lg: 'px-6 py-4 text-lg',
 }[size];
 
 const disabledClasses = disabled ? 'opacity-60 cursor-not-allowed pointer-events-none' : '';

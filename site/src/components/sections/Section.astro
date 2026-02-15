@@ -3,17 +3,17 @@ import type { HTMLAttributes } from 'astro/types';
 
 interface Props extends HTMLAttributes<'section'> {
   id: string;
-  background?: 'background' | 'surface' | 'primary-blue-dark' | 'secondary-gray';
+  background?: 'background' | 'surface' | 'primary-dark' | 'secondary';
   centered?: boolean;
 }
 
 const { id, background = 'surface', centered = false, ...attrs } = Astro.props;
 
 const backgroundClasses = {
-  'background': 'bg-background',
-  'surface': 'bg-surface',
-  'primary-blue-dark': 'bg-primary-blue-dark',
-  'secondary-gray': 'bg-secondary-gray',
+  'background': 'bg-neutral-50', // Maps to tokens.json: colors.background, tailwind.config.mjs: neutral.50
+  'surface': 'bg-white',        // Maps to tokens.json: colors.surface, tailwind.config.mjs: white
+  'primary-dark': 'bg-primary-dark', // Maps to tailwind.config.mjs: primary.dark
+  'secondary': 'bg-neutral-500',   // Maps to tokens.json: colors.secondary, tailwind.config.mjs: neutral.500
 }[background];
 
 const containerClasses = `container mx-auto px-4 max-w-7xl ${centered ? 'text-center' : ''}`;

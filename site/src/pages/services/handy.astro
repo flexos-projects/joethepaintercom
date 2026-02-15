@@ -8,7 +8,7 @@ import { getEntry } from 'astro:content';
 import BaseLayout from '@layouts/BaseLayout.astro';
 import Hero from '@components/sections/Hero.astro';
 import Section from '@components/sections/Section.astro';
-import Button from '@components/ui/Button.astro'; // Assuming Button.astro is now CallToAction
+import Button from '@components/ui/Button.astro';
 import BenefitCard from '@components/ui/BenefitCard.astro';
 import ProcessSteps from '@components/sections/ProcessSteps.astro';
 import Accordion from '@components/ui/Accordion.astro';
@@ -25,9 +25,11 @@ const { data } = handyServicesEntry;
 const pageMeta = {
   title: data.seo.title,
   description: data.seo.description,
-  // Assuming a default OG image or a page-specific one can be set
   ogImage: data.featuredImage?.src || '/images/social-share-default.jpg',
 };
+
+// Extract a relevant snippet from longDescription for benefit cards
+const benefitCardDescriptionSnippet = "Joe brings the same level of integrity, attention to detail, and craftsmanship to every repair and maintenance task.";
 ---
 
 <BaseLayout {...pageMeta}>
@@ -59,7 +61,7 @@ const pageMeta = {
       {data.benefits.map(benefit => (
         <BenefitCard
           title={benefit}
-          description="Joe's commitment to quality and personal touch ensures every task is completed to the highest standard."
+          description={benefitCardDescriptionSnippet}
           icon="wrench"
         />
       ))}
@@ -77,7 +79,7 @@ const pageMeta = {
         ))}
       </ul>
       <p class="mt-8 text-center text-text-muted text-base">
-        Don't see your specific need listed? Joe is versatile! <a href="/contact" class="text-primary-blue hover:underline">Contact us</a> to discuss your project.
+        Don't see your specific need listed? Joe is versatile! <a href="/contact" class="text-primary hover:underline">Contact us</a> to discuss your project.
       </p>
     </div>
   </Section>
@@ -100,7 +102,7 @@ const pageMeta = {
     </Section>
   )}
 
-  <Section id="cta-bottom" background="primary-blue-dark">
+  <Section id="cta-bottom" background="primary-dark">
     <div class="text-center text-white max-w-3xl mx-auto">
       <h2 class="font-heading text-4xl md:text-5xl font-bold mb-6">
         Ready to Tackle Your To-Do List?
