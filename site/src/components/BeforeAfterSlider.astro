@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
-import { initializeBeforeAfterSlider } from '@/utils/beforeAfterSlider';
+// The JS import for client-side execution should be in the <script> block.
+// Removed: import { initializeBeforeAfterSlider } from '@/utils/beforeAfterSlider';
 
 interface Props {
   beforeImage: { src: string; alt: string; };
@@ -21,7 +22,7 @@ const uniqueId = `before-after-slider-${Math.random().toString(36).substring(2, 
   class="relative w-full overflow-hidden rounded-lg shadow-md group select-none touch-none"
   style={`padding-bottom: calc(100% / (${aspectRatio}));`}
   role="group"
-  aria-label="Before and After Image Comparison"
+  aria-label="Before and After Image Comparison Slider"
 >
   <!-- After Image (Full width, static background) -->
   <Image
@@ -56,7 +57,7 @@ const uniqueId = `before-after-slider-${Math.random().toString(36).substring(2, 
   <!-- Divider Line -->
   <div
     data-slider-divider
-    class="absolute top-0 bottom-0 left-1/2 w-px bg-border z-30 pointer-events-none"
+    class="absolute top-0 bottom-0 left-1/2 w-px bg-border-light z-30 pointer-events-none"
     style="left: 50%;"
   ></div>
 
@@ -64,18 +65,25 @@ const uniqueId = `before-after-slider-${Math.random().toString(36).substring(2, 
   <div
     data-slider-handle
     class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 bg-primary-blue rounded-full shadow-md flex items-center justify-center z-40 cursor-ew-resize transition-colors duration-200
-           hover:bg-primary-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-blue focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+           hover:bg-primary-blue-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-blue focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-light"
     style="left: 50%;"
+    tabindex="0"
+    role="slider"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    aria-valuenow="50"
+    aria-label="Adjust image comparison"
   >
     <svg
-      class="w-4 h-4 text-surface pointer-events-none"
+      class="w-4 h-4 text-surface-light pointer-events-none"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path>
+      <!-- Two arrows pointing inwards for a horizontal slider handle -->
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5 5-5m2 10l5-5-5-5"></path>
     </svg>
   </div>
 </div>
@@ -83,40 +91,11 @@ const uniqueId = `before-after-slider-${Math.random().toString(36).substring(2, 
 <script define:vars={{ uniqueId }}>
   import { initializeBeforeAfterSlider } from '@/utils/beforeAfterSlider';
 
-  // Wait for the DOM to be fully loaded
+  // Wait for the DOM to be fully loaded before initializing the slider
   document.addEventListener('DOMContentLoaded', () => {
     const sliderElement = document.getElementById(uniqueId);
     if (sliderElement) {
       initializeBeforeAfterSlider(sliderElement);
     }
   });
-
-  // Also handle cases where the component might be added dynamically later
-  // though for SSG/SPA, DOMContentLoaded is usually sufficient.
-  // For robustness, could use a MutationObserver if dynamic addition is guaranteed.
 </script>
-
-<style>
-  /* Base styles for the slider to ensure images are positioned correctly */
-  .before-after-slider-container {
-    position: relative;
-    overflow: hidden;
-    user-select: none;
-    touch-action: none; /* Prevents default touch scroll/zoom */
-  }
-
-  .before-after-slider-container img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    pointer-events: none; /* Images shouldn't interfere with handle dragging */
-  }
-
-  /*
-    The `width` property on the `data-slider-before-image-container`
-    is dynamically set by JavaScript. This effectively "clips" the before image.
-  */
-</style>
