@@ -1,13 +1,12 @@
 ---
 import { Image } from 'astro:assets';
-import projectPlaceholder from '@assets/project-placeholder-1.webp'; // Placeholder image
 
 interface Props {
   title: string;
   location: string;
   description: string;
-  imageUrl?: string; // Optional, will be dynamic later
-  imageAlt?: string;
+  imageUrl: string;
+  imageAlt: string;
   projectLink: string;
 }
 
@@ -15,8 +14,8 @@ const {
   title,
   location,
   description,
-  imageUrl = projectPlaceholder, // Use placeholder if not provided
-  imageAlt = `Completed project: ${title} in ${location}`,
+  imageUrl,
+  imageAlt,
   projectLink,
 } = Astro.props;
 ---

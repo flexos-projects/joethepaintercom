@@ -4,39 +4,38 @@ import Header from '@components/Header.astro';
 import Footer from '@components/Footer.astro';
 import ProjectCard from '@components/ProjectCard.astro';
 
-// Placeholder data for projects. This will later come from content collections.
 const projects = [
   {
-    id: 'project-1',
-    title: 'Coastal Home Exterior Refresh',
+    id: 'encinitas-coastal-home-exterior',
+    title: 'Encinitas Coastal Home Exterior',
     location: 'Encinitas, CA',
-    description: 'Complete exterior repaint and minor stucco repair for a beautiful coastal home.',
-    imageUrl: '/src/assets/project-placeholder-1.webp',
-    projectLink: '/projects/coastal-home-refresh',
+    description: 'Complete exterior repaint and minor stucco repair, transforming a coastal home with a durable, fresh finish.',
+    imageUrl: '/images/projects/encinitas-coastal-home-exterior-after.webp',
+    projectLink: '/projects/encinitas-coastal-home-exterior',
   },
   {
-    id: 'project-2',
-    title: 'Modern Living Room Interior',
-    location: 'Carlsbad, CA',
+    id: 'rancho-santa-fe-living-room',
+    title: 'Rancho Santa Fe Living Room',
+    location: 'Rancho Santa Fe, CA',
     description: 'Transformed a dated living room with a fresh, contemporary color palette and flawless finish.',
-    imageUrl: '/src/assets/project-placeholder-2.webp',
-    projectLink: '/projects/modern-living-room',
+    imageUrl: '/images/projects/rancho-santa-fe-living-room-after.webp',
+    projectLink: '/projects/rancho-santa-fe-living-room',
   },
   {
-    id: 'project-3',
-    title: 'Office Space Renovation',
+    id: 'vista-commercial-office-renovation',
+    title: 'Vista Commercial Office Renovation',
     location: 'Vista, CA',
-    description: 'Updated a small business office with new paint, drywall repair, and fixture installation.',
-    imageUrl: '/src/assets/project-placeholder-3.webp',
-    projectLink: '/projects/office-renovation',
+    description: 'Updated a small business office with new paint, drywall repair, and fixture installation for a professional look.',
+    imageUrl: '/images/projects/vista-commercial-office-after.webp',
+    projectLink: '/projects/vista-commercial-office-renovation',
   },
   {
-    id: 'project-4',
-    title: 'Kitchen Cabinet Refinishing',
-    location: 'San Marcos, CA',
-    description: 'Expert cabinet refinishing, giving an old kitchen a brand new, modern look.',
-    imageUrl: '/src/assets/project-placeholder-1.webp', // Reusing placeholder
-    projectLink: '/projects/cabinet-refinishing',
+    id: 'carlsbad-kitchen-cabinet-refinishing',
+    title: 'Carlsbad Kitchen Cabinet Refinishing',
+    location: 'Carlsbad, CA',
+    description: 'Expert cabinet refinishing, giving an old kitchen a brand new, modern look with a durable, smooth finish.',
+    imageUrl: '/images/projects/carlsbad-kitchen-cabinets-after.webp',
+    projectLink: '/projects/carlsbad-kitchen-cabinet-refinishing',
   },
 ];
 
@@ -48,7 +47,7 @@ const pageDescription = "Explore Joe the Painter's portfolio of meticulously com
   <Header />
   <main class="bg-background py-16 md:py-24">
     <div class="container mx-auto px-4">
-      <h1 class="font-heading text-5xl md:text-6xl font-bold text-text-dark text-center mb-8 animate-fade-in">
+      <h1 class="font-heading text-5xl md:text-6xl font-bold text-text text-center mb-8 animate-fade-in">
         Our Work
       </h1>
       <p class="text-xl text-text-muted text-center max-w-3xl mx-auto mb-16 animate-fade-in animate-delay-100">
@@ -70,10 +69,10 @@ const pageDescription = "Explore Joe the Painter's portfolio of meticulously com
       </div>
 
       <section class="text-center mt-20">
-        <h2 class="font-heading text-4xl font-bold text-text-dark mb-6 animate-fade-in">
+        <h2 class="font-heading text-4xl font-bold text-text text-center mb-6 animate-fade-in">
           Ready to Transform Your Space?
         </h2>
-        <p class="text-lg text-text-muted mb-8 animate-fade-in animate-delay-100">
+        <p class="text-lg text-text-muted text-center mb-8 animate-fade-in animate-delay-100">
           Let's discuss your vision and bring your project to life with the same dedication and quality.
         </p>
         <a
