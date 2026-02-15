@@ -1,233 +1,386 @@
 ---
-/**
- * ConsultationForm.astro
- *
- * A reusable component for capturing free consultation requests.
- * It includes fields for client information, project details,
- * and preferred contact method, with a placeholder for reCAPTCHA.
- */
+import Label from './ui/Label.astro';
+import Input from './ui/Input.astro';
+import Button from './ui/Button.astro';
 
-// Component imports
-import Input from '@components/ui/Input.astro';
-import Label from '@components/ui/Label.astro';
-import Button from '@components/ui/Button.astro';
+// Ensure FORMSPREE_ENDPOINT_URL is defined in your .env file
+// Example: PUBLIC_FORMSPREE_ENDPOINT_URL="https://formspree.io/f/yourformid"
+const FORMSPREE_ENDPOINT_URL = Astro.env.PUBLIC_FORMSPREE_ENDPOINT_URL;
 
-// Type imports (if any, not directly needed for this static form but good practice)
-// import type { HTMLAttributes } from 'astro/types';
-
-// Props interface (no specific props for this self-contained form, but good for future extensibility)
-interface Props {
-  // Any props for customization, e.g., initialValues, onSubmit handler
-  // For now, it's a static form.
+// Type definition for form fields for client-side validation logic
+interface FieldConfig {
+  id: string;
+  name: string;
+  type: 'text' | 'email' | 'tel' | 'select' | 'textarea' | 'radio';
+  minLength?: number;
+  maxLength?: number;
+  pattern?: string; // For regex validation, e.g., phone numbers
+  groupName?: string; // For radio groups
 }
 
-// Destructure props if any
-const {} = Astro.props;
-
-// Hardcoded options for select and radio fields based on specs
-const serviceTypeOptions = [
-  { value: 'painting', label: 'Painting Services' },
-  { value: 'handy', label: 'Handy Services' },
-  { value: 'both', label: 'Both Painting & Handy Services' },
+// Define the fields for validation
+const fields: FieldConfig[] = [
+  { id: 'fullName', name: 'Full Name', type: 'text', minLength: 2 },
+  { id: 'email', name: 'Email Address', type: 'email' },
+  { id: 'phone', name: 'Phone Number', type: 'tel', pattern: '^\\(?(\\d{3})\\)?[-.\\s]?(\\d{3})[-.\\s]?(\\d{4})$' },
+  { id: 'projectType', name: 'Project Type', type: 'select' },
+  { id: 'serviceLocation', name: 'Service Location', type: 'text', minLength: 3 },
+  { id: 'projectDetails', name: 'Project Details', type: 'textarea', minLength: 10, maxLength: 500 },
+  { id: 'preferredContact', name: 'Preferred Contact Method', type: 'radio', groupName: 'preferredContact' },
 ];
-
-const preferredContactOptions = [
-  { value: 'phone', label: 'Phone Call' },
-  { value: 'email', label: 'Email' },
-];
-
-// Placeholder for form submission handler
-// In a real application, this would interact with a backend endpoint
-// as specified in TASK-024. For now, it's a client-side placeholder.
-const handleSubmit = (event: Event) => {
-  event.preventDefault();
-  const form = event.target as HTMLFormElement;
-  const formData = new FormData(form);
-  const data = Object.fromEntries(formData.entries());
-
-  console.log('Consultation Form Submitted:', data);
-  alert('Thank you for your request! Joe will be in touch shortly.'); // Placeholder for success message
-  form.reset(); // Clear the form
-  // Here, you would typically make an API call (TASK-024)
-  // and handle success/error states (TASK-010, TASK-024).
-};
 ---
 
 <form
-  class="w-full max-w-lg mx-auto p-6 lg:p-8 bg-surface rounded-lg shadow-md space-y-6"
-  aria-label="Free Consultation Request Form"
   id="consultation-form"
-  data-form-type="consultation"
-  onsubmit="handleSubmit(event)"
+  method="POST"
+  action={FORMSPREE_ENDPOINT_URL}
+  class="space-y-6"
+  name="Free Consultation Request for Joe the Painter"
+  data-netlify="true"
+  netlify-honeypot="bot-field"
 >
-  <h2 class="text-3xl font-heading font-bold text-text text-center mb-4">
-    Book Your Free Consultation
-  </h2>
-  <p class="text-text-muted text-center mb-6">
-    Let's discuss your project with no obligation. Joe personally reviews every request.
+  <!-- Honeypot field for spam prevention -->
+  <p class="hidden">
+    <label>
+      Don’t fill this out if you’re human: <input name="bot-field" />
+    </label>
   </p>
 
   <!-- Full Name -->
   <div>
-    <Label for="fullName">Full Name</Label>
+    <Label for="fullName" text="Full Name" required />
     <Input
       id="fullName"
       name="fullName"
       type="text"
       placeholder="John Doe"
       required
-      aria-required="true"
+      autocomplete="name"
     />
-    <p id="fullName-help" class="text-text-muted text-xs mt-1">Your full name, so Joe knows who to address.</p>
+    <p id="fullName-error" class="text-error text-xs mt-1 hidden" aria-live="polite"></p>
   </div>
 
   <!-- Email Address -->
   <div>
-    <Label for="emailAddress">Email Address</Label>
+    <Label for="email" text="Email Address" required />
     <Input
-      id="emailAddress"
-      name="emailAddress"
+      id="email"
+      name="email"
       type="email"
       placeholder="john.doe@example.com"
       required
-      aria-required="true"
+      autocomplete="email"
     />
-    <p id="emailAddress-help" class="text-text-muted text-xs mt-1">We'll send your confirmation here.</p>
+    <p id="email-error" class="text-error text-xs mt-1 hidden" aria-live="polite"></p>
   </div>
 
   <!-- Phone Number -->
   <div>
-    <Label for="phoneNumber">Phone Number</Label>
+    <Label for="phone" text="Phone Number" required />
     <Input
-      id="phoneNumber"
-      name="phoneNumber"
+      id="phone"
+      name="phone"
       type="tel"
-      pattern="^\(?([0-9]{3})\)?[-.●]?([0-9]{3})[-.●]?([0-9]{4})$"
       placeholder="(760) 555-1234"
       required
-      aria-required="true"
+      autocomplete="tel"
     />
-    <p id="phoneNumber-help" class="text-text-muted text-xs mt-1">For Joe to call you directly.</p>
+    <p id="phone-error" class="text-error text-xs mt-1 hidden" aria-live="polite"></p>
   </div>
 
-  <!-- Project Type (Dropdown) -->
+  <!-- Project Type -->
   <div>
-    <Label for="projectType">Project Type</Label>
+    <Label for="projectType" text="Project Type" required />
     <div class="relative">
       <select
         id="projectType"
         name="projectType"
-        class="block w-full appearance-none border border-border rounded-md p-3 text-base text-text bg-surface focus:outline-none focus:ring-2 focus:ring-primary/[0.2] focus:border-primary transition-all duration-150 ease-in-out pr-10"
         required
+        class="block w-full px-3 py-2 border border-border rounded-md text-text-dark bg-surface placeholder:text-text-muted appearance-none pr-8 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
         aria-required="true"
+        aria-invalid="false"
       >
-        <option value="" disabled selected>Select a service type...</option>
-        {serviceTypeOptions.map((option) => (
-          <option value={option.value}>{option.label}</option>
-        ))}
+        <option value="" disabled selected>What kind of project are you considering?</option>
+        <option value="Painting Services">Painting Services</option>
+        <option value="Handy Services">Handy Services</option>
+        <option value="Both Painting & Handy Services">Both Painting & Handy Services</option>
       </select>
       <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text-muted">
-        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
         </svg>
       </div>
     </div>
-    <p id="projectType-help" class="text-text-muted text-xs mt-1">What kind of project are you considering?</p>
+    <p id="projectType-error" class="text-error text-xs mt-1 hidden" aria-live="polite"></p>
   </div>
 
   <!-- Service Location -->
   <div>
-    <Label for="serviceLocation">Service Location</Label>
+    <Label for="serviceLocation" text="Service Location" required />
     <Input
       id="serviceLocation"
       name="serviceLocation"
       type="text"
       placeholder="Carlsbad, CA"
       required
-      aria-required="true"
+      autocomplete="address-level2"
     />
-    <p id="serviceLocation-help" class="text-text-muted text-xs mt-1">Which San Diego County city or zip code is your project located in?</p>
+    <p id="serviceLocation-error" class="text-error text-xs mt-1 hidden" aria-live="polite"></p>
   </div>
 
-  <!-- Project Details (Textarea) -->
+  <!-- Project Details -->
   <div>
-    <Label for="projectDetails">Project Details</Label>
+    <Label for="projectDetails" text="Project Details" required />
     <textarea
       id="projectDetails"
       name="projectDetails"
-      rows={5}
-      class="block w-full border border-border rounded-md p-3 text-base text-text bg-surface placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary/[0.2] focus:border-primary transition-all duration-150 ease-in-out"
-      placeholder="e.g., Exterior house paint, 3 bedrooms, drywall repair needed."
-      minlength="10"
-      maxlength="500"
+      rows="4"
+      placeholder="Tell Joe about your project (e.g., 'Exterior house paint, 3 bedrooms')."
       required
+      class="w-full px-3 py-2 border border-border rounded-md text-text-dark bg-surface placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
       aria-required="true"
+      aria-invalid="false"
     ></textarea>
-    <p id="projectDetails-help" class="text-text-muted text-xs mt-1">Tell Joe about your project (min 10, max 500 characters).</p>
+    <p id="projectDetails-error" class="text-error text-xs mt-1 hidden" aria-live="polite"></p>
   </div>
 
-  <!-- Preferred Contact Method (Radio) -->
-  <fieldset>
-    <legend class="font-body text-sm font-medium text-text mb-2 block">Preferred Contact Method</legend>
-    <div class="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
-      {preferredContactOptions.map((option) => (
-        <div class="flex items-center">
-          <input
-            id={`contact-${option.value}`}
-            name="preferredContact"
-            type="radio"
-            value={option.value}
-            class="h-4 w-4 text-primary border-border focus:ring-primary"
-            required
-            aria-required="true"
-          />
-          <Label for={`contact-${option.value}`} class="ml-2 !mb-0 cursor-pointer">
-            {option.label}
-          </Label>
-        </div>
-      ))}
+  <!-- Preferred Contact -->
+  <div>
+    <Label for="preferredContact" text="Preferred Contact Method" required />
+    <div class="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0 mt-2">
+      <div class="flex items-center">
+        <input
+          id="contactPhone"
+          name="preferredContact"
+          type="radio"
+          value="Phone Call"
+          class="h-4 w-4 text-primary border-border focus:ring-primary cursor-pointer"
+          required
+          aria-required="true"
+          aria-invalid="false"
+        />
+        <label for="contactPhone" class="ml-2 text-base text-text-dark cursor-pointer">Phone Call</label>
+      </div>
+      <div class="flex items-center">
+        <input
+          id="contactEmail"
+          name="preferredContact"
+          type="radio"
+          value="Email"
+          class="h-4 w-4 text-primary border-border focus:ring-primary cursor-pointer"
+          required
+          aria-required="true"
+          aria-invalid="false"
+        />
+        <label for="contactEmail" class="ml-2 text-base text-text-dark cursor-pointer">Email</label>
+      </div>
     </div>
-    <p id="preferredContact-help" class="text-text-muted text-xs mt-1">How would you prefer Joe to reach out for your consultation?</p>
-  </fieldset>
+    <p id="preferredContact-error" class="text-error text-xs mt-1 hidden" aria-live="polite"></p>
+  </div>
 
   <!-- How Did You Hear About Joe? (Optional) -->
   <div>
-    <Label for="howHearAboutJoe">How Did You Hear About Joe?</Label>
+    <Label for="howDidYouHear" text="How Did You Hear About Joe?" />
     <Input
-      id="howHearAboutJoe"
-      name="howHearAboutJoe"
+      id="howDidYouHear"
+      name="howDidYouHear"
       type="text"
-      placeholder="e.g., Google, friend's referral, Yelp"
-      aria-describedby="howHearAboutJoe-help"
+      placeholder="e.g., Google, Friend's referral, Yelp"
+      autocomplete="off"
     />
-    <p id="howHearAboutJoe-help" class="text-text-muted text-xs mt-1">Optional: This helps us understand our clients better.</p>
-  </div>
-
-  <!-- reCAPTCHA Placeholder -->
-  <div class="recaptcha-placeholder bg-background p-4 rounded-md text-center text-text-muted text-sm border border-border">
-    <!-- reCAPTCHA integration will go here (TASK-025) -->
-    <p>reCAPTCHA will be integrated here for spam prevention.</p>
   </div>
 
   <Button type="submit" variant="primary" size="lg" class="w-full">
     Request My Free Consultation
   </Button>
+
+  <p id="form-submission-message" class="text-center text-sm mt-4 hidden" aria-live="polite"></p>
 </form>
 
 <script is:inline>
-  // This client-side script is a placeholder.
-  // The actual form submission and backend integration will be handled in TASK-024.
-  // This inline script simply logs data and shows an alert for immediate testing.
-  function handleSubmit(event) {
-    event.preventDefault();
-    const form = event.target;
-    const formData = new FormData(form);
-    const data = {};
-    for (let [key, value] of formData.entries()) {
-      data[key] = value;
+  const form = document.getElementById('consultation-form');
+  const submitButton = form.querySelector('button[type="submit"]');
+  const formSubmissionMessage = document.getElementById('form-submission-message');
+
+  const fieldsConfig: FieldConfig[] = [
+    { id: 'fullName', name: 'Full Name', type: 'text', minLength: 2 },
+    { id: 'email', name: 'Email Address', type: 'email' },
+    { id: 'phone', name: 'Phone Number', type: 'tel', pattern: '^\\(?(\\d{3})\\)?[-.\\s]?(\\d{3})[-.\\s]?(\\d{4})$' },
+    { id: 'projectType', name: 'Project Type', type: 'select' },
+    { id: 'serviceLocation', name: 'Service Location', type: 'text', minLength: 3 },
+    { id: 'projectDetails', name: 'Project Details', type: 'textarea', minLength: 10, maxLength: 500 },
+    { id: 'preferredContact', name: 'Preferred Contact Method', type: 'radio', groupName: 'preferredContact' },
+  ];
+
+  function validateField(fieldElement: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement, fieldConfig: FieldConfig): boolean {
+    const errorElement = document.getElementById(`${fieldConfig.id}-error`);
+    if (!errorElement) return true; // Skip if no error element for this field
+
+    let isValid = true;
+    let errorMessage = '';
+    let targetElementForAria = fieldElement; // Default target for aria-invalid/describedby
+
+    if (fieldElement.hasAttribute('required') && !fieldElement.value.trim()) {
+      isValid = false;
+      errorMessage = `${fieldConfig.name} is required.`;
+    } else if (fieldConfig.type === 'email' && fieldElement.value && !/\S+@\S+\.\S+/.test(fieldElement.value)) {
+      isValid = false;
+      errorMessage = 'Please enter a valid email address.';
+    } else if (fieldConfig.type === 'tel' && fieldElement.value && fieldConfig.pattern && !new RegExp(fieldConfig.pattern).test(fieldElement.value)) {
+      isValid = false;
+      errorMessage = 'Please enter a valid phone number (e.g., (760) 555-1234).';
+    } else if (fieldConfig.type === 'text' || fieldConfig.type === 'textarea') {
+      if (fieldConfig.minLength && fieldElement.value.length < fieldConfig.minLength) {
+        isValid = false;
+        errorMessage = `${fieldConfig.name} must be at least ${fieldConfig.minLength} characters.`;
+      }
+      if (fieldConfig.maxLength && fieldElement.value.length > fieldConfig.maxLength) {
+        isValid = false;
+        errorMessage = `${fieldConfig.name} cannot exceed ${fieldConfig.maxLength} characters.`;
+      }
+    } else if (fieldConfig.type === 'radio' && fieldConfig.groupName) {
+      const radioGroup = form.querySelectorAll<HTMLInputElement>(`input[name="${fieldConfig.groupName}"]`);
+      const isRadioChecked = Array.from(radioGroup).some(radio => radio.checked);
+      if (fieldElement.hasAttribute('required') && !isRadioChecked) {
+        isValid = false;
+        errorMessage = `${fieldConfig.name} is required.`;
+      }
+      targetElementForAria = radioGroup[0] || fieldElement; // Apply aria to the first radio in the group
+    } else if (fieldConfig.type === 'select' && fieldElement.value === '') {
+       isValid = false;
+       errorMessage = `${fieldConfig.name} is required.`;
     }
-    console.log('Consultation Form Submitted (Client-side Placeholder):', data);
-    alert('Thank you for your request! Joe will be in touch shortly.');
-    form.reset();
+
+    // Apply visual styling and ARIA attributes
+    if (isValid) {
+      fieldElement.classList.remove('border-error');
+      fieldElement.classList.add('border-border');
+      errorElement.classList.add('hidden');
+      targetElementForAria.setAttribute('aria-invalid', 'false');
+      targetElementForAria.removeAttribute('aria-describedby');
+    } else {
+      fieldElement.classList.remove('border-border');
+      fieldElement.classList.add('border-error');
+      errorElement.textContent = errorMessage;
+      errorElement.classList.remove('hidden');
+      targetElementForAria.setAttribute('aria-invalid', 'true');
+      targetElementForAria.setAttribute('aria-describedby', `${fieldConfig.id}-error`);
+    }
+    return isValid;
   }
+
+  // Attach validation to input events (blur, change for radios/selects)
+  fieldsConfig.forEach(fieldConfig => {
+    const fieldElement = document.getElementById(fieldConfig.id);
+    if (fieldElement) {
+      if (fieldConfig.type === 'radio' && fieldConfig.groupName) {
+        const radioGroup = form.querySelectorAll<HTMLInputElement>(`input[name="${fieldConfig.groupName}"]`);
+        radioGroup.forEach(radio => radio.addEventListener('change', () => validateField(radio, fieldConfig)));
+      } else {
+        fieldElement.addEventListener('blur', () => validateField(fieldElement as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement, fieldConfig));
+        if (fieldConfig.type === 'select') {
+          fieldElement.addEventListener('change', () => validateField(fieldElement as HTMLSelectElement, fieldConfig));
+        }
+      }
+    }
+  });
+
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault(); // Prevent default form submission for client-side validation
+
+    let isFormValid = true;
+    fieldsConfig.forEach(fieldConfig => {
+      const fieldElement = document.getElementById(fieldConfig.id);
+      if (fieldElement) {
+        if (!validateField(fieldElement as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement, fieldConfig)) {
+          isFormValid = false;
+        }
+      }
+    });
+
+    if (!isFormValid) {
+      formSubmissionMessage.textContent = 'Please correct the errors in the form.';
+      formSubmissionMessage.classList.remove('hidden');
+      formSubmissionMessage.classList.remove('text-success');
+      formSubmissionMessage.classList.add('text-error');
+      // Find the first invalid field and focus it for better UX
+      const firstInvalidField = form.querySelector('[aria-invalid="true"]') as HTMLElement;
+      if (firstInvalidField) {
+        firstInvalidField.focus();
+      }
+      return;
+    }
+
+    submitButton.disabled = true;
+    submitButton.innerHTML = `
+      <svg class="animate-spin h-5 w-5 mr-3 text-white inline-block" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      Sending Request...
+    `;
+    formSubmissionMessage.classList.add('hidden'); // Hide previous messages
+
+    try {
+      const formData = new FormData(form);
+      const response = await fetch(form.action, {
+        method: form.method,
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        form.reset(); // Clear form fields after successful submission
+        // Hide all error messages and reset styles
+        fieldsConfig.forEach(fieldConfig => {
+          const fieldElement = document.getElementById(fieldConfig.id);
+          const errorElement = document.getElementById(`${fieldConfig.id}-error`);
+          if (fieldElement) {
+            fieldElement.classList.remove('border-error');
+            fieldElement.classList.add('border-border');
+            if (fieldConfig.type === 'radio' && fieldConfig.groupName) {
+                const radioGroup = form.querySelectorAll<HTMLInputElement>(`input[name="${fieldConfig.groupName}"]`);
+                radioGroup.forEach(radio => {
+                    radio.setAttribute('aria-invalid', 'false');
+                    radio.removeAttribute('aria-describedby');
+                });
+            } else {
+                (fieldElement as HTMLElement).setAttribute('aria-invalid', 'false');
+                (fieldElement as HTMLElement).removeAttribute('aria-describedby');
+            }
+          }
+          if (errorElement) {
+            errorElement.classList.add('hidden');
+          }
+        });
+
+        formSubmissionMessage.textContent = 'Thank You! Your Free Consultation Request Has Been Received.';
+        formSubmissionMessage.classList.remove('hidden');
+        formSubmissionMessage.classList.remove('text-error');
+        formSubmissionMessage.classList.add('text-success');
+        
+        // As per 05-flows, success state should redirect to /thank-you page.
+        // This is typically handled by Formspree's redirect feature or a parent component.
+        // For this component, we display the message on the form itself.
+      } else {
+        const errorData = await response.json();
+        formSubmissionMessage.textContent = errorData.errors ? errorData.errors.map((e: { message: string }) => e.message).join(', ') : 'Oops! Something went wrong on our end. Please try again or call Joe directly at (760) 580-8173.';
+        formSubmissionMessage.classList.remove('hidden');
+        formSubmissionMessage.classList.remove('text-success');
+        formSubmissionMessage.classList.add('text-error');
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+      formSubmissionMessage.textContent = 'Oops! Something went wrong on our end. Please try again or call Joe directly at (760) 580-8173.';
+      formSubmissionMessage.classList.remove('hidden');
+      formSubmissionMessage.classList.remove('text-success');
+      formSubmissionMessage.classList.add('text-error');
+    } finally {
+      submitButton.disabled = false;
+      submitButton.innerHTML = 'Request My Free Consultation';
+    }
+  });
 </script>

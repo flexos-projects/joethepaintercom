@@ -1,72 +1,90 @@
 ---
-/**
- * Input.astro
- *
- * A reusable input component for text, email, password, tel, etc.
- * Applies consistent styling and accessibility attributes.
- */
+import { type HTMLAttributes } from 'astro/types';
 
-// Type imports
-import type { HTMLAttributes } from 'astro/types';
-
-// Props interface with JSDoc comments
-interface Props extends HTMLAttributes<'input'> {
-  /** The type of the input (e.g., 'text', 'email', 'password', 'tel') */
-  type?: 'text' | 'email' | 'password' | 'tel' | 'url' | 'number' | 'search';
-  /** The name attribute for the input, used for form submission */
+interface Props extends HTMLAttributes<'input' | 'textarea'> {
+  type?: 'text' | 'email' | 'tel' | 'password' | 'textarea';
   name: string;
-  /** The id attribute for the input, crucial for linking with labels */
   id: string;
-  /** Placeholder text for the input */
-  placeholder?: string;
-  /** Whether the input is required */
-  required?: boolean;
-  /** Value of the input */
   value?: string;
-  /** Whether the input is disabled */
+  placeholder?: string;
+  required?: boolean;
   disabled?: boolean;
-  /** Aria-required attribute for accessibility */
-  'aria-required'?: boolean;
-  /** Aria-describedby attribute for accessibility, linking to help/error text */
-  'aria-describedby'?: string;
-  /** Custom Tailwind classes to apply to the input */
-  class?: string;
+  error?: boolean;
+  errorMessage?: string;
+  label?: string;
 }
 
-// Destructure with defaults
 const {
   type = 'text',
   name,
   id,
+  value,
   placeholder,
   required = false,
-  value,
   disabled = false,
-  class: className,
+  error = false,
+  errorMessage,
+  label,
   ...attrs
 } = Astro.props;
+
+const commonClasses = `
+  w-full p-3
+  border
+  rounded-md
+  text-base
+  text-neutral-800 bg-white
+  placeholder-neutral-500
+  focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary
+  transition-all duration-200 ease-in-out
+`;
+
+const errorClasses = error ? 'border-error' : 'border-neutral-200';
+const disabledClasses = disabled ? 'bg-neutral-50 cursor-not-allowed text-neutral-400' : '';
+
+const inputElement = type === 'textarea' ? (
+  <textarea
+    name={name}
+    id={id}
+    rows={4}
+    placeholder={placeholder}
+    required={required}
+    disabled={disabled}
+    aria-invalid={error ? 'true' : 'false'}
+    aria-describedby={error && errorMessage ? `${id}-error` : undefined}
+    class:list={[commonClasses, errorClasses, disabledClasses]}
+    {...attrs}
+  >
+    {value}
+  </textarea>
+) : (
+  <input
+    type={type}
+    name={name}
+    id={id}
+    value={value}
+    placeholder={placeholder}
+    required={required}
+    disabled={disabled}
+    aria-invalid={error ? 'true' : 'false'}
+    aria-describedby={error && errorMessage ? `${id}-error` : undefined}
+    inputmode={type === 'tel' ? 'tel' : undefined}
+    class:list={[commonClasses, errorClasses, disabledClasses]}
+    {...attrs}
+  />
+);
 ---
 
-<input
-  type={type}
-  name={name}
-  id={id}
-  placeholder={placeholder}
-  required={required}
-  value={value}
-  disabled={disabled}
-  class:list={[
-    'block w-full border border-border rounded-md p-3 text-base text-text bg-surface placeholder-neutral-400',
-    'focus:outline-none focus:ring-2 focus:ring-primary/[0.2] focus:border-primary',
-    'transition-all duration-150 ease-in-out',
-    className,
-  ]}
-  aria-required={required ? 'true' : undefined}
-  {...attrs}
-/>
-
-<style>
-  /* Base styles are applied via Tailwind classes in the component definition.
-     This <style> block is kept for potential future component-specific CSS,
-     but is empty as Tailwind is preferred for design tokens. */
-</style>
+<div class="mb-4">
+  {label && (
+    <label for={id} class="block text-sm font-medium text-neutral-800 mb-1">
+      {label} {required && <span class="text-error">*</span>}
+    </label>
+  )}
+  {inputElement}
+  {error && errorMessage && (
+    <p id={`${id}-error`} class="text-xs text-error mt-1">
+      {errorMessage}
+    </p>
+  )}
+</div>

@@ -1,43 +1,24 @@
 ---
-/**
- * Label.astro
- *
- * A reusable label component for form elements.
- * Ensures accessibility by linking to its associated input.
- */
-
-// Type imports
-import type { HTMLAttributes } from 'astro/types';
-
-// Props interface with JSDoc comments
-interface Props extends HTMLAttributes<'label'> {
-  /** The `for` attribute, linking the label to an input's `id`. */
+interface Props {
   for: string;
-  /** Custom Tailwind classes to apply to the label. */
-  class?: string;
+  text: string;
+  class?: string; // Allows additional Tailwind classes to be passed
 }
 
-// Destructure with defaults
-const {
-  for: htmlFor, // Rename 'for' to 'htmlFor' to avoid keyword conflict
-  class: className,
-  ...attrs
-} = Astro.props;
+const { for: htmlFor, text, class: className } = Astro.props;
 ---
 
 <label
   for={htmlFor}
   class:list={[
-    'font-body text-sm font-medium text-text mb-2 block',
+    "block",
+    "font-body",
+    "text-sm",
+    "font-medium",
+    "text-text",
+    "mb-1",
     className,
   ]}
-  {...attrs}
 >
-  <slot />
+  {text}
 </label>
-
-<style>
-  /* Base styles are applied via Tailwind classes in the component definition.
-     This <style> block is kept for potential future component-specific CSS,
-     but is empty as Tailwind is preferred for design tokens. */
-</style>
