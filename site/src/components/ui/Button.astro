@@ -22,8 +22,8 @@ const {
 
 const baseClasses = `
   inline-flex items-center justify-center font-body font-semibold text-center
-  text-decoration-none cursor-pointer border transition-all duration-150 ease-in-out
-  rounded-md focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
+  no-underline cursor-pointer border transition-all duration-150 ease-in-out
+  rounded-md focus-visible:ring-2 focus-visible:ring-[#0047AB] focus-visible:ring-offset-2
   transform
 `;
 
@@ -34,48 +34,63 @@ const sizeClasses = {
 }[size];
 
 let variantClasses = '';
-let contentColor = color; // Use explicit color prop for text if provided
+
+// Determine the base color for outline/ghost variants if specified
+let effectiveTextColor = 'text-[#0047AB]'; // Default to Primary Blue (#0047AB)
+let effectiveBorderColor = 'border-[#0047AB]'; // Default to Primary Blue Border
+
+if (color === 'white') {
+  effectiveTextColor = 'text-white';
+  effectiveBorderColor = 'border-white';
+} else if (color === 'secondary') {
+  effectiveTextColor = 'text-[#6B7280]'; // Secondary Gray
+  effectiveBorderColor = 'border-[#6B7280]'; // Secondary Gray Border
+} else if (color === 'accent') {
+  effectiveTextColor = 'text-[#E5B80B]'; // Accent Gold
+  effectiveBorderColor = 'border-[#E5B80B]'; // Accent Gold Border
+} else if (color === 'text-dark') {
+  effectiveTextColor = 'text-[#1F2937]'; // Text Dark
+  effectiveBorderColor = 'border-[#1F2937]'; // Text Dark Border
+}
 
 switch (variant) {
   case 'primary':
     variantClasses = `
-      bg-primary text-white border-primary
-      hover:bg-primary-dark hover:border-primary-dark hover:shadow-sm
-      active:scale-[0.98] active:bg-primary-darker active:border-primary-darker
-      disabled:bg-text-subtle disabled:border-text-subtle disabled:text-white disabled:cursor-not-allowed
+      bg-[#0047AB] text-white border-[#0047AB]
+      hover:bg-[#003B8D] hover:border-[#003B8D] hover:shadow-sm
+      active:scale-[0.98] active:bg-[#002A6B] active:border-[#002A6B] active:translate-y-[1px]
+      disabled:bg-[#9CA3AF] disabled:border-[#9CA3AF] disabled:text-white disabled:cursor-not-allowed
     `;
     break;
   case 'secondary':
     variantClasses = `
-      bg-secondary text-white border-secondary
-      hover:bg-secondary-dark hover:border-secondary-dark hover:shadow-sm
-      active:scale-[0.98] active:bg-secondary-darker active:border-secondary-darker
-      disabled:bg-text-subtle disabled:border-text-subtle disabled:text-white disabled:cursor-not-allowed
+      bg-[#6B7280] text-white border-[#6B7280]
+      hover:bg-[#5A616E] hover:border-[#5A616E] hover:shadow-sm
+      active:scale-[0.98] active:bg-[#4D535E] active:border-[#4D535E] active:translate-y-[1px]
+      disabled:bg-[#9CA3AF] disabled:border-[#9CA3AF] disabled:text-white disabled:cursor-not-allowed
     `;
     break;
   case 'outline':
-    const outlineBorderColor = color === 'white' ? 'border-white' : 'border-primary';
-    const outlineTextColor = color === 'white' ? 'text-white' : 'text-primary';
-    const outlineHoverBg = color === 'white' ? 'hover:bg-white/10' : 'hover:bg-primary';
-    const outlineHoverText = color === 'white' ? 'hover:text-white' : 'hover:text-white';
-    const outlineHoverBorder = color === 'white' ? 'hover:border-white' : 'hover:border-primary';
+    const outlineHoverBg = color === 'white' ? 'hover:bg-white/10' : 'hover:bg-[#0047AB]';
+    const outlineHoverText = 'hover:text-white'; // Always white on hover for outline
+    const outlineHoverBorder = color === 'white' ? 'hover:border-white' : 'hover:border-[#0047AB]';
 
     variantClasses = `
-      bg-transparent ${outlineTextColor} ${outlineBorderColor}
+      bg-transparent ${effectiveTextColor} ${effectiveBorderColor}
       ${outlineHoverBg} ${outlineHoverText} ${outlineHoverBorder} hover:shadow-sm
-      active:scale-[0.98] active:bg-primary-dark active:border-primary-dark active:text-white
-      disabled:text-text-subtle disabled:border-text-subtle disabled:cursor-not-allowed disabled:hover:bg-transparent
+      active:scale-[0.98] active:bg-[#002A6B] active:border-[#002A6B] active:text-white active:translate-y-[1px]
+      disabled:text-[#9CA3AF] disabled:border-[#9CA3AF] disabled:cursor-not-allowed disabled:hover:bg-transparent
     `;
     break;
   case 'ghost':
-    const ghostTextColor = color === 'white' ? 'text-white' : 'text-primary';
-    const ghostHoverBg = color === 'white' ? 'hover:bg-white/10' : 'hover:bg-primary/5';
+    const ghostHoverBg = color === 'white' ? 'hover:bg-white/10' : 'hover:bg-[rgba(0,71,171,0.05)]';
+    const ghostActiveBg = color === 'white' ? 'active:bg-white/20' : 'active:bg-[rgba(0,71,171,0.1)]';
 
     variantClasses = `
-      bg-transparent ${ghostTextColor} border-transparent
+      bg-transparent ${effectiveTextColor} border-transparent
       ${ghostHoverBg}
-      active:scale-[0.98] active:bg-primary/10
-      disabled:text-text-subtle disabled:cursor-not-allowed disabled:hover:bg-transparent
+      active:scale-[0.98] ${ghostActiveBg} active:translate-y-[1px]
+      disabled:text-[#9CA3AF] disabled:cursor-not-allowed disabled:hover:bg-transparent
     `;
     break;
 }

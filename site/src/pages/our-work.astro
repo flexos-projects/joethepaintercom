@@ -21,6 +21,7 @@ const allProjects = (await getCollection('projects', ({ data }) => data.publishe
   .sort((a, b) => b.data.projectDate.valueOf() - a.data.projectDate.valueOf());
 
 // Define categories for filtering
+// These correspond to the data-service-types attributes expected from ProjectCard components
 const categories = ['All', 'Painting', 'Handy', 'Combined'];
 
 // Client-side script for filtering projects
@@ -31,7 +32,7 @@ const categories = ['All', 'Painting', 'Handy', 'Combined'];
 <BaseLayout {...meta}>
   <main class="flex-1">
     <section class="container mx-auto px-4 py-12 md:py-16" aria-labelledby="portfolio-heading">
-      <h1 id="portfolio-heading" class="font-heading text-4xl md:text-5xl font-bold text-center mb-6 text-text-dark">
+      <h1 id="portfolio-heading" class="font-heading text-4xl md:text-5xl font-bold text-center mb-6 text-text">
         Our Work: A Legacy of Craftsmanship
       </h1>
       <p class="text-lg md:text-xl text-text-muted text-center max-w-3xl mx-auto mb-12">
@@ -137,7 +138,3 @@ const categories = ['All', 'Painting', 'Handy', 'Combined'];
     }
   });
 </script>
-
-<style>
-  /* Page-specific styles only if needed, otherwise rely on Tailwind */
-</style>

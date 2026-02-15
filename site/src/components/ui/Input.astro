@@ -26,10 +26,10 @@ const {
 } = Astro.props;
 
 const baseClasses = `
-  w-full px-4 py-3 font-body text-base text-text-dark bg-surface
+  w-full px-4 py-3 font-body text-base text-text
   border border-border rounded-md
   focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary
-  placeholder-text-muted transition-all duration-150 ease-in-out
+  placeholder:text-text-muted transition-all duration-150 ease-in-out
   disabled:bg-background disabled:cursor-not-allowed disabled:text-text-subtle
 `;
 
@@ -37,7 +37,7 @@ const errorClasses = error ? 'border-error ring-error' : '';
 ---
 
 <div class="mb-4">
-  {label && <label for={id} class="block font-body text-sm font-medium text-text-dark mb-1">{label}</label>}
+  {label && <label for={id} class="block font-body text-sm font-medium text-text mb-1">{label}</label>}
   <input
     id={id}
     name={name}
