@@ -1,0 +1,37 @@
+---
+/**
+ * SEO Component (Placeholder)
+ * Will be fully implemented in TASK-021: Local SEO & Structured Data Implementation
+ */
+
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  canonicalURL: string;
+  noIndex?: boolean;
+}
+
+const { title, description, ogImage, canonicalURL, noIndex } = Astro.props;
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalURL} />
+{noIndex && <meta name="robots" content="noindex, nofollow" />}
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content={canonicalURL} />
+<meta property="twitter:title" content={title} />
+<meta property="twitter:description" content={description} />
+<meta property="twitter:image" content={ogImage} />

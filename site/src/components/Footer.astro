@@ -1,0 +1,51 @@
+---
+/**
+ * Footer Component (Placeholder)
+ * Will be fully implemented in TASK-007: Footer Component
+ */
+---
+<footer class="bg-text-dark text-text-muted py-12 px-4">
+  <div class="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+    <div class="col-span-full md:col-span-1">
+      <a href="/" class="text-2xl font-heading font-bold text-surface mb-4 block">
+        JOE THE PAINTER
+      </a>
+      <p class="text-sm">Your Home, My Craft. Done Right Since 2001.</p>
+      <p class="text-sm mt-2">CA Lic. # <a href="https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=802167" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors">802167</a></p>
+    </div>
+
+    <nav class="md:col-span-1">
+      <h3 class="font-semibold text-surface mb-4">Quick Links</h3>
+      <ul role="list" class="space-y-2 text-sm">
+        <li><a href="/" class="hover:text-primary transition-colors">Home</a></li>
+        <li><a href="/services/painting" class="hover:text-primary transition-colors">Painting Services</a></li>
+        <li><a href="/services/handy" class="hover:text-primary transition-colors">Handy Services</a></li>
+        <li><a href="/our-work" class="hover:text-primary transition-colors">Our Work</a></li>
+        <li><a href="/about" class="hover:text-primary transition-colors">About Joe</a></li>
+        <li><a href="/contact" class="hover:text-primary transition-colors">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="md:col-span-1">
+      <h3 class="font-semibold text-surface mb-4">Contact Info</h3>
+      <ul role="list" class="space-y-2 text-sm">
+        <li>Phone: <a href="tel:+17605808173" class="hover:text-primary transition-colors">+1 (760) 580-8173</a></li>
+        <li>Email: <a href="mailto:joe@joethepainter.com" class="hover:text-primary transition-colors">joe@joethepainter.com</a></li>
+        <li>Service Area: San Diego County, CA</li>
+      </ul>
+    </div>
+
+    <div class="md:col-span-1">
+      <h3 class="font-semibold text-surface mb-4">Stay Connected</h3>
+      <p class="text-sm mb-4">Join our newsletter for tips and updates!</p>
+      <form class="flex flex-col space-y-2">
+        <input type="email" placeholder="Your email address" aria-label="Email for newsletter" class="px-3 py-2 rounded-md bg-gray-700 border border-gray-600 text-surface placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary">
+        <button type="submit" class="px-4 py-2 bg-primary text-surface rounded-md hover:bg-primary-dark transition-colors">Subscribe</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="container mx-auto text-center text-sm mt-12 pt-8 border-t border-gray-700">
+    &copy; {new Date().getFullYear()} Joe the Painter. All rights reserved.
+  </div>
+</footer>
