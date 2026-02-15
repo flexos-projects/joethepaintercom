@@ -1,0 +1,227 @@
+/* Import Tailwind CSS directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* --- Custom Fonts --- */
+/* Lora for headings */
+@font-face {
+  font-family: 'Lora';
+  src: url('/fonts/Lora-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Lora';
+  src: url('/fonts/Lora-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Lora';
+  src: url('/fonts/Lora-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Lora';
+  src: url('/fonts/Lora-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+
+/* Inter for body text */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+
+/* Space Mono for mono text (if needed) */
+@font-face {
+  font-family: 'Space Mono';
+  src: url('/fonts/SpaceMono-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+
+/* --- Base Body Styles --- */
+body {
+  font-family: theme('fontFamily.body');
+  color: theme('colors.text');
+  background-color: theme('colors.background');
+  line-height: theme('lineHeight.base');
+  /* Ensure smooth scrolling for anchor links */
+  scroll-behavior: smooth;
+}
+
+/* --- Focus-visible polyfill for better accessibility --- */
+/*
+  This ensures focus styles are only applied when navigating with keyboard,
+  not when clicking with a mouse/touch.
+  Tailwind's focus-visible utility typically handles this, but good to have a fallback.
+*/
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* --- Custom CSS Variables for Design Tokens (for non-Tailwind contexts if needed) --- */
+:root {
+  /* Colors */
+  --color-primary-blue: theme('colors.primary.DEFAULT');
+  --color-primary-blue-light: theme('colors.primary.light');
+  --color-primary-blue-dark: theme('colors.primary.dark');
+  --color-secondary-gray: theme('colors.secondary');
+  --color-accent-gold: theme('colors.accent.DEFAULT');
+  --color-accent-gold-light: theme('colors.accent.light');
+  --color-accent-gold-dark: theme('colors.accent.dark');
+
+  --color-background-white: theme('colors.background');
+  --color-surface-light: theme('colors.surface');
+  --color-text-dark: theme('colors.text');
+  --color-text-muted: theme('colors.textMuted');
+  --color-text-subtle: theme('colors.textSubtle');
+  --color-border-light: theme('colors.border');
+
+  --color-success: theme('colors.success');
+  --color-warning: theme('colors.warning');
+  --color-error: theme('colors.error');
+  --color-info: theme('colors.info');
+
+  /* Typography */
+  --font-family-heading: theme('fontFamily.heading');
+  --font-family-body: theme('fontFamily.body');
+  --font-family-mono: theme('fontFamily.mono');
+
+  --font-size-xs: theme('fontSize.xs');
+  --font-size-sm: theme('fontSize.sm');
+  --font-size-base: theme('fontSize.base');
+  --font-size-lg: theme('fontSize.lg');
+  --font-size-xl: theme('fontSize.xl');
+  --font-size-2xl: theme('fontSize.2xl');
+  --font-size-3xl: theme('fontSize.3xl');
+  --font-size-4xl: theme('fontSize.4xl');
+  --font-size-5xl: theme('fontSize.5xl');
+  --font-size-6xl: theme('fontSize.6xl');
+
+  --font-weight-normal: theme('fontWeight.normal');
+  --font-weight-medium: theme('fontWeight.medium');
+  --font-weight-semibold: theme('fontWeight.semibold');
+  --font-weight-bold: theme('fontWeight.bold');
+
+  --line-height-xs: theme('fontSize.xs.1'); /* Accessing line-height from fontSize array */
+  --line-height-sm: theme('fontSize.sm.1');
+  --line-height-base: theme('fontSize.base.1');
+  --line-height-lg: theme('fontSize.lg.1');
+  --line-height-xl: theme('fontSize.xl.1');
+  --line-height-2xl: theme('fontSize.2xl.1');
+  --line-height-3xl: theme('fontSize.3xl.1');
+  --line-height-4xl: theme('fontSize.4xl.1');
+  --line-height-5xl: theme('fontSize.5xl.1');
+  --line-height-6xl: theme('fontSize.6xl.1');
+
+  /* Spacing */
+  --spacing-px: theme('spacing.px');
+  --spacing-0-5: theme('spacing.0.5');
+  --spacing-1: theme('spacing.1');
+  --spacing-2: theme('spacing.2');
+  --spacing-3: theme('spacing.3');
+  --spacing-4: theme('spacing.4');
+  --spacing-5: theme('spacing.5');
+  --spacing-6: theme('spacing.6');
+  --spacing-8: theme('spacing.8');
+  --spacing-10: theme('spacing.10');
+  --spacing-12: theme('spacing.12');
+  --spacing-16: theme('spacing.16');
+  --spacing-20: theme('spacing.20');
+  --spacing-24: theme('spacing.24');
+
+  /* Border Radius */
+  --border-radius-none: theme('borderRadius.none');
+  --border-radius-sm: theme('borderRadius.sm');
+  --border-radius-md: theme('borderRadius.md');
+  --border-radius-lg: theme('borderRadius.lg');
+  --border-radius-xl: theme('borderRadius.xl');
+  --border-radius-2xl: theme('borderRadius.2xl');
+  --border-radius-full: theme('borderRadius.full');
+
+  /* Shadows */
+  --shadow-sm: theme('boxShadow.sm');
+  --shadow-md: theme('boxShadow.md');
+  --shadow-lg: theme('boxShadow.lg');
+  --shadow-xl: theme('boxShadow.xl');
+
+  /* Transitions */
+  --transition-fast: theme('transitionDuration.fast');
+  --transition-normal: theme('transitionDuration.normal');
+  --transition-slow: theme('transitionDuration.slow');
+  --easing-default: theme('transitionTimingFunction.default');
+  --easing-in: theme('transitionTimingFunction.in');
+  --easing-out: theme('transitionTimingFunction.out');
+  --easing-bounce: theme('transitionTimingFunction.bounce');
+}
+
+/* Responsive Typography Scaling for Headings (Mobile-First) */
+h1 {
+  @apply text-4xl font-bold leading-tight md:text-5xl lg:text-6xl;
+  font-family: theme('fontFamily.heading');
+  color: theme('colors.text');
+}
+
+h2 {
+  @apply text-3xl font-bold leading-snug md:text-4xl;
+  font-family: theme('fontFamily.heading');
+  color: theme('colors.text');
+}
+
+h3 {
+  @apply text-2xl font-semibold leading-normal md:text-3xl;
+  font-family: theme('fontFamily.heading');
+  color: theme('colors.text');
+}
+
+h4 {
+  @apply text-xl font-semibold leading-normal md:text-2xl;
+  font-family: theme('fontFamily.body'); /* H4 uses body font for slight distinction */
+  color: theme('colors.text');
+}
+
+h5 {
+  @apply text-lg font-medium leading-normal md:text-xl;
+  font-family: theme('fontFamily.body');
+  color: theme('colors.text');
+}
+
+h6 {
+  @apply text-base font-medium leading-normal md:text-lg;
+  font-family: theme('fontFamily.body');
+  color: theme('colors.text');
+}
+
+p {
+  @apply text-base leading-relaxed;
+}
+
+/* Global link styles */
+a {
+  @apply text-primary-dark hover:text-primary-light transition-colors duration-fast;
+}
