@@ -9,6 +9,7 @@ import CTABanner from '@components/sections/CTABanner.astro';
 import ProjectCard from '@components/cards/ProjectCard.astro'; // Assuming ProjectCard is in cards
 import TestimonialCard from '@components/cards/TestimonialCard.astro'; // Assuming TestimonialCard is in cards
 import ServiceCard from '@components/cards/ServiceCard.astro'; // Assuming ServiceCard is in cards
+import Button from '@components/ui/Button.astro'; // Assuming Button is in ui
 
 // Content Collections
 import { getCollection } from 'astro:content';
@@ -17,67 +18,23 @@ import { getCollection } from 'astro:content';
 const meta = {
   title: 'Carlsbad\'s Trusted Painter & Handyman | Joe the Painter',
   description: 'Expert painting and reliable handyman services in Carlsbad, CA. Joe the Painter offers meticulous craftsmanship for your home or business. Get a free estimate!',
-  ogImage: '/images/og/carlsbad.jpg', // Placeholder, ensure this asset exists
+  ogImage: '/images/og/carlsbad.jpg',
 };
 
 // Fetching data from content collections
-// NOTE: These collections are assumed to exist and be populated by P1 tasks (TASK-026, TASK-027).
-// If not, these pages will render with empty lists for projects and testimonials.
-const allServices = await getCollection('services');
-const paintingServices = allServices.filter(service => service.data.category === 'Painting');
-const handyServices = allServices.filter(service => service.data.category === 'Handyman');
+const allServices = await getCollection('service'); // Changed to 'service' as per 04-content-schema.md
+const paintingServices = allServices.filter(service => service.data.category === 'Painting' && service.data.published);
+const handyServices = allServices.filter(service => service.data.category === 'Handyman' && service.data.published);
 
-const allProjects = await getCollection('projects');
+const allProjects = await getCollection('project'); // Changed to 'project' as per 04-content-schema.md
 const carlsbadProjects = allProjects.filter(project =>
   project.data.location.toLowerCase().includes('carlsbad') && project.data.published
 );
 
-const allTestimonials = await getCollection('testimonials');
+const allTestimonials = await getCollection('testimonial'); // Changed to 'testimonial' as per 04-content-schema.md
 const carlsbadTestimonials = allTestimonials.filter(testimonial =>
   testimonial.data.location.toLowerCase().includes('carlsbad') && testimonial.data.published
 );
-
-// Fallback/dummy data if collections are empty or not ready
-const dummyProjects = [
-  {
-    id: 'carlsbad-coastal-condo-refresh',
-    slug: 'carlsbad-coastal-condo-refresh',
-    title: 'Coastal Condo Refresh',
-    projectDate: new Date('2024-01-20'),
-    location: 'Carlsbad, CA',
-    shortDescription: 'Complete interior repaint and minor drywall repair for a modern coastal condo.',
-    challenge: 'Faded interior paint and minor wall damage from previous tenants.',
-    solution: 'Full interior repaint with durable, low-VOC paint and seamless drywall repairs.',
-    result: 'A bright, refreshed interior ready for new residents, enhancing property value.',
-    servicesPerformed: ['interior-painting', 'drywall-repair'],
-    afterImages: [
-      { src: '/images/projects/carlsbad-condo-after-1.webp', alt: 'Freshly painted living room in Carlsbad condo' },
-      { src: '/images/projects/carlsbad-condo-after-2.webp', alt: 'Detail of painted wall and trim' },
-    ],
-    featuredImage: {
-      src: '/images/projects/carlsbad-condo-featured.webp',
-      alt: 'Clean, modern living room after painting in Carlsbad',
-    },
-    published: true,
-  },
-];
-
-const dummyTestimonials = [
-  {
-    id: 'carlsbad-client-1',
-    clientName: 'Sarah K.',
-    location: 'Carlsbad, CA',
-    quote: 'Joe painted our entire Carlsbad home exterior. His attention to detail was incredible, and the finish is flawless. Highly recommend for any coastal property!',
-    published: true,
-  },
-  {
-    id: 'carlsbad-client-2',
-    clientName: 'Mark D.',
-    location: 'Carlsbad, CA',
-    quote: 'We needed several small repairs and an interior refresh. Joe handled everything perfectly, from drywall to painting. A true professional for Carlsbad homeowners.',
-    published: true,
-  },
-];
 ---
 
 <BaseLayout {...meta}>
@@ -87,7 +44,7 @@ const dummyTestimonials = [
     ctaText="Get Your Free Carlsbad Estimate"
     ctaHref="/contact"
     image={{
-      src: "/images/heroes/carlsbad-hero.webp", // Placeholder, ensure this asset exists
+      src: "/images/heroes/carlsbad-hero.webp",
       alt: "Beautifully painted modern home exterior in Carlsbad, California"
     }}
     licenseNumber="CA Lic. #802167"
@@ -105,21 +62,21 @@ const dummyTestimonials = [
     </p>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       <div class="text-center">
-        <div class="text-primary mb-4 text-5xl">
+        <div class="text-primary mb-4 text-5xl" aria-hidden="true">
           <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7m0 9.5a2.5 2.5 0 0 1 0-5a2.5 2.5 0 0 1 0 5"/></svg>
         </div>
         <h3 class="font-heading text-xl font-semibold mb-2 text-text">Local Insight</h3>
         <p class="font-body text-text-muted">Deep understanding of Carlsbad's climate and architectural styles.</p>
       </div>
       <div class="text-center">
-        <div class="text-primary mb-4 text-5xl">
+        <div class="text-primary mb-4 text-5xl" aria-hidden="true">
           <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m14 18l-6-6l6-6l1.4 1.4L10.8 12l4.6 4.6L14 18Z" transform="rotate(90 12 12)"/><path fill="currentColor" d="M22 12c0 5.52-4.48 10-10 10S2 17.52 2 12S6.48 2 12 2s10 4.48 10 10m-2 0c0-4.42-3.58-8-8-8S4 7.58 4 12s3.58 8 8 8s8-3.58 8-8"/></svg>
         </div>
         <h3 class="font-heading text-xl font-semibold mb-2 text-text">Coastal Protection</h3>
         <p class="font-body text-text-muted">Specialized techniques and materials for lasting results by the ocean.</p>
       </div>
       <div class="text-center">
-        <div class="text-primary mb-4 text-5xl">
+        <div class="text-primary mb-4 text-5xl" aria-hidden="true">
           <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M22 12c0 5.52-4.48 10-10 10S2 17.52 2 12S6.48 2 12 2s10 4.48 10 10m-2 0c0-4.42-3.58-8-8-8S4 7.58 4 12s3.58 8 8 8s8-3.58 8-8m-7-5h2v6h-2V7m0 8h2v2h-2v-2"/></svg>
         </div>
         <h3 class="font-heading text-xl font-semibold mb-2 text-text">Quality Guaranteed</h3>
@@ -154,7 +111,7 @@ const dummyTestimonials = [
     </div>
   </Section>
 
-  {carlsbadProjects.length > 0 || dummyProjects.length > 0 ? (
+  {carlsbadProjects.length > 0 && (
     <Section
       id="carlsbad-projects"
       title="Recent Projects in Carlsbad"
@@ -163,7 +120,7 @@ const dummyTestimonials = [
       centered
     >
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {(carlsbadProjects.length > 0 ? carlsbadProjects : dummyProjects).slice(0, 3).map(project => (
+        {carlsbadProjects.slice(0, 3).map(project => (
           <ProjectCard
             title={project.data.title}
             location={project.data.location}
@@ -177,9 +134,9 @@ const dummyTestimonials = [
         <Button href="/our-work" variant="outline" size="lg">View All Our Work</Button>
       </div>
     </Section>
-  ) : null}
+  )}
 
-  {carlsbadTestimonials.length > 0 || dummyTestimonials.length > 0 ? (
+  {carlsbadTestimonials.length > 0 && (
     <Section
       id="carlsbad-testimonials"
       title="What Our Carlsbad Clients Say"
@@ -187,7 +144,7 @@ const dummyTestimonials = [
       centered
     >
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-        {(carlsbadTestimonials.length > 0 ? carlsbadTestimonials : dummyTestimonials).slice(0, 2).map(testimonial => (
+        {carlsbadTestimonials.slice(0, 2).map(testimonial => (
           <TestimonialCard
             clientName={testimonial.data.clientName}
             location={testimonial.data.location}
@@ -199,7 +156,7 @@ const dummyTestimonials = [
         <Button href="/testimonials" variant="outline" size="lg">Read All Testimonials</Button>
       </div>
     </Section>
-  ) : null}
+  )}
 
   <CTABanner
     headline="Ready to Enhance Your Carlsbad Property?"
@@ -208,7 +165,3 @@ const dummyTestimonials = [
     ctaHref="/contact"
   />
 </BaseLayout>
-
-<style>
-  /* Page-specific styles only if needed, otherwise use Tailwind utilities */
-</style>

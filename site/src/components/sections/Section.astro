@@ -20,6 +20,7 @@ const {
   subtitle,
   background = 'white',
   centered = false,
+  class: additionalClasses, // Capture the 'class' prop to explicitly remove it from the final class list
   ...attrs
 } = Astro.props;
 
@@ -39,7 +40,6 @@ const textContainerClasses = centered ? 'text-center' : '';
   class:list={[
     'py-16 md:py-24',
     backgroundClasses[background],
-    attrs.class,
   ]}
   {...attrs}
 >
