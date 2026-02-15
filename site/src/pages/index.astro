@@ -1,110 +1,105 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import Hero from '@/components/Hero.astro';
-import AboutJoeSection from '@/components/AboutJoeSection.astro';
-import TestimonialCarousel from '@/components/TestimonialCarousel.astro';
-import type { SiteMeta } from '@/utils/seo';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+import Hero from '@components/Hero.astro';
+import AboutJoeSection from '@components/AboutJoeSection.astro';
+// Other placeholder imports for sections that will be added later
+// import ServiceOverview from '@components/sections/ServiceOverview.astro';
+// import TestimonialCarousel from '@components/TestimonialCarousel.astro';
 
-// Define meta for this page
-const pageMeta: SiteMeta = {
-  title: "Your Home, My Craft. Done Right Since 2001.",
-  description: "Meticulous painting and reliable repairs, personally delivered by a licensed craftsman dedicated to your peace of mind in San Diego County.",
-  ogImage: "/images/social-share-home.jpg" // Specific image for homepage
-};
+const pageTitle = "Joe the Painter: Your Home, My Craft. Done Right Since 2001.";
+const pageDescription = "Meticulous painting and reliable handy services in San Diego County. 25+ years licensed experience, personal touch, unparalleled craftsmanship.";
 
-const localBusinessSchema = {
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "name": "Joe the Painter",
-  "image": "https://www.joethepainter.com/images/joe-profile.jpg", // Professional photo of Joe (placeholder)
-  "url": "https://www.joethepainter.com",
-  "telephone": "+1-760-580-8173",
-  "email": "joe@joethepainter.com",
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "San Diego County", // General service area
-    "addressRegion": "CA",
-    "addressCountry": "US"
-  },
-  "priceRange": "$$", // Indicative price range
-  "hasMap": "https://www.google.com/maps/search/?api=1&query=Joe+the+Painter+San+Diego", // Link to Google Maps search
-  "openingHoursSpecification": [
-    {
-      "@type": "OpeningHoursSpecification",
-      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-      "opens": "08:00",
-      "closes": "17:00"
-    }
-  ],
-  "areaServed": [
-    { "@type": "State", "name": "California" },
-    { "@type": "City", "name": "Carlsbad" },
-    { "@type": "City", "name": "Encinitas" },
-    { "@type": "City", "name": "Vista" },
-    { "@type": "City", "name": "San Marcos" },
-    { "@type": "City", "name": "Oceanside" },
-    { "@type": "City", "name": "Escondido" },
-    { "@type": "City", "name": "Poway" },
-    { "@type": "City", "name": "Rancho Bernardo" },
-    { "@type": "City", "name": "Del Mar" },
-    { "@type": "City", "name": "Solana Beach" }
-  ],
-  "geo": {
-    "@type": "GeoCircle",
-    "geoMidpoint": {
-      "@type": "GeoCoordinates",
-      "latitude": 33.0903, // Approximate center of North San Diego County
-      "longitude": -117.2519
-    },
-    "geoRadius": 50000 // Radius in meters, ~30 miles
-  },
-  "review": [ /* Will be populated dynamically from testimonials, placeholder for now */ ],
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "5", // Placeholder: Assume 5-star for now
-    "reviewCount": "25" // Placeholder: Assume 25 reviews for now
-  }
-};
+const heroHeadline = "Your Home, My Craft. Done Right Since 2001.";
+const heroTagline = "Meticulous Painting & Reliable Handy Services in San Diego County.";
+const heroCtaText = "Book Your Free Consultation";
+const heroCtaLink = "/consultation"; // Assuming a consultation page/modal
+const licenseNumber = "802167";
+const cslbLink = `https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=${licenseNumber}`;
+
+const aboutJoeTitle = "Meet Joe: Your Personal Craftsman";
+const aboutJoeDescription = "With over two decades of licensed experience, Joe brings unparalleled expertise and a personal commitment to every painting and handyman project. Discover the difference trust and quality make.";
+const aboutJoeCtaText = "Learn More About Joe";
+const aboutJoeCtaLink = "/about";
 ---
 
-<BaseLayout meta={pageMeta}>
-  <Fragment slot="json-ld">
-    <script type="application/ld+json" set:html={JSON.stringify(localBusinessSchema)} />
-  </Fragment>
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <Header />
+  <main>
+    <Hero
+      headline={heroHeadline}
+      tagline={heroTagline}
+      ctaText={heroCtaText}
+      ctaLink={heroCtaLink}
+      licenseNumber={licenseNumber}
+      licenseLink={cslbLink}
+    />
 
-  <Hero />
+    <AboutJoeSection
+      title={aboutJoeTitle}
+      description={aboutJoeDescription}
+      ctaText={aboutJoeCtaText}
+      ctaLink={aboutJoeCtaLink}
+    />
 
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-    <h2 class="text-center mb-12">
-      Your Trusted Partner for Home & Business
-    </h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16">
-      <div class="bg-surface-light p-6 md:p-8 rounded-lg shadow-md flex flex-col items-center text-center">
-        <h3 class="font-heading text-primary text-3xl mb-4">Painting Services</h3>
-        <p class="text-lg text-text-muted mb-6">
-          From vibrant interiors to durable exteriors, Joe delivers a flawless finish that protects and beautifies your property.
+    <!-- Placeholder for Services Overview -->
+    <section class="py-16 md:py-24 bg-surface text-center">
+      <div class="container mx-auto px-4">
+        <h2 class="font-heading text-4xl font-bold text-text-dark mb-6">Our Services</h2>
+        <p class="text-lg text-text-muted mb-12">
+          From a fresh coat of paint to essential home repairs, we deliver lasting quality.
         </p>
-        <a href="/services/painting" class="btn btn-primary-outline btn-md">Explore Painting</a>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+          <a href="/services/painting" class="bg-white p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 group animate-fade-in">
+            <h3 class="font-heading text-2xl font-bold text-primary mb-4">Painting Services</h3>
+            <p class="text-text-muted group-hover:text-text-dark transition-colors">Interior, Exterior, Cabinet Refinishing & more.</p>
+          </a>
+          <a href="/services/handy" class="bg-white p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 group animate-fade-in animate-delay-100">
+            <h3 class="font-heading text-2xl font-bold text-primary mb-4">Handy Services</h3>
+            <p class="text-text-muted group-hover:text-text-dark transition-colors">Drywall repair, minor carpentry, fixture installation & more.</p>
+          </a>
+        </div>
+        <div class="mt-12">
+          <a href="/consultation" class="inline-flex px-8 py-4 bg-accent text-white rounded-lg font-semibold text-lg hover:bg-accent-dark transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent animate-fade-in animate-delay-200">
+            Book Your Free Consultation
+          </a>
+        </div>
       </div>
-      <div class="bg-surface-light p-6 md:p-8 rounded-lg shadow-md flex flex-col items-center text-center">
-        <h3 class="font-heading text-primary text-3xl mb-4">Handy Services</h3>
-        <p class="text-lg text-text-muted mb-6">
-          Seamlessly integrate essential repairs like drywall and carpentry with your painting project, ensuring a comprehensive solution.
+    </section>
+
+    <!-- Placeholder for Testimonials Carousel -->
+    <section class="py-16 md:py-24 bg-background text-center">
+      <div class="container mx-auto px-4">
+        <h2 class="font-heading text-4xl font-bold text-text-dark mb-6">What Our Clients Say</h2>
+        <p class="text-lg text-text-muted mb-12">
+          Hear directly from homeowners and businesses who trust Joe the Painter.
         </p>
-        <a href="/services/handy" class="btn btn-primary-outline btn-md">Discover Handy Services</a>
+        <!-- TestimonialCarousel component will go here -->
+        <div class="bg-surface p-8 rounded-lg shadow-md animate-fade-in animate-delay-100">
+          <p class="text-xl italic text-text-dark mb-4">"Joe's work is simply outstanding. Meticulous, professional, and reliable – he transformed our home!"</p>
+          <p class="font-semibold text-primary">- Happy Homeowner, Carlsbad</p>
+        </div>
+        <div class="mt-12">
+          <a href="/testimonials" class="inline-flex px-8 py-4 bg-primary text-white rounded-lg font-semibold text-lg hover:bg-primary-dark transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-light animate-fade-in animate-delay-200">
+            Read All Testimonials
+          </a>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <AboutJoeSection />
-
-  <TestimonialCarousel />
-
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center">
-    <h2 class="mb-8">Ready for a Transformation?</h2>
-    <p class="text-lg text-text-muted max-w-3xl mx-auto mb-10">
-      Experience the difference of working with a licensed craftsman dedicated to quality and your peace of mind.
-    </p>
-    <a href="/consultation" class="btn btn-primary btn-lg">Book Your Free Consultation</a>
-  </section>
+    <!-- Placeholder for Portfolio/CTA -->
+    <section class="py-16 md:py-24 bg-surface text-center">
+      <div class="container mx-auto px-4">
+        <h2 class="font-heading text-4xl font-bold text-text-dark mb-6">Our Work Speaks for Itself</h2>
+        <p class="text-lg text-text-muted mb-12">
+          Explore our portfolio of completed painting and handyman projects.
+        </p>
+        <a href="/our-work" class="inline-flex px-8 py-4 bg-accent text-white rounded-lg font-semibold text-lg hover:bg-accent-dark transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent animate-fade-in animate-delay-100">
+          View Our Portfolio
+        </a>
+      </div>
+    </section>
+  </main>
+  <Footer />
 </BaseLayout>

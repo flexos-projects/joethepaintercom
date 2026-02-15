@@ -1,38 +1,90 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import PortfolioGrid from '@/components/PortfolioGrid.astro';
-import Button from '@/components/ui/Button.astro';
-import type { SiteMeta } from '@/utils/seo';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+import ProjectCard from '@components/ProjectCard.astro';
 
-// Define meta for this page
-const pageMeta: SiteMeta = {
-  title: "Our Work | Joe the Painter's Project Portfolio - San Diego",
-  description: "Explore Joe the Painter's portfolio of meticulous interior, exterior, and handyman projects throughout San Diego County. See before-and-after transformations.",
-  ogImage: "/images/social-share-portfolio.jpg"
-};
+// Placeholder data for projects. This will later come from content collections.
+const projects = [
+  {
+    id: 'project-1',
+    title: 'Coastal Home Exterior Refresh',
+    location: 'Encinitas, CA',
+    description: 'Complete exterior repaint and minor stucco repair for a beautiful coastal home.',
+    imageUrl: '/src/assets/project-placeholder-1.webp',
+    projectLink: '/projects/coastal-home-refresh',
+  },
+  {
+    id: 'project-2',
+    title: 'Modern Living Room Interior',
+    location: 'Carlsbad, CA',
+    description: 'Transformed a dated living room with a fresh, contemporary color palette and flawless finish.',
+    imageUrl: '/src/assets/project-placeholder-2.webp',
+    projectLink: '/projects/modern-living-room',
+  },
+  {
+    id: 'project-3',
+    title: 'Office Space Renovation',
+    location: 'Vista, CA',
+    description: 'Updated a small business office with new paint, drywall repair, and fixture installation.',
+    imageUrl: '/src/assets/project-placeholder-3.webp',
+    projectLink: '/projects/office-renovation',
+  },
+  {
+    id: 'project-4',
+    title: 'Kitchen Cabinet Refinishing',
+    location: 'San Marcos, CA',
+    description: 'Expert cabinet refinishing, giving an old kitchen a brand new, modern look.',
+    imageUrl: '/src/assets/project-placeholder-1.webp', // Reusing placeholder
+    projectLink: '/projects/cabinet-refinishing',
+  },
+];
+
+const pageTitle = "Our Work | Joe the Painter: Portfolio of Excellence";
+const pageDescription = "Explore Joe the Painter's portfolio of meticulously completed painting and handyman projects across San Diego County. See the quality difference!";
 ---
 
-<BaseLayout meta={pageMeta}>
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center">
-    <h1 class="mb-8">Our Work: A Legacy of Craftsmanship</h1>
-    <p class="text-lg text-text-muted max-w-3xl mx-auto mb-10">
-      Browse through a selection of my completed painting and handyman projects. Each one reflects my commitment to quality, attention to detail, and the personal touch that defines Joe the Painter.
-    </p>
-  </section>
-
-  <section class="bg-background-white py-16 md:py-24">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <PortfolioGrid /> {/* This component should fetch and display projects */}
-    </div>
-  </section>
-
-  <section class="bg-primary-dark text-white py-16 md:py-24 text-center">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-white mb-8">Inspired by Our Transformations?</h2>
-      <p class="text-lg text-neutral-100 max-w-2xl mx-auto mb-10">
-        Let's discuss how we can bring your vision to life with the same level of expertise and dedication.
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <Header />
+  <main class="bg-background py-16 md:py-24">
+    <div class="container mx-auto px-4">
+      <h1 class="font-heading text-5xl md:text-6xl font-bold text-text-dark text-center mb-8 animate-fade-in">
+        Our Work
+      </h1>
+      <p class="text-xl text-text-muted text-center max-w-3xl mx-auto mb-16 animate-fade-in animate-delay-100">
+        Discover the meticulous craftsmanship and transformative results Joe the Painter delivers. From stunning exterior repaints to detailed interior work and essential handyman repairs, our portfolio showcases our commitment to excellence.
       </p>
-      <Button href="/consultation" variant="accent" size="lg">Book Your Free Consultation</Button>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {projects.map((project, index) => (
+          <ProjectCard
+            title={project.title}
+            location={project.location}
+            description={project.description}
+            imageUrl={project.imageUrl}
+            imageAlt={`Image of completed project: ${project.title}`}
+            projectLink={project.projectLink}
+            style={`animation-delay: ${index * 100}ms;`}
+          />
+        ))}
+      </div>
+
+      <section class="text-center mt-20">
+        <h2 class="font-heading text-4xl font-bold text-text-dark mb-6 animate-fade-in">
+          Ready to Transform Your Space?
+        </h2>
+        <p class="text-lg text-text-muted mb-8 animate-fade-in animate-delay-100">
+          Let's discuss your vision and bring your project to life with the same dedication and quality.
+        </p>
+        <a
+          href="/consultation"
+          class="inline-flex px-8 py-4 bg-accent text-white rounded-lg font-semibold text-lg hover:bg-accent-dark transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent animate-fade-in animate-delay-200"
+          aria-label="Book a Free Consultation with Joe the Painter"
+        >
+          Book Your Free Consultation
+        </a>
+      </section>
     </div>
-  </section>
+  </main>
+  <Footer />
 </BaseLayout>

@@ -1,0 +1,46 @@
+---
+import { Image } from 'astro:assets';
+import joeProfile from '@assets/joe-profile.webp'; // Reusing Joe's profile image
+
+interface Props {
+  title: string;
+  description: string;
+  ctaText: string;
+  ctaLink: string;
+}
+
+const { title, description, ctaText, ctaLink } = Astro.props;
+---
+
+<section class="bg-background py-16 md:py-24">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+      <div class="flex justify-center md:justify-start">
+        <Image
+          src={joeProfile}
+          alt="Joe the Painter, smiling and approachable"
+          widths={[300, 450, 600]}
+          sizes="(max-width: 768px) 80vw, 40vw"
+          loading="lazy"
+          quality={85}
+          class="w-64 h-64 md:w-80 md:h-80 object-cover rounded-full shadow-lg border-4 border-surface animate-fade-in"
+        />
+      </div>
+      <div class="text-center md:text-left animate-fade-in animate-delay-100">
+        <h2 class="font-heading text-4xl font-bold text-text-dark mb-6">
+          {title}
+        </h2>
+        <p class="text-lg text-text-muted mb-8">
+          {description}
+        </p>
+        <a
+          href={ctaLink}
+          class="inline-flex px-8 py-4 bg-accent text-white rounded-lg font-semibold text-lg hover:bg-accent-dark transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          aria-label={ctaText}
+        >
+          {ctaText}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
