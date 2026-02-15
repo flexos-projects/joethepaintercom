@@ -5,71 +5,67 @@ export default {
   content: ['./src/**/*.{astro,html,js,jsx,md,mdx,ts,tsx}'],
   theme: {
     extend: {
-      // --- Colors (from 06-design.md and 07-technical.md, prioritizing 06-design.md for specific hex values) ---
+      // --- Colors (from 06-design.md) ---
       colors: {
-        primary: {
+        'primary-blue': {
           DEFAULT: '#0047AB', // Primary Blue
-          hover: '#003B8D',   // Primary Blue Hover (from Button component styles)
-          active: '#002A6B',  // Primary Blue Active (from Button component styles)
+          hover: '#003B8D',   // Derived from Button component styles
+          active: '#002A6B',  // Derived from Button component styles
         },
-        secondary: {
+        'secondary-gray': {
           DEFAULT: '#6B7280', // Secondary Gray
-          hover: '#5A616E',   // Secondary Gray Hover (from Button component styles)
-          active: '#4D535E',  // Secondary Gray Active (from Button component styles)
+          hover: '#5A616E',   // Derived from Button component styles
+          active: '#4D535E',  // Derived from Button component styles
         },
-        accent: {
+        'accent-gold': {
           DEFAULT: '#E5B80B', // Accent Gold
-          light: '#FFD700',   // Brighter variant for highlights (from 07-technical.md)
-          dark: '#B38B00',    // Deeper variant for subtle contrast (from 07-technical.md)
+          light: '#FFD700',   // From 07-technical.md (as a variant)
+          dark: '#B38B00',    // From 07-technical.md (as a variant)
         },
-        neutral: { // Renaming to match 06-design.md's semantic names
-          background: '#F9FAFB', // Background White
-          surface: '#FFFFFF',    // Surface Light
-          text: '#1F2937',       // Text Dark
-          textMuted: '#6B7280',  // Text Muted
-          textSubtle: '#9CA3AF', // Text Subtle
-          border: '#E5E7EB',     // Border Light
-        },
-        white: '#FFFFFF', // Explicit white
-        black: '#000000', // Explicit black
-        // Semantic colors (from 06-design.md)
-        success: '#10B981',
-        warning: '#F59E0B',
-        error: '#EF4444',
-        info: '#3B82F6',
+        'background-white': '#F9FAFB', // Background White
+        'surface-light': '#FFFFFF',    // Surface Light
+        'text-dark': '#1F2937',       // Text Dark
+        'text-muted': '#6B7280',      // Text Muted
+        'text-subtle': '#9CA3AF',     // Text Subtle
+        'border-light': '#E5E7EB',    // Border Light
+
+        // Semantic Colors (from 06-design.md)
+        'success': '#10B981',
+        'warning': '#F59E0B',
+        'error': '#EF4444',
+        'info': '#3B82F6',
+
+        // Explicit white and black (from 07-technical.md)
+        'white': '#FFFFFF',
+        'black': '#000000',
       },
 
-      // --- Typography (from 06-design.md and 07-technical.md) ---
+      // --- Typography (from 06-design.md) ---
       fontFamily: {
-        heading: ['"Lora Variable"', ...defaultTheme.fontFamily.serif], // Elegant serif for headings
-        body: ['"Inter Variable"', ...defaultTheme.fontFamily.sans], // Modern sans-serif for body
-        mono: ['"Space Mono"', ...defaultTheme.fontFamily.mono], // For code snippets or specific data displays
+        heading: ['Lora', ...defaultTheme.fontFamily.serif], // Elegant serif for headings
+        body: ['Inter', ...defaultTheme.fontFamily.sans],    // Modern sans-serif for body
+        mono: ['Space Mono', ...defaultTheme.fontFamily.mono], // For code snippets or specific data displays
       },
       fontSize: {
-        'xs': ['0.75rem', { lineHeight: '1rem' }], // 12px
-        'sm': ['0.875rem', { lineHeight: '1.25rem' }], // 14px
-        'base': ['1rem', { lineHeight: '1.5rem' }], // 16px (default body)
-        'lg': ['1.125rem', { lineHeight: '1.75rem' }], // 18px
-        'xl': ['1.25rem', { lineHeight: '1.75rem' }], // 20px
-        '2xl': ['1.5rem', { lineHeight: '2rem' }], // 24px (H4 desktop, H3 mobile)
-        '3xl': ['1.875rem', { lineHeight: '2.25rem' }], // 30px (H3 desktop, H2 mobile)
-        '4xl': ['2.25rem', { lineHeight: '2.5rem' }], // 36px (H2 desktop, H1 mobile)
-        '5xl': ['3rem', { lineHeight: '1' }], // 48px (H1 desktop)
-        '6xl': ['3.75rem', { lineHeight: '1' }], // 60px (Display Hero desktop)
+        'xs': ['0.75rem', { lineHeight: '1.5' }], // 12px, from 06-design.md
+        'sm': ['0.875rem', { lineHeight: '1.5' }], // 14px, from 06-design.md
+        'base': ['1rem', { lineHeight: '1.6' }], // 16px, from 06-design.md
+        'lg': ['1.125rem', { lineHeight: '1.6' }], // 18px, from 06-design.md
+        'xl': ['1.25rem', { lineHeight: '1.4' }], // 20px, from 06-design.md
+        '2xl': ['1.5rem', { lineHeight: '1.3' }], // 24px, from 06-design.md
+        '3xl': ['1.875rem', { lineHeight: '1.3' }], // 30px, from 06-design.md
+        '4xl': ['2.25rem', { lineHeight: '1.2' }], // 36px, from 06-design.md
+        '5xl': ['3rem', { lineHeight: '1.1' }], // 48px, from 06-design.md
+        '6xl': ['3.75rem', { lineHeight: '1.1' }], // 60px, from 06-design.md
       },
       fontWeight: {
-        thin: '100', // Not explicitly used but standard
-        extralight: '200', // Not explicitly used but standard
-        light: '300', // Not explicitly used but standard
-        normal: '400',
-        medium: '500',
-        semibold: '600',
-        bold: '700',
-        extrabold: '800', // Not explicitly used but standard
-        black: '900', // Not explicitly used but standard
+        normal: '400', // From 06-design.md
+        medium: '500', // From 06-design.md
+        semibold: '600', // From 06-design.md
+        bold: '700', // From 06-design.md
       },
 
-      // --- Spacing (from 06-design.md and 07-technical.md) ---
+      // --- Spacing (from 06-design.md and 07-technical.md for comprehensive list) ---
       spacing: {
         'px': '1px',
         '0.5': '0.125rem', // 2px
@@ -107,42 +103,26 @@ export default {
         '96': '24rem', // 384px
       },
 
-      // --- Border Radius (from 06-design.md and 07-technical.md) ---
+      // --- Border Radius (from 06-design.md) ---
       borderRadius: {
         'none': '0',
         'sm': '0.125rem', // 2px
-        'DEFAULT': '0.25rem', // 4px (Tailwind default)
         'md': '0.375rem', // 6px
         'lg': '0.5rem', // 8px
         'xl': '0.75rem', // 12px
         '2xl': '1rem', // 16px
-        '3xl': '1.5rem', // 24px
         'full': '9999px',
       },
 
-      // --- Shadows (from 06-design.md and 07-technical.md) ---
+      // --- Shadows (from 06-design.md) ---
       boxShadow: {
         'sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-        'DEFAULT': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)', // Tailwind default
         'md': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
         'lg': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
         'xl': '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
-        '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)', // Tailwind default
-        'inner': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)', // Tailwind default
-        'none': 'none',
-        'outline': '0 0 0 3px rgba(0, 71, 171, 0.5)', // Custom focus outline using primary-blue
       },
 
       // --- Transitions (from 06-design.md) ---
-      transitionProperty: {
-        'height': 'height',
-        'spacing': 'margin, padding',
-        'all': 'all', // Tailwind default
-        'colors': 'background-color, border-color, color, fill, stroke', // Tailwind default
-        'opacity': 'opacity', // Tailwind default
-        'shadow': 'box-shadow', // Tailwind default
-        'transform': 'transform', // Tailwind default
-      },
       transitionTimingFunction: {
         'ease-in-out': 'cubic-bezier(0.4, 0, 0.2, 1)', // Default cubic-bezier from 06-design.md
         'ease-in': 'cubic-bezier(0.4, 0, 1, 1)',

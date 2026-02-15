@@ -31,14 +31,14 @@ const {
 } = Astro.props;
 
 // Base styling for all buttons
-const baseClasses = 'inline-flex items-center justify-center text-center font-body font-semibold text-white cursor-pointer border-2 border-transparent transition-all duration-fast ease-in-out rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2';
+const baseClasses = 'inline-flex items-center justify-center text-center font-body font-semibold text-white cursor-pointer border-2 border-transparent transition-all duration-150 ease-in-out rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2';
 
 // Variant-specific styles (using Tailwind colors defined in config)
 const variantClasses = {
-  primary: `bg-primary hover:bg-primary-hover active:bg-primary-active active:scale-[0.98]`,
-  secondary: `bg-secondary hover:bg-secondary-hover active:bg-secondary-active active:scale-[0.98]`,
-  outline: `bg-transparent text-primary border-primary hover:bg-primary hover:text-white active:bg-primary-active active:text-white active:scale-[0.98]`,
-  ghost: `bg-transparent text-primary border-transparent hover:bg-primary/[0.05] active:bg-primary/[0.1] active:scale-[0.98]`,
+  primary: `bg-primary hover:bg-primary-hover active:bg-primary-active hover:shadow-sm active:translate-y-px`,
+  secondary: `bg-secondary hover:bg-secondary-hover active:bg-secondary-active hover:shadow-sm active:translate-y-px`,
+  outline: `bg-transparent text-primary border-primary hover:bg-primary hover:text-white active:bg-primary-active active:translate-y-px hover:shadow-sm`,
+  ghost: `bg-transparent text-primary border-transparent hover:bg-primary/[0.05] active:bg-primary/[0.1] active:translate-y-px`,
 };
 
 // Size-specific styles
@@ -54,8 +54,8 @@ const disabledClasses = 'opacity-60 cursor-not-allowed';
 // Combine all classes
 const classes = [
   baseClasses,
-  variantClasses[variant],
   sizeClasses[size],
+  variantClasses[variant],
   disabled && disabledClasses, // Apply disabled classes conditionally
   className, // Allow external classes to be passed
 ].filter(Boolean).join(' '); // Filter out any falsey values and join
