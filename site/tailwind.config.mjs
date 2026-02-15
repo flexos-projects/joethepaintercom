@@ -7,19 +7,19 @@ export default {
     extend: {
       // --- Colors from 06-design.md ---
       colors: {
-        'primary-blue': '#0047AB',
-        'secondary-gray': '#6B7280',
-        'accent-gold': '#E5B80B',
-        'background-white': '#F9FAFB',
-        'surface-light': '#FFFFFF',
-        'text-dark': '#1F2937',
-        'text-muted': '#6B7280',
-        'text-subtle': '#9CA3AF',
-        'border-light': '#E5E7EB',
-        'success-green': '#10B981',
-        'warning-orange': '#F59E0B',
-        'error-red': '#EF4444',
-        'info-blue': '#3B82F6',
+        'primary': '#0047AB',
+        'secondary': '#6B7280',
+        'accent': '#E5B80B',
+        'background': '#F9FAFB',
+        'surface': '#FFFFFF',
+        'text': '#1F2937',
+        'textMuted': '#6B7280',
+        'textSubtle': '#9CA3AF',
+        'border': '#E5E7EB',
+        'success': '#10B981',
+        'warning': '#F59E0B',
+        'error': '#EF4444',
+        'info': '#3B82F6',
       },
 
       // --- Typography ---
@@ -47,10 +47,7 @@ export default {
         bold: '700',
       },
 
-      // --- Spacing (using existing defaultTheme for common values, and extending for specific design tokens) ---
-      // The design spec uses a mix of specific rem values and multiples of 4px.
-      // Tailwind's default spacing goes up to 96 (384px), which covers most needs.
-      // I'll add specific names from 06-design for clarity, mapping to Tailwind's scale where possible.
+      // --- Spacing (from 06-design.md) ---
       spacing: {
         'px': '1px',
         '0.5': '0.125rem', // 2px
@@ -100,8 +97,16 @@ export default {
         'in-out': 'cubic-bezier(0.4, 0, 0.2, 1)', // Same as default
         'bounce': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       },
+
+      // --- Breakpoints (from 06-design.md Layout System) ---
+      screens: {
+        'sm': '640px',
+        'md': '768px',
+        'lg': '1024px',
+        'xl': '1280px',
+        '2xl': '1536px',
+      },
     },
   },
   plugins: [],
 };
----

@@ -92,7 +92,7 @@ const ConsultationFormScript = () => {
       {submitMessage && (
         <div
           role="alert"
-          class={`px-4 py-3 rounded-md text-sm font-medium ${isSuccess ? 'bg-success-green/10 text-success-green' : 'bg-error-red/10 text-error-red'}`}
+          class={`px-4 py-3 rounded-md text-sm font-medium ${isSuccess ? 'bg-success/10 text-success' : 'bg-error/10 text-error'}`}
         >
           {submitMessage}
         </div>
@@ -119,7 +119,7 @@ const ConsultationFormScript = () => {
           name="emailAddress"
           type="email"
           label="Email Address"
-          placeholder="john.doe@example.com"
+          placeholder="john.doe@mail.com"
           required
           value={formData.emailAddress}
           onChange={handleChange}
@@ -152,7 +152,7 @@ const ConsultationFormScript = () => {
           onChange={handleChange}
           errorMessage={formErrors.projectType}
           options={[
-            { value: '', label: 'Select a project type...' },
+            { value: '', label: 'Select a project type' },
             { value: 'Painting Services', label: 'Painting Services' },
             { value: 'Handy Services', label: 'Handy Services' },
             { value: 'Both Painting & Handy Services', label: 'Both Painting & Handy Services' },
