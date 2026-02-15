@@ -1,0 +1,122 @@
+---
+import { Image } from 'astro:assets';
+import { initializeBeforeAfterSlider } from '@/utils/beforeAfterSlider';
+
+interface Props {
+  beforeImage: { src: string; alt: string; };
+  afterImage: { src: string; alt: string; };
+  width?: number; // Optional, for responsive image generation
+  height?: number; // Optional, for responsive image generation
+  aspectRatio?: string; // e.g., "16/9", "4/3"
+}
+
+const { beforeImage, afterImage, width, height, aspectRatio = '16/9' } = Astro.props;
+
+// Generate unique ID for the slider instance if multiple are on a page
+const uniqueId = `before-after-slider-${Math.random().toString(36).substring(2, 9)}`;
+---
+
+<div
+  id={uniqueId}
+  class="relative w-full overflow-hidden rounded-lg shadow-md group select-none touch-none"
+  style={`padding-bottom: calc(100% / (${aspectRatio}));`}
+  role="group"
+  aria-label="Before and After Image Comparison"
+>
+  <!-- After Image (Full width, static background) -->
+  <Image
+    src={afterImage.src}
+    alt={afterImage.alt}
+    class="absolute inset-0 w-full h-full object-cover z-10"
+    {width}
+    {height}
+    loading="lazy"
+    decoding="async"
+    densities={[1.5, 2]}
+  />
+
+  <!-- Before Image (Clipped, foreground) -->
+  <div
+    data-slider-before-image-container
+    class="absolute inset-0 w-1/2 h-full overflow-hidden z-20"
+    style="width: 50%;"
+  >
+    <Image
+      src={beforeImage.src}
+      alt={beforeImage.alt}
+      class="absolute inset-0 w-full h-full object-cover z-20"
+      {width}
+      {height}
+      loading="lazy"
+      decoding="async"
+      densities={[1.5, 2]}
+    />
+  </div>
+
+  <!-- Divider Line -->
+  <div
+    data-slider-divider
+    class="absolute top-0 bottom-0 left-1/2 w-px bg-border z-30 pointer-events-none"
+    style="left: 50%;"
+  ></div>
+
+  <!-- Handle -->
+  <div
+    data-slider-handle
+    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 bg-primary-blue rounded-full shadow-md flex items-center justify-center z-40 cursor-ew-resize transition-colors duration-200
+           hover:bg-primary-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-blue focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+    style="left: 50%;"
+  >
+    <svg
+      class="w-4 h-4 text-surface pointer-events-none"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path>
+    </svg>
+  </div>
+</div>
+
+<script define:vars={{ uniqueId }}>
+  import { initializeBeforeAfterSlider } from '@/utils/beforeAfterSlider';
+
+  // Wait for the DOM to be fully loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    const sliderElement = document.getElementById(uniqueId);
+    if (sliderElement) {
+      initializeBeforeAfterSlider(sliderElement);
+    }
+  });
+
+  // Also handle cases where the component might be added dynamically later
+  // though for SSG/SPA, DOMContentLoaded is usually sufficient.
+  // For robustness, could use a MutationObserver if dynamic addition is guaranteed.
+</script>
+
+<style>
+  /* Base styles for the slider to ensure images are positioned correctly */
+  .before-after-slider-container {
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    touch-action: none; /* Prevents default touch scroll/zoom */
+  }
+
+  .before-after-slider-container img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none; /* Images shouldn't interfere with handle dragging */
+  }
+
+  /*
+    The `width` property on the `data-slider-before-image-container`
+    is dynamically set by JavaScript. This effectively "clips" the before image.
+  */
+</style>
