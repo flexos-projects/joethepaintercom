@@ -1,115 +1,62 @@
+```astro
 ---
 import type { HTMLAttributes } from 'astro/types';
 
-interface Props extends HTMLAttributes<'input' | 'textarea' | 'select'> {
+interface Props extends HTMLAttributes<'input'> {
   label: string;
   id: string;
-  name: string;
-  type?: 'text' | 'email' | 'tel' | 'password' | 'number' | 'url';
+  type?: 'text' | 'email' | 'tel' | 'password' | 'number';
   placeholder?: string;
-  value?: string;
   required?: boolean;
-  disabled?: boolean;
-  readonly?: boolean;
-  error?: string; // Error message to display
-  as?: 'input' | 'textarea' | 'select'; // Allow rendering as textarea or select
-  options?: { value: string; label: string }[]; // For select element
+  value?: string;
+  error?: string; // For displaying validation errors
+  class?: string;
 }
 
 const {
   label,
   id,
-  name,
   type = 'text',
   placeholder,
-  value,
   required = false,
-  disabled = false,
-  readonly = false,
+  value,
   error,
-  as = 'input',
-  options,
   class: className,
-  ...attrs
+  ...props
 } = Astro.props;
 
-const baseClasses = `
-  block w-full px-4 py-3 rounded-md
-  font-body text-base text-text-dark bg-surface
-  border border-border motion-safe:transition-colors motion-reduce:transition-none duration-200
-  placeholder:text-textSubtle
-  focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-0 focus-visible:ring-primary focus-visible:border-primary
-  disabled:bg-background disabled:cursor-not-allowed disabled:text-textSubtle
-  read-only:bg-background read-only:cursor-default
-`;
+const inputClasses = [
+  'form-input-base', // Defined in global.css
+  error ? 'border-error ring-error ring-opacity-50' : '',
+  className,
+];
 
-const errorClasses = error ? 'border-error focus-visible:ring-error' : '';
+// Generate a unique ID for the error message if an error exists
+const errorId = error ? `${id}-error` : undefined;
 ---
 
-<div class:list={['w-full', className]} >
-  <label for={id} class="block text-sm font-medium text-text-dark mb-1">
+<div class="w-full">
+  <label for={id} class="form-label-base">
     {label}
     {required && <span class="text-error ml-1" aria-hidden="true">*</span>}
   </label>
-  {as === 'input' && (
-    <input
-      id={id}
-      name={name}
-      type={type}
-      placeholder={placeholder}
-      value={value}
-      required={required}
-      disabled={disabled}
-      readonly={readonly}
-      class:list={[baseClasses, errorClasses]}
-      aria-invalid={!!error}
-      aria-describedby={error ? `${id}-error` : undefined}
-      {...attrs}
-    />
-  )}
-  {as === 'textarea' && (
-    <textarea
-      id={id}
-      name={name}
-      placeholder={placeholder}
-      required={required}
-      disabled={disabled}
-      readonly={readonly}
-      class:list={[baseClasses, errorClasses, 'min-h-[100px]']}
-      aria-invalid={!!error}
-      aria-describedby={error ? `${id}-error` : undefined}
-      {...attrs}
-    >{value}</textarea>
-  )}
-  {as === 'select' && (
-    <div class="relative">
-      <select
-        id={id}
-        name={name}
-        required={required}
-        disabled={disabled}
-        class:list={[baseClasses, errorClasses, 'appearance-none pr-10']}
-        aria-invalid={!!error}
-        aria-describedby={error ? `${id}-error` : undefined}
-        {...attrs}
-      >
-        {placeholder && <option value="" disabled selected>{placeholder}</option>}
-        {options?.map(option => (
-          <option value={option.value} selected={value === option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-      <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text-dark">
-        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-        </svg>
-      </div>
-    </div>
-  )}
+  <input
+    type={type}
+    id={id}
+    name={id}
+    placeholder={placeholder}
+    required={required}
+    value={value}
+    class:list={inputClasses}
+    aria-invalid={!!error}
+    aria-describedby={errorId}
+    {...props}
+  />
   {error && (
-    <p id={`${id}-error`} class="text-error text-sm mt-1" role="alert">
+    <p id={errorId} class="text-error text-sm mt-1" role="alert">
       {error}
     </p>
   )}
 </div>
+```
+---

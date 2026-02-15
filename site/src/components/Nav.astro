@@ -1,13 +1,13 @@
+```astro
 ---
-import type { HTMLAttributes } from 'astro/types';
-
-interface Props extends HTMLAttributes<'nav'> {
-  isMobile?: boolean;
+// This component is for desktop navigation links
+interface Props {
+  class?: string;
 }
 
-const { isMobile = false, ...attrs } = Astro.props;
+const { class: className } = Astro.props;
 
-const navItems = [
+const navLinks = [
   { name: 'Home', href: '/' },
   { name: 'Painting Services', href: '/services/painting' },
   { name: 'Handy Services', href: '/services/handy' },
@@ -16,36 +16,33 @@ const navItems = [
   { name: 'Contact', href: '/contact' },
 ];
 
-const linkClasses = `
-  font-body font-medium text-text-dark hover:text-primary focus-visible:text-primary
-  motion-safe:transition-colors motion-reduce:transition-none
-  relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-px after:bg-primary after:scale-x-0 after:origin-left after:transition-transform after:duration-300 after:ease-out
-  hover:after:scale-x-100 focus-visible:after:scale-x-100
-`;
-const mobileLinkClasses = `
-  font-heading text-3xl font-bold text-text-dark hover:text-primary focus-visible:text-primary
-  motion-safe:transition-colors motion-reduce:transition-none py-4 w-full text-center
-  block
-`;
+const currentPath = Astro.url.pathname;
+
+const isActive = (href: string) => {
+  if (href === '/') {
+    return currentPath === href;
+  }
+  return currentPath.startsWith(href);
+};
 ---
 
-<ul role="list" class:list={[
-  'flex',
-  isMobile ? 'flex-col space-y-4' : 'space-x-6',
-  attrs.class
-]}>
-  {navItems.map((item) => (
-    <li>
-      <a
-        href={item.href}
-        class:list={[
-          isMobile ? mobileLinkClasses : linkClasses,
-          Astro.url.pathname === item.href ? (isMobile ? 'text-primary' : 'text-primary after:scale-x-100') : '' // Active state
-        ]}
-        aria-current={Astro.url.pathname === item.href ? 'page' : false}
-      >
-        {item.name}
-      </a>
-    </li>
-  ))}
-</ul>
+<nav class:list={['flex items-center space-x-6 lg:space-x-8', className]} aria-label="Main navigation">
+  <ul role="list" class="flex items-center space-x-6 lg:space-x-8">
+    {navLinks.map((link) => (
+      <li>
+        <a
+          href={link.href}
+          class:list={[
+            'font-body text-base font-medium text-neutral-700 hover:text-primary transition-colors duration-200',
+            { 'text-primary border-b-2 border-primary pb-1': isActive(link.href) },
+          ]}
+          aria-current={isActive(link.href) ? 'page' : undefined}
+        >
+          {link.name}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+```
+---

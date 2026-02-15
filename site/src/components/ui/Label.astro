@@ -1,17 +1,24 @@
+```astro
 ---
-interface Props {
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'label'> {
   for: string;
   required?: boolean;
+  class?: string;
 }
 
-const { for: htmlFor, required = false, ...rest } = Astro.props;
+const {
+  for: htmlFor,
+  required = false,
+  class: className,
+  ...props
+} = Astro.props;
 ---
 
-<label
-  for={htmlFor}
-  class="block text-sm font-medium text-text-dark mb-1"
-  {...rest}
->
+<label for={htmlFor} class:list={['form-label-base', className]} {...props}>
   <slot />
-  {required && <span class="text-error ml-1">*</span>}
+  {required && <span class="text-error ml-1" aria-hidden="true">*</span>}
 </label>
+```
+---

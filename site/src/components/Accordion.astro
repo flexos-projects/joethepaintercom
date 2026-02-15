@@ -1,56 +1,118 @@
+```astro
 ---
-import type { HTMLAttributes } from 'astro/types';
+import { getUniqueId } from '../utils/uniqueId';
 
-interface Props extends HTMLAttributes<'details'> {
-  question: string;
-  id: string; // Unique ID for accordion item
-  initiallyOpen?: boolean;
+interface Props {
+  items: {
+    question: string;
+    answer: string; // RichText in schema, but here as plain string for simplicity
+  }[];
+  multiOpen?: boolean; // Allow multiple items to be open at once
+  class?: string;
 }
 
-const { question, id, initiallyOpen = false, class: className, ...attrs } = Astro.props;
+const {
+  items,
+  multiOpen = false,
+  class: className,
+} = Astro.props;
+
+const accordionId = getUniqueId('accordion');
 ---
 
-<details
-  id={id}
-  class:list={['border-b border-border py-4', className]}
-  {...attrs}
-  {...initiallyOpen && { open: true }} // Conditionally apply 'open' attribute if initiallyOpen is true
->
-  <summary
-    class="flex justify-between items-center w-full text-left p-2 -ml-2 rounded-md cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-lg font-semibold text-text-dark"
-  >
-    <span class="pr-2">{question}</span>
-    <svg
-      class:list={[
-        'w-5 h-5 flex-shrink-0 motion-safe:transition-transform motion-reduce:transition-none duration-200',
-        initiallyOpen ? 'rotate-180' : '' // Apply initial rotation if open
-      ]}
-      fill="currentColor"
-      viewBox="0 0 20 20"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-    </svg>
-  </summary>
-  <div class="mt-2 pl-2 text-text-muted text-base pb-2">
-    <slot />
-  </div>
-</details>
+<div class:list={['w-full', className]} role="presentation">
+  {items.map((item, index) => {
+    const uniqueId = getUniqueId(`accordion-item-${index}`);
+    const headingId = `${uniqueId}-heading`;
+    const panelId = `${uniqueId}-panel`;
 
-<script is:inline>
-  document.querySelectorAll('details').forEach(detail => {
-    const icon = detail.querySelector('summary svg');
+    return (
+      <div class="border-b border-neutral-200 last:border-b-0" role="presentation">
+        <h3 class="text-lg font-semibold" id={headingId}>
+          <button
+            type="button"
+            class="flex justify-between items-center w-full py-4 text-left text-neutral-900 hover:text-primary transition-colors
+                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            aria-expanded="false"
+            aria-controls={panelId}
+            data-accordion-trigger={accordionId}
+            data-accordion-target={panelId}
+            data-accordion-multi-open={multiOpen}
+          >
+            {item.question}
+            <svg class="w-5 h-5 ml-2 transform rotate-0 transition-transform duration-200"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+        </h3>
+        <div
+          id={panelId}
+          role="region"
+          aria-labelledby={headingId}
+          class="grid grid-rows-[0fr] transition-[grid-template-rows] duration-200 ease-in-out overflow-hidden"
+        >
+          <div class="overflow-hidden pb-4 text-neutral-700">
+            <p>{item.answer}</p>
+          </div>
+        </div>
+      </div>
+    );
+  })}
+</div>
 
-    if (!icon) return;
+<script define:vars={{ accordionId }} is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const accordionTriggers = document.querySelectorAll(`[data-accordion-trigger="${accordionId}"]`);
 
-    // Listen for the native 'toggle' event on the <details> element
-    detail.addEventListener('toggle', () => {
-      if (detail.open) {
-        icon.classList.add('rotate-180');
-      } else {
-        icon.classList.remove('rotate-180');
+    accordionTriggers.forEach(trigger => {
+      const targetId = trigger.dataset.accordionTarget;
+      const targetPanel = document.getElementById(targetId);
+      const isMultiOpen = trigger.dataset.accordionMultiOpen === 'true';
+      const arrowIcon = trigger.querySelector('svg');
+
+      if (targetPanel) {
+        // Initialize all panels as closed
+        targetPanel.style.gridTemplateRows = '0fr';
+        trigger.setAttribute('aria-expanded', 'false');
+        if (arrowIcon) arrowIcon.style.transform = 'rotate(0deg)';
       }
+
+      trigger.addEventListener('click', () => {
+        const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
+
+        if (!isMultiOpen) {
+          // Close all other panels if single-open mode
+          accordionTriggers.forEach(otherTrigger => {
+            if (otherTrigger !== trigger) {
+              const otherTargetId = otherTrigger.dataset.accordionTarget;
+              const otherTargetPanel = document.getElementById(otherTargetId);
+              const otherArrowIcon = otherTrigger.querySelector('svg');
+
+              if (otherTargetPanel && otherTrigger.getAttribute('aria-expanded') === 'true') {
+                otherTargetPanel.style.gridTemplateRows = '0fr';
+                otherTrigger.setAttribute('aria-expanded', 'false');
+                if (otherArrowIcon) otherArrowIcon.style.transform = 'rotate(0deg)';
+              }
+            }
+          });
+        }
+
+        // Toggle current panel
+        if (targetPanel) {
+          if (isExpanded) {
+            targetPanel.style.gridTemplateRows = '0fr';
+            trigger.setAttribute('aria-expanded', 'false');
+            if (arrowIcon) arrowIcon.style.transform = 'rotate(0deg)';
+          } else {
+            targetPanel.style.gridTemplateRows = '1fr';
+            trigger.setAttribute('aria-expanded', 'true');
+            if (arrowIcon) arrowIcon.style.transform = 'rotate(180deg)';
+          }
+        }
+      });
     });
   });
 </script>
+```
+---

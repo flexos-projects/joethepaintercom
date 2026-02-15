@@ -1,94 +1,217 @@
+```astro
 ---
-import TestimonialCard from './TestimonialCard.astro';
-import Button from './ui/Button.astro'; // Assuming Button component is available
+import type { Testimonial } from '../content/config'; // Assuming Testimonial schema is defined
+import Button from './ui/Button.astro';
+import { getUniqueId } from '../utils/uniqueId';
 
-const testimonials = [
-  {
-    quote: "Joe did an incredible job painting our home's exterior. His attention to detail and prep work were outstanding. It looks brand new!",
-    clientName: 'Sarah L.',
-    clientLocation: 'Homeowner, Encinitas',
-    projectType: 'Exterior Painting',
-  },
-  {
-    quote: "We've hired Joe for multiple handy projects around our office. Always reliable, professional, and gets the job done right. Highly recommend!",
-    clientName: 'Mark D.',
-    clientLocation: 'Small Business Owner, Carlsbad',
-    projectType: 'Handy Services',
-  },
-  {
-    quote: "Our kitchen cabinets were completely transformed! Joe's refinishing work is meticulous, and the finish is absolutely perfect. So happy with the results.",
-    clientName: 'Jessica R.',
-    clientLocation: 'Homeowner, San Marcos',
-    projectType: 'Cabinet Refinishing',
-  },
-  {
-    quote: "Joe painted our entire interior and fixed several drywall issues. It was a seamless process, and he was a pleasure to work with. True craftsman!",
-    clientName: 'David P.',
-    clientLocation: 'Homeowner, Vista',
-    projectType: 'Interior Painting & Drywall Repair',
-  },
-  {
-    quote: "Prompt, professional, and the quality of work is unmatched. Joe is our go-to for any painting or repair needs. He truly cares about his clients.",
-    clientName: 'Emily S.',
-    clientLocation: 'Repeat Client, Oceanside',
-    projectType: 'Various Projects',
-  },
-];
+interface Props {
+  testimonials: Testimonial[];
+  carouselId?: string;
+  class?: string;
+}
 
-// Shuffle testimonials to get a random order for the carousel
-const shuffledTestimonials = testimonials.sort(() => 0.5 - Math.random());
-const carouselItems = shuffledTestimonials.slice(0, 3); // Display 3 testimonials
+const {
+  testimonials,
+  carouselId = getUniqueId('testimonial-carousel'),
+  class: className,
+} = Astro.props;
+
+if (!testimonials || testimonials.length === 0) {
+  // Render nothing or a fallback message if no testimonials
+  console.warn('TestimonialCarousel: No testimonials provided.');
+  return;
+}
+
+const uniqueSlidesId = getUniqueId('carousel-slides');
+const uniqueControlsId = getUniqueId('carousel-controls');
 ---
 
-<section class="bg-background py-16 md:py-24" aria-labelledby="testimonials-heading" role="region">
-  <div class="container mx-auto px-4 max-w-5xl text-center">
-    <h2 id="testimonials-heading" class="font-heading text-4xl md:text-5xl font-bold text-text mb-6">
-      What Our Clients Say
-    </h2>
-    <p class="text-lg text-textMuted mb-12 leading-relaxed max-w-3xl mx-auto">
-      Our reputation is built on trust, quality, and satisfied customers. Hear directly from those who have experienced the Joe the Painter difference.
-    </p>
-
-    <div class="relative">
-      <!-- Carousel Container -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" role="feed" aria-live="polite">
-        {carouselItems.map((testimonial, index) => (
-          <div role="article" aria-label={`Testimonial ${index + 1} of ${carouselItems.length}`}>
-            <TestimonialCard {...testimonial} />
-          </div>
-        ))}
+<section class:list={['relative', className]} aria-label="Client Testimonials Carousel">
+  <div
+    id={uniqueSlidesId}
+    class="flex overflow-hidden relative w-full"
+    role="region"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    {testimonials.map((testimonial, index) => (
+      <div
+        id={`${carouselId}-slide-${index}`}
+        role="group"
+        aria-roledescription="slide"
+        aria-label={`${index + 1} of ${testimonials.length}`}
+        class="flex-none w-full p-4 md:p-8 text-center transition-transform duration-500 ease-in-out"
+        data-carousel-slide
+        data-slide-index={index}
+        tabindex="-1"
+      >
+        <blockquote class="max-w-3xl mx-auto">
+          <p class="text-xl md:text-2xl font-heading italic text-neutral-800 mb-6">
+            "{testimonial.data.quote}"
+          </p>
+          <footer class="text-neutral-700 font-body">
+            <cite class="block font-semibold not-italic text-lg">
+              {testimonial.data.clientName || 'Satisfied Client'}
+            </cite>
+            {testimonial.data.location && (
+              <span class="block text-sm text-neutral-500">
+                {testimonial.data.location}
+              </span>
+            )}
+          </footer>
+        </blockquote>
       </div>
+    ))}
+  </div>
 
-      <!-- Placeholder for actual carousel navigation if implemented with JS -->
-      <!-- For a static display, buttons are not needed, but included for future JS interaction -->
-      <div class="absolute inset-y-0 left-0 flex items-center -ml-6 hidden md:flex">
-        <button
-          class="p-2 bg-surface rounded-full shadow-md text-text hover:bg-primary hover:text-surface transition-colors duration-150 ease-in-out"
-          aria-label="Previous testimonial"
-          disabled
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-      </div>
-      <div class="absolute inset-y-0 right-0 flex items-center -mr-6 hidden md:flex">
-        <button
-          class="p-2 bg-surface rounded-full shadow-md text-text hover:bg-primary hover:text-surface transition-colors duration-150 ease-in-out"
-          aria-label="Next testimonial"
-          disabled
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      </div>
-    </div>
+  <div class="absolute inset-x-0 bottom-4 flex justify-center space-x-2" role="group" aria-label="Carousel pagination">
+    {testimonials.map((_, index) => (
+      <button
+        type="button"
+        class="w-3 h-3 rounded-full bg-neutral-300 hover:bg-primary transition-colors duration-200"
+        data-carousel-indicator={index}
+        aria-label={`Go to slide ${index + 1}`}
+      ></button>
+    ))}
+  </div>
 
-    <div class="mt-12">
-      <Button href="/testimonials" variant="outline" size="lg">
-        Read All Testimonials
-      </Button>
-    </div>
+  <!-- Carousel Navigation Buttons -->
+  <div class="absolute inset-y-0 left-0 flex items-center">
+    <Button
+      variant="ghost"
+      size="md"
+      class="p-2 rounded-full text-neutral-700 hover:bg-neutral-100 hover:text-primary"
+      data-carousel-prev
+      aria-controls={uniqueSlidesId}
+      aria-label="Previous slide"
+    >
+      <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
+      </svg>
+    </Button>
+  </div>
+  <div class="absolute inset-y-0 right-0 flex items-center">
+    <Button
+      variant="ghost"
+      size="md"
+      class="p-2 rounded-full text-neutral-700 hover:bg-neutral-100 hover:text-primary"
+      data-carousel-next
+      aria-controls={uniqueSlidesId}
+      aria-label="Next slide"
+    >
+      <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+      </svg>
+    </Button>
   </div>
 </section>
+
+<script define:vars={{ carouselId, testimonials }} is:inline>
+  class TestimonialCarousel {
+    constructor(id, testimonialsData) {
+      this.carouselElement = document.getElementById(id);
+      if (!this.carouselElement) {
+        console.error(`Carousel element with ID "${id}" not found.`);
+        return;
+      }
+      this.slidesContainer = this.carouselElement.querySelector('[role="region"]');
+      this.slides = Array.from(this.slidesContainer.querySelectorAll('[data-carousel-slide]'));
+      this.indicators = Array.from(this.carouselElement.querySelectorAll('[data-carousel-indicator]'));
+      this.prevButton = this.carouselElement.querySelector('[data-carousel-prev]');
+      this.nextButton = this.carouselElement.querySelector('[data-carousel-next]');
+      this.totalSlides = testimonialsData.length;
+      this.currentIndex = 0;
+      this.autoplayInterval = 5000; // 5 seconds
+      this.autoplayTimer = null;
+
+      this.init();
+    }
+
+    init() {
+      this.updateSlideVisibility();
+      this.addEventListeners();
+      this.startAutoplay();
+    }
+
+    addEventListeners() {
+      this.prevButton?.addEventListener('click', () => {
+        this.prevSlide();
+        this.resetAutoplay();
+      });
+      this.nextButton?.addEventListener('click', () => {
+        this.nextSlide();
+        this.resetAutoplay();
+      });
+      this.indicators.forEach(indicator => {
+        indicator.addEventListener('click', (e) => {
+          const index = parseInt(e.target.dataset.carouselIndicator);
+          this.goToSlide(index);
+          this.resetAutoplay();
+        });
+      });
+
+      // Keyboard navigation for slides
+      this.slidesContainer.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') {
+          this.prevSlide();
+          this.resetAutoplay();
+        } else if (e.key === 'ArrowRight') {
+          this.nextSlide();
+          this.resetAutoplay();
+        }
+      });
+    }
+
+    startAutoplay() {
+      this.autoplayTimer = setInterval(() => {
+        this.nextSlide();
+      }, this.autoplayInterval);
+    }
+
+    resetAutoplay() {
+      clearInterval(this.autoplayTimer);
+      this.startAutoplay();
+    }
+
+    goToSlide(index) {
+      this.currentIndex = (index + this.totalSlides) % this.totalSlides;
+      this.updateSlideVisibility();
+    }
+
+    nextSlide() {
+      this.goToSlide(this.currentIndex + 1);
+    }
+
+    prevSlide() {
+      this.goToSlide(this.currentIndex - 1);
+    }
+
+    updateSlideVisibility() {
+      this.slides.forEach((slide, i) => {
+        const isCurrent = i === this.currentIndex;
+        slide.style.transform = `translateX(${-this.currentIndex * 100}%)`;
+        slide.setAttribute('aria-hidden', !isCurrent);
+        slide.setAttribute('tabindex', isCurrent ? '0' : '-1'); // Make current slide focusable
+        // Announce slide change for screen readers
+        if (isCurrent && this.slidesContainer.hasAttribute('aria-live')) {
+          this.slidesContainer.setAttribute('aria-live', 'off'); // Temporarily turn off live region
+          setTimeout(() => {
+            this.slidesContainer.setAttribute('aria-live', 'polite');
+          }, 100); // Re-enable after a short delay
+        }
+      });
+
+      this.indicators.forEach((indicator, i) => {
+        const isCurrent = i === this.currentIndex;
+        indicator.classList.toggle('bg-primary', isCurrent);
+        indicator.classList.toggle('bg-neutral-300', !isCurrent);
+        indicator.setAttribute('aria-current', isCurrent ? 'true' : 'false');
+      });
+    }
+  }
+
+  // Initialize carousel for each instance
+  const carouselInstance = new TestimonialCarousel(carouselId, testimonials);
+</script>
+```
+---

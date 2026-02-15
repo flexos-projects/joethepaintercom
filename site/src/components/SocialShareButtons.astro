@@ -1,61 +1,70 @@
+```astro
 ---
+import Button from './ui/Button.astro';
+
 interface Props {
   title: string;
   url: string;
-  text: string;
+  text?: string;
+  class?: string;
 }
 
-const { title, url, text } = Astro.props;
+const {
+  title,
+  url,
+  text = `Check out this article: ${title}`,
+  class: className,
+} = Astro.props;
 
 const encodedUrl = encodeURIComponent(url);
 const encodedTitle = encodeURIComponent(title);
 const encodedText = encodeURIComponent(text);
 
-const twitterShareUrl = `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedText}`;
-const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
-const linkedinShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}&title=${encodedTitle}&summary=${encodedText}`;
-const emailShareUrl = `mailto:?subject=${encodedTitle}&body=${encodedText}%0A${encodedUrl}`;
+const shareButtons = [
+  {
+    name: 'Facebook',
+    icon: 'M13.397 20.997v-8.192h2.768l.412-3.217h-3.18V7.206c0-.928.258-1.564 1.59-1.564h1.7V2.511a21.49 21.49 0 00-2.483-.127c-2.465 0-4.156 1.503-4.156 4.275v2.392h-2.77v3.217h2.77V21h3.397z',
+    shareUrl: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}`,
+    label: `Share on Facebook: ${title}`,
+  },
+  {
+    name: 'Twitter',
+    icon: 'M22.46 6c-.8.36-1.65.6-2.55.7-.7.75-1.7 1.25-2.8 1.25-2.05 0-3.72-1.67-3.72-3.72 0-.3.03-.6.08-.88C9.9 5.42 7.7 4.34 6.2 2.5a3.75 3.75 0 00-.5 1.85c0 1.29.65 2.45 1.64 3.12a3.75 3.75 0 01-1.65-.45v.05c0 1.8 1.28 3.29 2.97 3.63a3.75 3.75 0 01-1.68.06c.47 1.47 1.83 2.54 3.44 2.57C12.42 16.7 10.7 17.5 8.8 17.5c-.32 0-.64-.02-.95-.06 1.7 1.1 3.7 1.75 5.85 1.75 6.9 0 10.7-5.7 10.7-10.7v-.5c.7-.5 1.3-1.15 1.8-1.88z',
+    shareUrl: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedText}`,
+    label: `Share on X (formerly Twitter): ${title}`,
+  },
+  {
+    name: 'LinkedIn',
+    icon: 'M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM4 21H0V9h4v12zM2 6a2 2 0 100-4 2 2 0 000 4z',
+    shareUrl: `https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedTitle}&summary=${encodedText}`,
+    label: `Share on LinkedIn: ${title}`,
+  },
+  {
+    name: 'Email',
+    icon: 'M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884zM18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z',
+    shareUrl: `mailto:?subject=${encodedTitle}&body=${encodedText}%0A${encodedUrl}`,
+    label: `Share via Email: ${title}`,
+  },
+];
 ---
 
-<div class="flex flex-wrap gap-4 justify-center sm:justify-start">
-  <a
-    href={twitterShareUrl}
-    target="_blank"
-    rel="noopener noreferrer"
-    aria-label="Share on Twitter"
-    class="btn btn-secondary btn-sm flex items-center gap-2"
-  >
-    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22.46 6c-.84.37-1.75.62-2.67.73.96-.58 1.7-1.5 2.04-2.58-.9.54-1.9.93-2.95 1.15-1.0-.99-2.42-1.61-3.96-1.61-3.09 0-5.6 2.51-5.6 5.6 0 .44.05.87.14 1.28-4.66-.23-8.79-2.47-11.56-5.88-.48.82-.76 1.77-.76 2.79 0 1.95.99 3.66 2.5 4.68-.92-.03-1.79-.28-2.55-.7v.07c0 2.72 1.94 4.98 4.51 5.5-.47.13-.97.2-1.48.2-.36 0-.71-.03-1.06-.1.72 2.25 2.81 3.89 5.29 3.93-1.93 1.51-4.36 2.41-7 2.41-.46 0-.91-.03-1.36-.08 2.5 1.6 5.46 2.54 8.66 2.54 9.19 0 14.2-7.61 14.2-14.2 0-.22-.01-.43-.01-.64.97-.7 1.8-1.58 2.46-2.6z"/></svg>
-    Share on Twitter
-  </a>
-  <a
-    href={facebookShareUrl}
-    target="_blank"
-    rel="noopener noreferrer"
-    aria-label="Share on Facebook"
-    class="btn btn-secondary btn-sm flex items-center gap-2"
-  >
-    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.25 6 14 6c1.65 0 2.47.12 2.85.17v2.43h-1.42c-1.53 0-1.87.7-1.87 1.92V12h3.29l-.53 3H14v6.95c5.03-.58 9-4.75 9-9.95z"/></svg>
-    Share on Facebook
-  </a>
-  <a
-    href={linkedinShareUrl}
-    target="_blank"
-    rel="noopener noreferrer"
-    aria-label="Share on LinkedIn"
-    class="btn btn-secondary btn-sm flex items-center gap-2"
-  >
-    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22.23 0H1.77C.8 0 0 .77 0 1.73v20.54c0 .96.8 1.73 1.77 1.73h20.46c.97 0 1.77-.77 1.77-1.73V1.73c0-.96-.8-1.73-1.77-1.73zM7.06 20.48H3.54V9.12h3.52v11.36zM5.3 7.5c-1.17 0-2.1-.94-2.1-2.1s.93-2.1 2.1-2.1 2.1.94 2.1 2.1-.93 2.1-2.1 2.1zm15.18 12.98h-3.52V14.5c0-1.6-.58-2.69-1.99-2.69-1.09 0-1.74.74-2.03 1.45-.1.25-.13.59-.13.93v5.29h-3.52s.05-10.32 0-11.36h3.52v1.61c.47-.75 1.34-1.82 3.17-1.82 2.31 0 4.04 1.5 4.04 4.74v6.83z"/></svg>
-    Share on LinkedIn
-  </a>
-  <a
-    href={emailShareUrl}
-    target="_blank"
-    rel="noopener noreferrer"
-    aria-label="Share via Email"
-    class="btn btn-secondary btn-sm flex items-center gap-2"
-  >
-    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 2l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z"/></svg>
-    Share via Email
-  </a>
+<div class:list={['flex flex-wrap gap-4', className]} role="group" aria-label="Share this content on social media">
+  {shareButtons.map((button) => (
+    <Button
+      variant="ghost"
+      size="md"
+      href={button.shareUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={button.label}
+      class="flex items-center space-x-2 text-neutral-700 hover:text-primary transition-colors"
+    >
+      <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+        <path d={button.icon}></path>
+      </svg>
+      <span class="sr-only">{button.name}</span>
+    </Button>
+  ))}
 </div>
+```
+---

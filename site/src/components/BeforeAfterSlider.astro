@@ -1,140 +1,155 @@
 ```astro
 ---
-import type { ImageMetadata } from 'astro';
-import { Image } from 'astro:assets';
-import { v4 as uuidv4 } from 'uuid'; // For unique IDs if multiple sliders on one page
+import { getUniqueId } from '../utils/uniqueId';
 
 interface Props {
-  beforeImage: ImageMetadata;
-  afterImage: ImageMetadata;
-  alt: string;
+  beforeImage: { src: string; alt: string; };
+  afterImage: { src: string; alt: string; };
+  class?: string;
 }
 
-const { beforeImage, afterImage, alt } = Astro.props;
-const sliderId = `before-after-slider-${uuidv4()}`; // Unique ID for each slider
+const { beforeImage, afterImage, class: className } = Astro.props;
+
+const sliderId = getUniqueId('before-after-slider');
+const handleId = getUniqueId('slider-handle');
 ---
 
-<div class="relative w-full overflow-hidden rounded-lg group" id={sliderId}>
-  <!-- Before Image -->
-  <Image
-    src={beforeImage}
-    alt={`Before: ${alt}`}
-    loading="lazy"
-    class="w-full h-full object-cover absolute top-0 left-0"
+<div
+  id={sliderId}
+  class:list={[
+    'relative w-full overflow-hidden group select-none touch-pan-x',
+    'rounded-lg shadow-md',
+    'aspect-video', // Maintain aspect ratio for common video sizes
+    className
+  ]}
+  role="group"
+  aria-label="Before and after image comparison"
+  tabindex="0"
+>
+  <img
+    src={beforeImage.src}
+    alt={beforeImage.alt}
+    class="absolute inset-0 w-full h-full object-cover z-10"
+    draggable="false"
+  />
+  <img
+    src={afterImage.src}
+    alt={afterImage.alt}
+    class="absolute inset-0 w-full h-full object-cover z-20"
+    style="clip-path: inset(0 0 0 50%);"
+    draggable="false"
   />
 
-  <!-- After Image -->
-  <Image
-    src={afterImage}
-    alt={`After: ${alt}`}
-    loading="lazy"
-    class="w-full h-full object-cover absolute top-0 left-0"
-    style={{ clipPath: 'inset(0 0 0 50%)' }}
-    id={`${sliderId}-after-image`}
-  />
-
-  <!-- Slider Handle -->
+  <!-- Handle -->
   <div
-    class="absolute top-0 bottom-0 w-2 bg-surface flex items-center justify-center cursor-ew-resize shadow-md
-           motion-safe:transition-all motion-reduce:transition-none duration-100 ease-linear
-           group-hover:w-8 group-focus-within:w-8"
-    style={{ left: 'calc(50% - 1px)' }}
-    id={`${sliderId}-handle`}
+    id={handleId}
+    class="absolute top-0 bottom-0 w-1 bg-white z-30 flex items-center justify-center cursor-ew-resize
+           shadow-lg transition-colors duration-200 group-hover:bg-primary-light"
+    style="left: 50%; transform: translateX(-50%);"
     role="slider"
+    aria-label="Image comparison slider"
     aria-valuenow="50"
     aria-valuemin="0"
     aria-valuemax="100"
-    aria-label="Drag to compare before and after images"
     tabindex="0"
   >
-    <svg class="w-6 h-6 text-primary" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd"></path>
-    </svg>
+    <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-neutral-700
+                shadow-md group-hover:bg-primary-light group-hover:text-white transition-colors duration-200">
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7l4-4m0 0l4 4m-4-4v18"></path>
+      </svg>
+    </div>
   </div>
 </div>
 
-<script is:inline>
-  function initializeBeforeAfterSlider(sliderElementId) {
-    const slider = document.getElementById(sliderElementId);
-    if (!slider) return;
-
-    const handle = slider.querySelector(`#${sliderElementId}-handle`);
-    const afterImage = slider.querySelector(`#${sliderElementId}-after-image`);
+<script define:vars={{ sliderId, handleId }} is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const sliderContainer = document.getElementById(sliderId);
+    const handle = document.getElementById(handleId);
+    const afterImage = sliderContainer?.querySelector('img:last-of-type');
     let isDragging = false;
 
-    if (!handle || !afterImage) return;
+    if (!sliderContainer || !handle || !afterImage) return;
 
-    function moveHandle(clientX) {
-      const rect = slider.getBoundingClientRect();
-      let x = clientX - rect.left; // X position relative to the slider
-      x = Math.max(0, Math.min(x, rect.width)); // Constrain x within slider bounds
+    const updateSlider = (clientX) => {
+      const rect = sliderContainer.getBoundingClientRect();
+      let x = clientX - rect.left;
+      x = Math.max(0, Math.min(x, rect.width));
 
       const percentage = (x / rect.width) * 100;
-      handle.style.left = `${x}px`;
-      afterImage.style.clipPath = `inset(0 0 0 ${x}px)`;
-      handle.setAttribute('aria-valuenow', Math.round(percentage).toString());
-    }
 
-    // Mouse events
+      handle.style.left = `${percentage}%`;
+      afterImage.style.clipPath = `inset(0 0 0 ${percentage}%)`;
+      handle.setAttribute('aria-valuenow', Math.round(percentage).toString());
+    };
+
+    const onMouseMove = (e) => {
+      if (!isDragging) return;
+      updateSlider(e.clientX);
+    };
+
+    const onTouchMove = (e) => {
+      if (!isDragging || !e.touches[0]) return;
+      updateSlider(e.touches[0].clientX);
+    };
+
+    const onMouseUp = () => {
+      isDragging = false;
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    const onTouchEnd = () => {
+      isDragging = false;
+      document.removeEventListener('touchmove', onTouchMove);
+      document.removeEventListener('touchend', onTouchEnd);
+    };
+
     handle.addEventListener('mousedown', (e) => {
       e.preventDefault();
       isDragging = true;
-      slider.classList.add('cursor-ew-resize');
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
     });
 
-    document.addEventListener('mousemove', (e) => {
-      if (!isDragging) return;
-      moveHandle(e.clientX);
-    });
-
-    document.addEventListener('mouseup', () => {
-      if (isDragging) {
-        isDragging = false;
-        slider.classList.remove('cursor-ew-resize');
-      }
-    });
-
-    // Touch events
     handle.addEventListener('touchstart', (e) => {
       e.preventDefault();
       isDragging = true;
-      slider.classList.add('cursor-ew-resize');
+      document.addEventListener('touchmove', onTouchMove);
+      document.addEventListener('touchend', onTouchEnd);
     }, { passive: false });
 
-    document.addEventListener('touchmove', (e) => {
-      if (!isDragging || !e.touches[0]) return;
-      moveHandle(e.touches[0].clientX);
-    }, { passive: false });
-
-    document.addEventListener('touchend', () => {
-      if (isDragging) {
-        isDragging = false;
-        slider.classList.remove('cursor-ew-resize');
-      }
-    });
-
-    // Keyboard navigation for accessibility
+    // Keyboard navigation for handle
     handle.addEventListener('keydown', (e) => {
-      const step = 5; // Pixels to move per key press
-      const rect = slider.getBoundingClientRect();
-      let currentLeft = parseFloat(handle.style.left) || (rect.width / 2);
+      const step = 5; // Move by 5%
+      const rect = sliderContainer.getBoundingClientRect();
+      const currentLeft = parseFloat(handle.style.left); // Percentage
+      let newLeft = currentLeft;
 
-      if (e.key === 'ArrowLeft' || e.key === 'Left') {
+      if (e.key === 'ArrowLeft') {
+        newLeft = Math.max(0, currentLeft - step);
         e.preventDefault();
-        moveHandle(rect.left + currentLeft - step);
-      } else if (e.key === 'ArrowRight' || e.key === 'Right') {
+      } else if (e.key === 'ArrowRight') {
+        newLeft = Math.min(100, currentLeft + step);
         e.preventDefault();
-        moveHandle(rect.left + currentLeft + step);
+      } else if (e.key === 'Home') {
+        newLeft = 0;
+        e.preventDefault();
+      } else if (e.key === 'End') {
+        newLeft = 100;
+        e.preventDefault();
+      }
+
+      if (newLeft !== currentLeft) {
+        handle.style.left = `${newLeft}%`;
+        afterImage.style.clipPath = `inset(0 0 0 ${newLeft}%)`;
+        handle.setAttribute('aria-valuenow', Math.round(newLeft).toString());
       }
     });
 
     // Initial positioning
-    moveHandle(slider.getBoundingClientRect().left + slider.getBoundingClientRect().width / 2);
-  }
-
-  // Initialize all sliders on the page
-  document.querySelectorAll('[id^="before-after-slider-"]').forEach(slider => {
-    initializeBeforeAfterSlider(slider.id);
+    updateSlider(sliderContainer.getBoundingClientRect().width / 2 + sliderContainer.getBoundingClientRect().left);
   });
 </script>
 ```
+---

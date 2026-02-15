@@ -1,248 +1,208 @@
+```astro
 ---
-import Input from '@/components/ui/Input.astro';
-import Button from '@/components/ui/Button.astro';
+import Button from './ui/Button.astro';
+import Input from './ui/Input.astro';
+import Label from './ui/Label.astro';
 
-// Environment variables are expected to be present in a production-ready setup.
-// No fallbacks are provided here to adhere to the "no placeholders, no shortcuts" rule.
-// A build-time check or runtime error will occur if these are not defined.
-const FORMSPREE_ENDPOINT_URL: string = import.meta.env.FORMSPREE_ENDPOINT_URL;
-const RECAPTCHA_SITE_KEY: string = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY;
-
-// Ensure FORMSPREE_ENDPOINT_URL is not empty or undefined for form action
-if (!FORMSPREE_ENDPOINT_URL) {
-  console.error('FORMSPREE_ENDPOINT_URL is not defined. Form submissions will not work.');
-  // In a real application, you might throw an error or render a disabled form.
+interface Props {
+  formId?: string;
+  action?: string; // Formspree or custom endpoint
+  class?: string;
 }
----
 
-<style is:global>
-  /* Define error styles globally to ensure consistency and functionality across all form elements */
-  .border-error {
-    border-color: var(--colors-error) !important;
-    box-shadow: 0 0 0 1px var(--colors-error) !important;
-  }
-  input[type="radio"].border-error-radio {
-    outline: 2px solid var(--colors-error) !important;
-    outline-offset: 2px;
-  }
-  input[type="checkbox"].border-error-radio {
-    outline: 2px solid var(--colors-error) !important;
-    outline-offset: 2px;
-  }
-</style>
+const {
+  formId = 'consultation-form',
+  action = 'https://formspree.io/f/yourformid', // Placeholder, replace with actual Formspree endpoint
+  class: className,
+} = Astro.props;
+
+// This component will handle client-side validation and submission
+// Placeholder for potential reCAPTCHA integration (handled in TASK-025)
+---
 
 <form
-  id="consultation-form"
+  id={formId}
+  action={action}
   method="POST"
-  action={FORMSPREE_ENDPOINT_URL}
-  class="space-y-6 max-w-lg mx-auto p-6 bg-surface rounded-lg shadow-md"
+  class:list={['space-y-6', className]}
   aria-labelledby="consultation-form-title"
 >
-  <h2 id="consultation-form-title" class="font-heading text-3xl font-bold text-center text-text-dark mb-6">
-    Book Your Free Consultation
-  </h2>
-  <p class="text-text-muted text-center mb-6">
-    Let's discuss your project. No pressure, just expert advice from Joe himself.
-  </p>
+  <h2 id="consultation-form-title" class="sr-only">Book Your Free Consultation</h2>
+
+  <Input
+    label="Full Name"
+    id="full-name"
+    type="text"
+    placeholder="John Doe"
+    required
+    autocomplete="name"
+  />
+
+  <Input
+    label="Email Address"
+    id="email"
+    type="email"
+    placeholder="john.doe@example.com"
+    required
+    autocomplete="email"
+  />
+
+  <Input
+    label="Phone Number"
+    id="phone"
+    type="tel"
+    placeholder="(760) 555-1234"
+    required
+    autocomplete="tel"
+  />
 
   <div>
-    <Input label="Full Name" id="fullName" name="fullName" type="text" placeholder="John Doe" required />
-    <p id="fullName-error" class="text-error text-sm mt-1" aria-live="polite"></p>
-  </div>
-  <div>
-    <Input label="Email Address" id="email" name="email" type="email" placeholder="john.doe@example.com" required />
-    <p id="email-error" class="text-error text-sm mt-1" aria-live="polite"></p>
-  </div>
-  <div>
-    <Input label="Phone Number" id="phone" name="phone" type="tel" placeholder="(760) 555-1234" required />
-    <p id="phone-error" class="text-error text-sm mt-1" aria-live="polite"></p>
+    <Label for="service-type" required>Project Type</Label>
+    <div class="relative mt-1">
+      <select
+        id="service-type"
+        name="service-type"
+        required
+        class="form-input-base appearance-none pr-10"
+        aria-describedby="service-type-description"
+      >
+        <option value="">Select a service type...</option>
+        <option value="Painting Services">Painting Services</option>
+        <option value="Handy Services">Handy Services</option>
+        <option value="Both Painting & Handy Services">Both Painting & Handy Services</option>
+      </select>
+      <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-neutral-700">
+        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </span>
+    </div>
+    <p id="service-type-description" class="sr-only">Choose the primary type of service you need.</p>
   </div>
 
   <div>
-    <Input
-      label="Project Type"
-      id="projectType"
-      name="projectType"
-      as="select"
-      placeholder="Select a service type"
+    <Label for="project-description" required>Project Details</Label>
+    <textarea
+      id="project-description"
+      name="project-description"
+      rows={4}
+      placeholder="Briefly describe your project, e.g., 'Exterior house paint, 3 bedrooms, drywall repair needed.'"
       required
-      options={[
-        { value: '', label: 'Select a service type', disabled: true, selected: true },
-        { value: 'painting', label: 'Painting Services' },
-        { value: 'handy', label: 'Handy Services' },
-        { value: 'both', label: 'Both Painting & Handy Services' },
-      ]}
-    />
-    <p id="projectType-error" class="text-error text-sm mt-1" aria-live="polite"></p>
+      class="form-input-base mt-1"
+      aria-describedby="project-description-hint"
+    ></textarea>
+    <p id="project-description-hint" class="text-sm text-neutral-500 mt-1">
+      Tell Joe about your project (e.g., "Exterior house paint, 3 bedrooms").
+    </p>
   </div>
 
   <div>
-    <Input label="Service Location (City/Zip)" id="serviceLocation" name="serviceLocation" type="text" placeholder="Carlsbad, CA 92008" required />
-    <p id="serviceLocation-error" class="text-error text-sm mt-1" aria-live="polite"></p>
-  </div>
-  <div>
-    <Input label="Project Details" id="projectDetails" name="projectDetails" as="textarea" placeholder="Tell Joe about your project (e.g., 'Exterior house paint, 3 bedrooms')" required />
-    <p id="projectDetails-error" class="text-error text-sm mt-1" aria-live="polite"></p>
-  </div>
-
-  <div>
-    <p class="block text-sm font-medium text-text-dark mb-2">Preferred Contact Method <span class="text-error ml-1">*</span></p>
-    <div class="flex items-center space-x-4">
+    <Label as="legend" class="mb-2">Preferred Contact Method</Label>
+    <div class="flex items-center space-x-4 mt-1" role="radiogroup" aria-labelledby="preferred-contact-label">
+      <p id="preferred-contact-label" class="sr-only">How would you prefer Joe to reach out for your consultation?</p>
       <div class="flex items-center">
         <input
+          id="contact-phone"
+          name="preferred-contact"
           type="radio"
-          id="contactPhone"
-          name="preferredContact"
-          value="phone"
-          class="h-4 w-4 text-primary border-border focus:ring-primary"
+          value="Phone Call"
           required
+          class="focus:ring-primary h-4 w-4 text-primary border-neutral-300"
         />
-        <label for="contactPhone" class="ml-2 text-text-dark text-base">Phone Call</label>
+        <label for="contact-phone" class="ml-2 block text-sm text-neutral-900">Phone Call</label>
       </div>
       <div class="flex items-center">
         <input
+          id="contact-email"
+          name="preferred-contact"
           type="radio"
-          id="contactEmail"
-          name="preferredContact"
-          value="email"
-          class="h-4 w-4 text-primary border-border focus:ring-primary"
+          value="Email"
           required
+          class="focus:ring-primary h-4 w-4 text-primary border-neutral-300"
         />
-        <label for="contactEmail" class="ml-2 text-text-dark text-base">Email</label>
+        <label for="contact-email" class="ml-2 block text-sm text-neutral-900">Email</label>
       </div>
     </div>
-    <p id="preferredContact-error" class="text-error text-sm mt-1" aria-live="polite"></p>
   </div>
 
-  <div>
-    <Input label="How Did You Hear About Joe?" id="howHear" name="howHear" type="text" placeholder="Google, Friend's referral, Yelp (Optional)" />
-    <p id="howHear-error" class="text-error text-sm mt-1" aria-live="polite"></p>
-  </div>
+  <Input
+    label="How Did You Hear About Joe?"
+    id="referral-source"
+    type="text"
+    placeholder="e.g., Google, Friend's referral, Yelp"
+    autocomplete="off"
+  />
 
-  <!-- reCAPTCHA integration (badge will appear if site key is valid) -->
-  <div id="recaptcha-badge-container" class="g-recaptcha" data-sitekey={RECAPTCHA_SITE_KEY}></div>
-  <p class="text-xs text-text-muted mt-2">This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy" class="text-primary hover:underline">Privacy Policy</a> and <a href="https://policies.google.com/terms" class="text-primary hover:underline">Terms of Service</a> apply.</p>
-
-  <Button type="submit" variant="primary" size="lg" class="w-full">
+  <Button variant="primary" size="lg" type="submit" class="w-full">
     Request My Free Consultation
   </Button>
 
-  <div id="form-status" aria-live="polite" class="mt-4 text-center"></div>
+  <!-- Placeholder for submission message -->
+  <div id="form-status-message" class="mt-4 sr-only" role="status" aria-live="polite"></div>
 </form>
 
 <script is:inline>
   const form = document.getElementById('consultation-form');
-  const formStatus = document.getElementById('form-status');
-  const submitButton = form?.querySelector('button[type="submit"]');
+  const statusMessage = document.getElementById('form-status-message');
 
-  // Access client-side environment variable for reCAPTCHA
-  const RECAPTCHA_SITE_KEY = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY;
+  if (form) {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
 
-  // Dynamically load reCAPTCHA script if site key is available
-  if (RECAPTCHA_SITE_KEY && !document.querySelector(`script[src*="recaptcha"]`)) {
-    const recaptchaScript = document.createElement('script');
-    recaptchaScript.src = `https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`;
-    recaptchaScript.async = true;
-    document.head.appendChild(recaptchaScript);
-  }
-
-  form?.addEventListener('submit', async (event) => {
-    event.preventDefault(); // Prevent default form submission
-
-    let isValid = true;
-    const requiredInputs = form.querySelectorAll('input[required]:not([type="radio"]), textarea[required], select[required]');
-    const radioGroups = {};
-
-    // Clear previous errors first
-    formStatus.innerHTML = '';
-    form.querySelectorAll('.border-error').forEach(el => el.classList.remove('border-error'));
-    form.querySelectorAll('.border-error-radio').forEach(el => el.classList.remove('border-error-radio'));
-    form.querySelectorAll('[aria-invalid="true"]').forEach(el => el.setAttribute('aria-invalid', 'false'));
-    form.querySelectorAll('[id$="-error"]').forEach(el => el.textContent = '');
-
-    // Validate text/select/textarea inputs
-    requiredInputs.forEach(input => {
-      const errorElement = document.getElementById(`${input.id}-error`);
-      if (input.value.trim() === '' || (input.type === 'email' && !input.value.includes('@'))) {
-        isValid = false;
-        input.classList.add('border-error');
-        if (errorElement) errorElement.textContent = `Please enter a valid ${input.labels[0]?.textContent || 'value'}.`;
-        input.setAttribute('aria-invalid', 'true');
-      }
-    });
-
-    // Collect and validate radio button groups
-    form.querySelectorAll('input[type="radio"][required]').forEach(radio => {
-      if (!radioGroups[radio.name]) {
-        radioGroups[radio.name] = [];
-      }
-      radioGroups[radio.name].push(radio);
-    });
-
-    for (const name in radioGroups) {
-      const groupInputs = radioGroups[name];
-      const isChecked = groupInputs.some(radio => radio.checked);
-      const errorElement = document.getElementById(`${name}-error`);
-      if (!isChecked) {
-        isValid = false;
-        groupInputs.forEach(radio => radio.classList.add('border-error-radio'));
-        if (errorElement) errorElement.textContent = 'Please select an option.';
-        groupInputs[0].setAttribute('aria-invalid', 'true'); // Set aria-invalid on the first radio of the group
-      }
-    }
-
-    if (!isValid) {
-      formStatus.innerHTML = '<p class="text-error">Please correct the highlighted fields and try again.</p>';
-      return;
-    }
-
-    if (submitButton) {
-      submitButton.disabled = true;
-      submitButton.innerHTML = '<span class="inline-block animate-spin rounded-full h-5 w-5 border-2 border-r-transparent"></span> Sending Request...';
-    }
-    
-    try {
-      let recaptchaToken = '';
-      if (RECAPTCHA_SITE_KEY && typeof grecaptcha !== 'undefined' && grecaptcha.ready) {
-        await new Promise(resolve => grecaptcha.ready(resolve)); // Wait for reCAPTCHA to be ready
-        recaptchaToken = await grecaptcha.execute(RECAPTCHA_SITE_KEY, {action: 'submit_consultation'});
+      // Basic client-side validation (browser's native HTML5 validation handles most)
+      if (!form.checkValidity()) {
+        statusMessage.textContent = 'Please fill out all required fields correctly.';
+        statusMessage.classList.remove('sr-only');
+        statusMessage.classList.add('text-error');
+        return;
       }
 
-      const formData = new FormData(form);
-      if (recaptchaToken) {
-        formData.append('g-recaptcha-response', recaptchaToken);
-      }
-
-      const response = await fetch(form.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-
-      if (response.ok) {
-        formStatus.innerHTML = '<p class="text-success">Thank You! Your Free Consultation Request Has Been Received. Joe will be in touch within 1 business day.</p>';
-        form.reset(); // Clear form fields
-
-        // Redirect to a dedicated thank you page after a short delay
-        setTimeout(() => {
-          if (window.location.pathname !== '/thank-you') {
-            window.location.href = '/thank-you';
-          }
-        }, 3000); // Redirect after 3 seconds
-      } else {
-        const errorData = await response.json();
-        formStatus.innerHTML = `<p class="text-error">Oops! Something went wrong: ${errorData.error || 'Please try again.'}</p>`;
-      }
-    } catch (error) {
-      console.error('Form submission error:', error);
-      formStatus.innerHTML = '<p class="text-error">Network error. Please try again or call Joe directly at (760) 580-8173.</p>';
-    } finally {
+      const submitButton = form.querySelector('button[type="submit"]');
       if (submitButton) {
-        submitButton.disabled = false;
-        submitButton.innerHTML = 'Request My Free Consultation';
+        submitButton.disabled = true;
+        submitButton.textContent = 'Sending Request...';
+        submitButton.classList.add('opacity-75', 'cursor-not-allowed');
       }
-    }
-  });
+
+      // Simulate network request (replace with actual fetch to Formspree/backend)
+      try {
+        const response = await fetch(form.action, {
+          method: form.method,
+          body: new FormData(form),
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          statusMessage.textContent = 'Thank You! Your Free Consultation Request Has Been Received. Joe personally reviews every request and will be in touch within 1 business day to discuss your project and schedule your consultation. We appreciate your patience!';
+          statusMessage.classList.remove('sr-only', 'text-error');
+          statusMessage.classList.add('text-success');
+          form.reset();
+        } else {
+          const data = await response.json();
+          if (data?.errors) {
+            statusMessage.textContent = `Error: ${data.errors.map(e => e.field).join(', ')} are invalid.`;
+          } else {
+            statusMessage.textContent = 'Oops! Something went wrong on our end. Please try again or call Joe directly at (760) 580-8173.';
+          }
+          statusMessage.classList.remove('sr-only', 'text-success');
+          statusMessage.classList.add('text-error');
+        }
+      } catch (error) {
+        statusMessage.textContent = 'A network error occurred. Please try again or call Joe directly at (760) 580-8173.';
+        statusMessage.classList.remove('sr-only', 'text-success');
+        statusMessage.classList.add('text-error');
+      } finally {
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent = 'Request My Free Consultation';
+          submitButton.classList.remove('opacity-75', 'cursor-not-allowed');
+        }
+        statusMessage.focus(); // Move focus to the status message for screen readers
+      }
+    });
+  }
 </script>
+```
+---

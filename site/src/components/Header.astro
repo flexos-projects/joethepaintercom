@@ -1,170 +1,130 @@
 ```astro
 ---
 import { Image } from 'astro:assets';
-import logo from '@/assets/logo-joethepainter.svg'; // Assuming logo is in src/assets
-import Nav from '@/components/Nav.astro';
-import Button from '@/components/ui/Button.astro';
-import { useState } from 'react'; // For client-side state in Astro component with client:load
-import { useStore } from '@nanostores/react'; // Example of a global state manager for modal
-
-// Placeholder for a global modal state (e.g., using Nanostores, Zustand, or simple React context)
-// This is a conceptual example, actual implementation would depend on the chosen state management.
-// For this task, we'll assume a simple state toggle.
-interface ModalState {
-  isOpen: boolean;
-  toggle: () => void;
-}
-// Assume this `useModalStore` is available from a client-side utility, e.g., src/stores/modalStore.ts
-// For this specific task, we'll use a simple client:load script to toggle a modal.
+import logo from '../assets/logo-joethepainter.svg'; // Assuming an SVG logo asset
+import Button from './ui/Button.astro';
+import Nav from './Nav.astro';
 ---
 
-<header class="sticky top-0 z-50 bg-surface shadow-sm motion-safe:transition-all motion-reduce:transition-none">
-  <div class="container mx-auto px-4 py-4 flex items-center justify-between">
-    <a href="/" class="flex items-center gap-2" aria-label="Joe the Painter homepage">
-      <Image src={logo} alt="Joe the Painter logo" width={40} height={40} />
-      <span class="font-heading text-2xl font-bold text-text-dark">Joe the Painter</span>
+<header class="sticky top-0 z-50 bg-white shadow-sm py-4 md:py-5">
+  <div class="container flex items-center justify-between">
+    <a href="/" class="flex items-center group" aria-label="Joe the Painter homepage">
+      <Image src={logo} alt="Joe the Painter Logo" width={40} height={40} class="mr-2 transition-transform duration-200 group-hover:scale-105" />
+      <span class="font-heading text-2xl font-bold text-neutral-900 transition-colors duration-200 group-hover:text-primary">
+        JOE THE PAINTER
+      </span>
     </a>
 
     <!-- Desktop Navigation -->
-    <nav class="hidden md:flex items-center space-x-6" aria-label="Main navigation">
-      <Nav />
+    <Nav class="hidden md:flex" />
+
+    <div class="hidden md:block">
       <Button variant="primary" size="md" href="/consultation">
         Book a Free Consultation
       </Button>
-    </nav>
-
-    <!-- Mobile Navigation Toggle -->
-    <div class="md:hidden flex items-center">
-      <Button
-        id="mobile-menu-button"
-        variant="primary"
-        size="md"
-        class="mr-4"
-        href="/consultation"
-      >
-        Consultation
-      </Button>
-      <button
-        id="hamburger-menu-toggle"
-        class="p-2 text-text-dark hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md"
-        aria-controls="mobile-menu-overlay"
-        aria-expanded="false"
-        aria-label="Open main menu"
-      >
-        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path id="hamburger-icon-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-          <path id="hamburger-icon-close" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-      </button>
     </div>
+
+    <!-- Mobile Hamburger Menu Button -->
+    <button
+      id="mobile-menu-button"
+      class="md:hidden p-2 rounded-md text-neutral-700 hover:bg-neutral-100 focus-visible:ring-2 focus-visible:ring-primary"
+      aria-label="Open main menu"
+      aria-controls="mobile-menu"
+      aria-expanded="false"
+    >
+      <svg id="hamburger-icon" class="w-6 h-6 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+      <svg id="close-icon" class="w-6 h-6 hidden transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
   </div>
 
   <!-- Mobile Menu Overlay -->
-  <div
-    id="mobile-menu-overlay"
-    class="fixed inset-0 bg-surface z-40 md:hidden transform translate-x-full motion-safe:transition-transform motion-reduce:transition-none duration-300 ease-in-out"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="mobile-menu-title"
-    tabindex="-1"
+  <nav
+    id="mobile-menu"
+    class="fixed inset-0 bg-white z-40 flex flex-col items-center justify-center space-y-8
+           md:hidden transform translate-x-full transition-transform duration-300 ease-in-out"
+    aria-label="Main navigation"
   >
-    <div class="flex items-center justify-between px-4 py-4 border-b border-border">
-      <h2 id="mobile-menu-title" class="font-heading text-2xl font-bold text-text-dark">Menu</h2>
-      <button
-        id="mobile-menu-close"
-        class="p-2 text-text-dark hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md"
-        aria-label="Close main menu"
-      >
-        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-      </button>
-    </div>
-    <nav class="flex flex-col items-center justify-center min-h-[calc(100vh-6rem)] py-8" aria-label="Mobile navigation">
-      <Nav isMobile />
-      <div class="mt-8">
-        <Button variant="primary" size="lg" href="/consultation">
-          Book a Free Consultation
-        </Button>
-      </div>
-    </nav>
-  </div>
+    <Button
+      id="mobile-menu-close-button"
+      variant="ghost"
+      size="md"
+      class="absolute top-5 right-5 text-neutral-700 hover:text-primary"
+      aria-label="Close main menu"
+    >
+      <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </Button>
+
+    <a href="/" class="font-heading text-3xl text-neutral-900 hover:text-primary transition-colors" data-mobile-menu-link>Home</a>
+    <a href="/services/painting" class="font-heading text-3xl text-neutral-900 hover:text-primary transition-colors" data-mobile-menu-link>Painting Services</a>
+    <a href="/services/handy" class="font-heading text-3xl text-neutral-900 hover:text-primary transition-colors" data-mobile-menu-link>Handy Services</a>
+    <a href="/our-work" class="font-heading text-3xl text-neutral-900 hover:text-primary transition-colors" data-mobile-menu-link>Our Work</a>
+    <a href="/about" class="font-heading text-3xl text-neutral-900 hover:text-primary transition-colors" data-mobile-menu-link>About Joe</a>
+    <a href="/contact" class="font-heading text-3xl text-neutral-900 hover:text-primary transition-colors" data-mobile-menu-link>Contact</a>
+
+    <Button variant="primary" size="lg" href="/consultation" class="mt-8" data-mobile-menu-link>
+      Book a Free Consultation
+    </Button>
+  </nav>
 </header>
 
 <script is:inline>
-  const toggleButton = document.getElementById('hamburger-menu-toggle');
-  const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
-  const closeButton = document.getElementById('mobile-menu-close');
-  const openIcon = document.getElementById('hamburger-icon-open');
-  const closeIcon = document.getElementById('hamburger-icon-close');
-  const firstFocusableElement = mobileMenuOverlay?.querySelector('a, button'); // First item to focus in menu
-  const lastFocusableElement = mobileMenuOverlay?.querySelector('a:last-of-type, button:last-of-type'); // Last item to focus
+  const mobileMenuButton = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const mobileMenuCloseButton = document.getElementById('mobile-menu-close-button');
+  const hamburgerIcon = document.getElementById('hamburger-icon');
+  const closeIcon = document.getElementById('close-icon');
+  const mobileMenuLinks = document.querySelectorAll('[data-mobile-menu-link]');
+  let isMobileMenuOpen = false;
 
-  let isMenuOpen = false;
+  const toggleMobileMenu = () => {
+    isMobileMenuOpen = !isMobileMenuOpen;
+    mobileMenuButton?.setAttribute('aria-expanded', String(isMobileMenuOpen));
+    mobileMenu?.classList.toggle('translate-x-full', !isMobileMenuOpen);
+    document.body.classList.toggle('overflow-hidden', isMobileMenuOpen); // Prevent body scroll
+    hamburgerIcon?.classList.toggle('hidden', isMobileMenuOpen);
+    closeIcon?.classList.toggle('hidden', !isMobileMenuOpen);
 
-  function toggleMobileMenu(open) {
-    isMenuOpen = open;
-    if (mobileMenuOverlay) {
-      mobileMenuOverlay.classList.toggle('translate-x-full', !open);
-      mobileMenuOverlay.classList.toggle('translate-x-0', open);
-      mobileMenuOverlay.setAttribute('aria-expanded', String(open));
-
-      if (open) {
-        document.body.style.overflow = 'hidden'; // Prevent scrolling on body
-        mobileMenuOverlay.focus(); // Focus the overlay itself for initial screen reader announcement
-        openIcon?.classList.add('hidden');
-        closeIcon?.classList.remove('hidden');
-        // Set focus to the first interactive element in the menu
-        setTimeout(() => { // Timeout to allow transition to complete
-          const firstFocusable = mobileMenuOverlay.querySelector('a, button');
-          if (firstFocusable) firstFocusable.focus();
-        }, 300);
-      } else {
-        document.body.style.overflow = ''; // Restore scrolling
-        openIcon?.classList.remove('hidden');
-        closeIcon?.classList.add('hidden');
-        toggleButton?.focus(); // Return focus to the hamburger button
-      }
+    if (isMobileMenuOpen) {
+      // Set focus to the first interactive element in the menu
+      const firstLink = mobileMenu?.querySelector('a, button');
+      firstLink?.focus();
+    } else {
+      // Return focus to the hamburger button when menu closes
+      mobileMenuButton?.focus();
     }
-  }
+  };
 
-  toggleButton?.addEventListener('click', () => toggleMobileMenu(!isMenuOpen));
-  closeButton?.addEventListener('click', () => toggleMobileMenu(false));
+  mobileMenuButton?.addEventListener('click', toggleMobileMenu);
+  mobileMenuCloseButton?.addEventListener('click', toggleMobileMenu);
 
-  // Close menu on ESC key
+  mobileMenuLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      // Close menu when a link is clicked
+      if (isMobileMenuOpen) {
+        toggleMobileMenu();
+      }
+    });
+  });
+
+  // Close menu on Escape key
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && isMenuOpen) {
-      toggleMobileMenu(false);
-    }
-    // Trap focus inside the modal
-    if (event.key === 'Tab' && isMenuOpen) {
-      const focusableElements = mobileMenuOverlay?.querySelectorAll('a, button, input, select, textarea');
-      if (!focusableElements || focusableElements.length === 0) return;
-
-      const firstElement = focusableElements[0];
-      const lastElement = focusableElements[focusableElements.length - 1];
-
-      if (event.shiftKey) { // Shift + Tab
-        if (document.activeElement === firstElement) {
-          lastElement.focus();
-          event.preventDefault();
-        }
-      } else { // Tab
-        if (document.activeElement === lastElement) {
-          firstElement.focus();
-          event.preventDefault();
-        }
-      }
+    if (event.key === 'Escape' && isMobileMenuOpen) {
+      toggleMobileMenu();
     }
   });
 
-  // Close menu on outside click (if not an overlay but a slide-out)
-  // For a full-screen overlay, this might not be strictly necessary,
-  // but good for robustness if the overlay doesn't cover 100% or to handle accidental clicks.
-  mobileMenuOverlay?.addEventListener('click', (event) => {
-    if (event.target === mobileMenuOverlay) {
-      toggleMobileMenu(false);
+  // Ensure menu is closed if screen resizes above mobile breakpoint
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 768 && isMobileMenuOpen) { // md breakpoint is 768px
+      toggleMobileMenu();
     }
   });
 </script>
 ```
+---

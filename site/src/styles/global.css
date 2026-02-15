@@ -1,176 +1,209 @@
-```css
+/* Global styles and Tailwind directives */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Custom CSS variables based on design tokens */
-:root {
-  --color-primary: #0047AB;
-  --color-secondary: #6B7280;
-  --color-accent: #E5B80B;
-  --color-background: #F9FAFB;
-  --color-surface: #FFFFFF;
-  --color-text: #1F2937;
-  --color-text-muted: #6B7280;
-  --color-border: #E5E7EB;
-  --color-error: #EF4444;
-  --color-success: #10B981;
-  --color-warning: #F59E0B;
-  --color-text-subtle: #9CA3AF;
-  --color-info: #3B82F6;
+/* Custom properties for design tokens from tailwind.config.mjs */
+@layer base {
+  :root {
+    /* Colors */
+    --color-primary: theme('colors.primary.DEFAULT');
+    --color-primary-light: theme('colors.primary.light');
+    --color-primary-dark: theme('colors.primary.dark');
+    --color-accent: theme('colors.accent.DEFAULT');
+    --color-accent-light: theme('colors.accent.light');
+    --color-accent-dark: theme('colors.accent.dark');
+    --color-neutral-50: theme('colors.neutral.50');
+    --color-neutral-100: theme('colors.neutral.100');
+    --color-neutral-200: theme('colors.neutral.200');
+    --color-neutral-300: theme('colors.neutral.300');
+    --color-neutral-400: theme('colors.neutral.400');
+    --color-neutral-500: theme('colors.neutral.500');
+    --color-neutral-600: theme('colors.neutral.600');
+    --color-neutral-700: theme('colors.neutral.700');
+    --color-neutral-800: theme('colors.neutral.800');
+    --color-neutral-900: theme('colors.neutral.900');
+    --color-white: theme('colors.white');
+    --color-black: theme('colors.black');
+    --color-success: theme('colors.success');
+    --color-warning: theme('colors.warning');
+    --color-error: theme('colors.error');
 
-  --font-family-heading: 'Lora', Georgia, serif;
-  --font-family-body: 'Inter', system-ui, sans-serif;
-  --font-family-mono: 'Space Mono', monospace;
+    /* Typography */
+    --font-heading: theme('fontFamily.heading');
+    --font-body: theme('fontFamily.body');
+    --font-display: theme('fontFamily.display'); /* If used */
 
-  --border-radius-sm: 0.125rem;
-  --border-radius-md: 0.375rem;
-  --border-radius-lg: 0.5rem;
-  --border-radius-xl: 0.75rem;
-  --border-radius-2xl: 1rem;
-  --border-radius-full: 9999px;
+    /* Spacing */
+    --spacing-px: theme('spacing.px');
+    --spacing-0-5: theme('spacing.0.5');
+    --spacing-1: theme('spacing.1');
+    --spacing-1-5: theme('spacing.1.5');
+    --spacing-2: theme('spacing.2');
+    --spacing-2-5: theme('spacing.2.5');
+    --spacing-3: theme('spacing.3');
+    --spacing-3-5: theme('spacing.3.5');
+    --spacing-4: theme('spacing.4');
+    --spacing-5: theme('spacing.5');
+    --spacing-6: theme('spacing.6');
+    --spacing-7: theme('spacing.7');
+    --spacing-8: theme('spacing.8');
+    --spacing-9: theme('spacing.9');
+    --spacing-10: theme('spacing.10');
+    --spacing-11: theme('spacing.11');
+    --spacing-12: theme('spacing.12');
+    --spacing-14: theme('spacing.14');
+    --spacing-16: theme('spacing.16');
+    --spacing-20: theme('spacing.20');
+    --spacing-24: theme('spacing.24');
+    --spacing-28: theme('spacing.28');
+    --spacing-32: theme('spacing.32');
+    --spacing-36: theme('spacing.36');
+    --spacing-40: theme('spacing.40');
+    --spacing-44: theme('spacing.44');
+    --spacing-48: theme('spacing.48');
+    --spacing-52: theme('spacing.52');
+    --spacing-56: theme('spacing.56');
+    --spacing-60: theme('spacing.60');
+    --spacing-64: theme('spacing.64');
+    --spacing-72: theme('spacing.72');
+    --spacing-80: theme('spacing.80');
+    --spacing-96: theme('spacing.96');
 
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    /* Border Radius */
+    --radius-none: theme('borderRadius.none');
+    --radius-sm: theme('borderRadius.sm');
+    --radius-default: theme('borderRadius.DEFAULT');
+    --radius-md: theme('borderRadius.md');
+    --radius-lg: theme('borderRadius.lg');
+    --radius-xl: theme('borderRadius.xl');
+    --radius-2xl: theme('borderRadius.2xl');
+    --radius-3xl: theme('borderRadius.3xl');
+    --radius-full: theme('borderRadius.full');
 
-  /* Transition timings from design tokens */
-  --transition-duration-fast: 150ms;
-  --transition-duration-normal: 300ms;
-  --transition-duration-slow: 500ms;
-  --transition-easing-default: cubic-bezier(0.4, 0, 0.2, 1);
-}
+    /* Box Shadows */
+    --shadow-sm: theme('boxShadow.sm');
+    --shadow-default: theme('boxShadow.DEFAULT');
+    --shadow-md: theme('boxShadow.md');
+    --shadow-lg: theme('boxShadow.lg');
+    --shadow-xl: theme('boxShadow.xl');
+    --shadow-2xl: theme('boxShadow.2xl');
+    --shadow-inner: theme('boxShadow.inner');
+    --shadow-outline: theme('boxShadow.outline');
 
-/* Base body styles */
-body {
-  font-family: var(--font-family-body);
-  color: var(--color-text);
-  background-color: var(--color-background);
-  line-height: 1.6;
-}
+    /* Transitions */
+    --transition-duration-default: theme('transitionDuration.DEFAULT');
+    --transition-duration-150: theme('transitionDuration.150');
+    --transition-duration-200: theme('transitionDuration.200');
+    --transition-duration-300: theme('transitionDuration.300');
+    --transition-duration-500: theme('transitionDuration.500');
+    --transition-duration-700: theme('transitionDuration.700');
+    --transition-duration-1000: theme('transitionDuration.1000');
+    --transition-easing-in-out: theme('transitionTimingFunction.ease-in-out');
+  }
 
-/* Headings */
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-family-heading);
-  color: var(--color-text);
-  line-height: var(--typography-lineHeight-tight); /* Use specific line heights from tokens */
-}
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
 
-h1 {
-  font-size: var(--typography-fontSize-5xl);
-  font-weight: var(--typography-fontWeight-bold);
-  line-height: var(--typography-lineHeight-5xl);
-}
-@media (max-width: theme('screens.md')) {
-  h1 {
-    font-size: var(--typography-fontSize-4xl);
-    line-height: var(--typography-lineHeight-4xl);
+  body {
+    @apply font-body text-neutral-900 bg-neutral-50;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading text-neutral-900;
+  }
+
+  /* Accessible focus-visible styles */
+  *:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: var(--radius-md); /* Apply consistent border-radius to focus outline */
+  }
+
+  /* Remove default outline for elements that already have custom focus-visible styles */
+  button:focus:not(:focus-visible),
+  a:focus:not(:focus-visible),
+  input:focus:not(:focus-visible),
+  select:focus:not(:focus-visible),
+  textarea:focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* Reduced Motion Preference */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
-h2 {
-  font-size: var(--typography-fontSize-4xl);
-  font-weight: var(--typography-fontWeight-bold);
-  line-height: var(--typography-lineHeight-4xl);
-}
-@media (max-width: theme('screens.md')) {
-  h2 {
-    font-size: var(--typography-fontSize-3xl);
-    line-height: var(--typography-lineHeight-3xl);
-  }
-}
-
-h3 {
-  font-size: var(--typography-fontSize-3xl);
-  font-weight: var(--typography-fontWeight-semibold);
-  line-height: var(--typography-lineHeight-3xl);
-}
-@media (max-width: theme('screens.md')) {
-  h3 {
-    font-size: var(--typography-fontSize-2xl);
-    line-height: var(--typography-lineHeight-2xl);
-  }
-}
-
-h4 {
-  font-family: var(--font-family-body);
-  font-size: var(--typography-fontSize-2xl);
-  font-weight: var(--typography-fontWeight-semibold);
-  line-height: var(--typography-lineHeight-2xl);
-}
-@media (max-width: theme('screens.md')) {
-  h4 {
-    font-size: var(--typography-fontSize-xl);
-    line-height: var(--typography-lineHeight-xl);
-  }
-}
-
-/* Links */
-a {
-  color: var(--color-primary);
-  text-decoration: none;
-  transition: color var(--transition-duration-fast) ease-in-out;
-}
-a:hover {
-  color: var(--color-primary); /* Keep same for now, or define a hover shade */
-  text-decoration: underline;
-}
-
-/* Images */
-img {
-  max-width: 100%;
-  height: auto;
-  display: block; /* Removes extra space below images */
-}
-
-/* Focus styles for all interactive elements */
-*:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-  border-radius: var(--border-radius-md); /* Apply a subtle border-radius to focus outline */
-}
-
-/* Force specific elements to not have default outline removal if applied by frameworks */
-[role="button"]:focus-visible,
-[role="link"]:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-
-/* Ensure prefers-reduced-motion applies globally */
-@media (prefers-reduced-motion: reduce) {
-  .motion-safe\:transition-all,
-  .motion-safe\:transition-transform,
-  .motion-safe\:transition-colors {
-    transition: none !important;
-  }
-  .motion-reduce\:transition-none {
-    transition: none !important;
-  }
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* Container Utility (example) */
-.container {
-  max-width: theme('screens.xl'); /* 1280px */
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: theme('spacing.4'); /* 16px */
-  padding-right: theme('spacing.4'); /* 16px */
-}
-@media (min-width: theme('screens.md')) {
+/* Custom components and utilities */
+@layer components {
   .container {
-    padding-left: theme('spacing.8'); /* 32px */
-    padding-right: theme('spacing.8'); /* 32px */
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center font-semibold text-center no-underline cursor-pointer border-2 border-transparent
+           transition-all duration-300 ease-in-out rounded-md
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-white hover:bg-primary-dark active:bg-primary-darker;
+  }
+
+  .btn-secondary {
+    @apply bg-neutral-500 text-white hover:bg-neutral-600 active:bg-neutral-700;
+  }
+
+  .btn-outline {
+    @apply bg-transparent border-primary text-primary hover:bg-primary hover:text-white;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent border-transparent text-primary hover:bg-primary-light/10 active:bg-primary-light/20;
+  }
+
+  .btn-sm {
+    @apply py-2 px-4 text-sm;
+  }
+
+  .btn-md {
+    @apply py-2.5 px-5 text-base;
+  }
+
+  .btn-lg {
+    @apply py-3 px-6 text-lg;
+  }
+
+  .form-input-base {
+    @apply w-full border-neutral-300 rounded-md shadow-sm py-2 px-3
+           text-neutral-900 placeholder-neutral-500
+           focus:border-primary focus:ring-primary focus:ring-opacity-50;
+  }
+
+  .form-label-base {
+    @apply block text-sm font-medium text-neutral-700 mb-1;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
   }
 }
-```
+---
