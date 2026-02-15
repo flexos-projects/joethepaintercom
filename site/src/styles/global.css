@@ -1,221 +1,148 @@
-/* Global styles and Tailwind directives */
+---
+/* src/styles/global.css */
+/* Global styles, Tailwind directives, and custom utilities */
+---
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Custom properties for design tokens from tailwind.config.mjs */
-@layer base {
-  :root {
-    /* Colors from 06-design.md / tokens.json */
-    --color-primary: theme('colors.primary.DEFAULT'); /* Mapped to #1A365D from tailwind.config.mjs, but defined as #0047AB in 06-design.md */
-    --color-secondary: theme('colors.neutral.500'); /* Mapped to #6B7280 from 06-design.md / tokens.json */
-    --color-accent: theme('colors.accent.DEFAULT'); /* Mapped to #E6B200 from tailwind.config.mjs, but defined as #E5B80B in 06-design.md */
+/* Custom fonts */
+@font-face {
+  font-family: 'Lora';
+  src: url('/fonts/Lora-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
-    --color-background: theme('colors.neutral.50'); /* Mapped to #F9FAFB from 06-design.md / tokens.json */
-    --color-surface: theme('colors.white'); /* Mapped to #FFFFFF from 06-design.md / tokens.json */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
-    --color-text: theme('colors.neutral.800'); /* Mapped to #1F2937 from 06-design.md / tokens.json */
-    --color-text-muted: theme('colors.neutral.500'); /* Mapped to #6B7280 from 06-design.md / tokens.json */
-    --color-text-subtle: theme('colors.neutral.400'); /* Mapped to #9CA3AF from 06-design.md / tokens.json */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
 
-    --color-border: theme('colors.neutral.200'); /* Mapped to #E5E7EB from 06-design.md / tokens.json */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
 
-    /* Semantic colors */
-    --color-success: theme('colors.success'); /* Mapped to #10B981 */
-    --color-warning: theme('colors.warning'); /* Mapped to #F59E0B */
-    --color-error: theme('colors.error'); /* Mapped to #EF4444 */
-    --color-info: theme('colors.blue.500'); /* Mapped to #3B82F6 from 06-design.md / tokens.json, assuming default Tailwind blue-500 */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
-    /* Tailwind's extended neutral palette for granular use */
-    --color-neutral-50: theme('colors.neutral.50');
-    --color-neutral-100: theme('colors.neutral.100');
-    --color-neutral-200: theme('colors.neutral.200');
-    --color-neutral-300: theme('colors.neutral.300');
-    --color-neutral-400: theme('colors.neutral.400');
-    --color-neutral-500: theme('colors.neutral.500');
-    --color-neutral-600: theme('colors.neutral.600');
-    --color-neutral-700: theme('colors.neutral.700');
-    --color-neutral-800: theme('colors.neutral.800');
-    --color-neutral-900: theme('colors.neutral.900');
+/* Base styles for accessibility and consistency */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  line-height: 1.5;
+}
 
-    /* Direct white and black for specific use cases */
-    --color-white: theme('colors.white');
-    --color-black: theme('colors.black');
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-    /* Typography */
-    --font-heading: theme('fontFamily.heading');
-    --font-body: theme('fontFamily.body');
-    /* --font-display is not explicitly defined in 06-design.md as a primary font but is in tailwind.config.mjs for potential use. */
+/* Ensure focus outlines are visible and consistent */
+*:focus {
+  outline: none; /* Reset default browser outline */
+}
 
-    /* Spacing */
-    --spacing-px: theme('spacing.px');
-    --spacing-0-5: theme('spacing.0.5');
-    --spacing-1: theme('spacing.1');
-    --spacing-1-5: theme('spacing.1.5');
-    --spacing-2: theme('spacing.2');
-    --spacing-2-5: theme('spacing.2.5');
-    --spacing-3: theme('spacing.3');
-    --spacing-3-5: theme('spacing.3.5');
-    --spacing-4: theme('spacing.4');
-    --spacing-5: theme('spacing.5');
-    --spacing-6: theme('spacing.6');
-    --spacing-7: theme('spacing.7');
-    --spacing-8: theme('spacing.8');
-    --spacing-9: theme('spacing.9');
-    --spacing-10: theme('spacing.10');
-    --spacing-11: theme('spacing.11');
-    --spacing-12: theme('spacing.12');
-    --spacing-14: theme('spacing.14');
-    --spacing-16: theme('spacing.16');
-    --spacing-20: theme('spacing.20');
-    --spacing-24: theme('spacing.24');
-    --spacing-28: theme('spacing.28');
-    --spacing-32: theme('spacing.32');
-    --spacing-36: theme('spacing.36');
-    --spacing-40: theme('spacing.40');
-    --spacing-44: theme('spacing.44');
-    --spacing-48: theme('spacing.48');
-    --spacing-52: theme('spacing.52');
-    --spacing-56: theme('spacing.56');
-    --spacing-60: theme('spacing.60');
-    --spacing-64: theme('spacing.64');
-    --spacing-72: theme('spacing.72');
-    --spacing-80: theme('spacing.80');
-    --spacing-96: theme('spacing.96');
+/* Using `:focus-visible` for better UX (only show outline when navigating with keyboard) */
+/* Fallback for browsers not supporting :focus-visible (e.g., polyfill or a custom outline) */
+*:focus-visible {
+  outline: 2px solid theme('colors.primary.DEFAULT');
+  outline-offset: 2px;
+  border-radius: theme('borderRadius.sm'); /* Apply a slight radius for better appearance */
+}
 
-    /* Border Radius */
-    --radius-none: theme('borderRadius.none');
-    --radius-sm: theme('borderRadius.sm');
-    --radius-default: theme('borderRadius.DEFAULT');
-    --radius-md: theme('borderRadius.md');
-    --radius-lg: theme('borderRadius.lg');
-    --radius-xl: theme('borderRadius.xl');
-    --radius-2xl: theme('borderRadius.2xl');
-    --radius-3xl: theme('borderRadius.3xl');
-    --radius-full: theme('borderRadius.full');
-
-    /* Box Shadows */
-    --shadow-sm: theme('boxShadow.sm');
-    --shadow-default: theme('boxShadow.DEFAULT');
-    --shadow-md: theme('boxShadow.md');
-    --shadow-lg: theme('boxShadow.lg');
-    --shadow-xl: theme('boxShadow.xl');
-    --shadow-2xl: theme('boxShadow.2xl');
-    --shadow-inner: theme('boxShadow.inner');
-    --shadow-outline: theme('boxShadow.outline');
-
-    /* Transitions */
-    --transition-duration-default: theme('transitionDuration.DEFAULT');
-    --transition-duration-150: theme('transitionDuration.150');
-    --transition-duration-200: theme('transitionDuration.200');
-    --transition-duration-300: theme('transitionDuration.300');
-    --transition-duration-500: theme('transitionDuration.500');
-    --transition-duration-700: theme('transitionDuration.700');
-    --transition-duration-1000: theme('transitionDuration.1000');
-    --transition-easing-in-out: theme('transitionTimingFunction.ease-in-out');
-  }
-
-  html {
-    scroll-behavior: smooth;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-  }
-
-  body {
-    @apply font-body text-neutral-900 bg-neutral-50;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-heading text-neutral-900;
-  }
-
-  /* Accessible focus-visible styles */
-  *:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
-    border-radius: var(--radius-md); /* Apply consistent border-radius to focus outline */
-  }
-
-  /* Remove default outline for elements that already have custom focus-visible styles */
-  button:focus:not(:focus-visible),
-  a:focus:not(:focus-visible),
-  input:focus:not(:focus-visible),
-  select:focus:not(:focus-visible),
-  textarea:focus:not(:focus-visible) {
-    outline: none;
-  }
-
-  /* Reduced Motion Preference */
-  @media (prefers-reduced-motion: reduce) {
-    * {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
-    }
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
-/* Custom components and utilities */
-@layer components {
-  .container {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
-  }
+/* Custom utility classes */
+.container {
+  @apply mx-auto max-w-7xl;
+}
 
-  .btn {
-    @apply inline-flex items-center justify-center font-semibold text-center no-underline cursor-pointer border-2 border-transparent
-           transition-all duration-300 ease-in-out rounded-md
-           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
-  }
+/* For Prose content (e.g., blog posts) */
+.prose {
+  @apply text-neutral-800;
+}
+.prose h1, .prose h2, .prose h3, .prose h4 {
+  @apply font-heading text-neutral-900;
+}
+.prose a {
+  @apply text-primary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm;
+}
+.prose strong {
+  @apply font-semibold;
+}
+.prose code {
+  @apply bg-neutral-100 text-neutral-700 px-1 py-0.5 rounded;
+}
+.prose blockquote {
+  @apply border-l-4 border-primary pl-4 italic text-neutral-600;
+}
+.prose ul, .prose ol {
+  @apply list-inside;
+}
+.prose li {
+  @apply mb-2;
+}
 
-  .btn-primary {
-    @apply bg-primary text-white hover:bg-primary-dark active:bg-primary-darker;
+/* Animations for Accordion component (if using CSS-only approach) */
+@keyframes accordion-open {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
   }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-  .btn-secondary {
-    @apply bg-neutral-500 text-white hover:bg-neutral-600 active:bg-neutral-700;
+@keyframes accordion-close {
+  from {
+    opacity: 1;
+    transform: translateY(0);
   }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+    height: 0; /* Ensures content fully collapses */
+  }
+}
 
-  .btn-outline {
-    @apply bg-transparent border-primary text-primary hover:bg-primary hover:text-white;
-  }
-
-  .btn-ghost {
-    @apply bg-transparent border-transparent text-primary hover:bg-primary-light/10 active:bg-primary-light/20;
-  }
-
-  .btn-sm {
-    @apply py-2 px-4 text-sm;
-  }
-
-  .btn-md {
-    @apply py-2.5 px-5 text-base;
-  }
-
-  .btn-lg {
-    @apply py-3 px-6 text-lg;
-  }
-
-  .form-input-base {
-    @apply w-full border-neutral-300 rounded-md shadow-sm py-2 px-3
-           text-neutral-900 placeholder-neutral-500
-           focus:border-primary focus:ring-primary focus:ring-opacity-50;
-  }
-
-  .form-label-base {
-    @apply block text-sm font-medium text-neutral-700 mb-1;
-  }
-
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
-  }
+/* Ensure images have alt attributes or are decorative */
+img:not([alt]) {
+  /* This is a visual indicator for developers, not for users */
+  /* outline: 2px dashed red; */
 }

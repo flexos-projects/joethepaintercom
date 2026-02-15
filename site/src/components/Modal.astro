@@ -1,143 +1,154 @@
-```astro
 ---
-import { getUniqueId } from '../utils/uniqueId'; // Assuming a utility for unique IDs
+// Modal.astro
+// Accessible and reusable modal component with focus trapping and keyboard navigation.
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  titleId?: string;
-  descriptionId?: string;
-  label?: string; // Accessible label for the modal
-  class?: string;
+  titleId: string; // ID for the modal title element
+  contentId: string; // ID for the modal content element
+  title: string;
+  class?: string; // Additional classes for the modal content div
 }
 
-const {
-  isOpen,
-  onClose,
-  titleId = getUniqueId('modal-title'),
-  descriptionId = getUniqueId('modal-description'),
-  label = 'Dialog', // Fallback label
-  class: className,
-} = Astro.props;
+const { isOpen, onClose, titleId, contentId, title, class: additionalClass } = Astro.props;
 
-// Use client:visible to only hydrate when the modal is potentially needed
-// Or use client:only="react" if using a React modal implementation
-// For a pure Astro/JS solution, inline script will handle show/hide
+// This script handles the modal's accessibility features:
+// - Focus trapping: Keeps keyboard focus within the modal when open.
+// - Escape key: Closes the modal.
+// - aria attributes: Communicates modal state to screen readers.
+// - Scroll locking: Prevents body scrolling when modal is open.
+// - Focus restoration: Returns focus to the element that opened the modal.
 ---
 
-{isOpen && (
+<div
+  class:list={[
+    'fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-300 ease-out',
+    isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+  ]}
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby={titleId}
+  aria-describedby={contentId}
+  tabindex="-1"
+  data-modal-open={isOpen.toString()}
+>
+  <!-- Backdrop -->
   <div
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby={titleId}
-    aria-describedby={descriptionId}
+    class="absolute inset-0 bg-black bg-opacity-50"
+    aria-hidden="true"
+    onclick={onClose}
+  ></div>
+
+  <!-- Modal Content -->
+  <div
     class:list={[
-      'fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6',
-      'animate-fade-in-slow' // Assuming an animation is defined in global.css or tailwind.config
+      'relative bg-white rounded-lg shadow-xl max-w-lg w-full p-6 sm:p-8 transition-transform duration-300 ease-out z-50',
+      isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0',
+      additionalClass
     ]}
-    tabindex="-1"
+    role="document"
   >
-    <!-- Backdrop -->
-    <div
-      class="absolute inset-0 bg-black bg-opacity-50 transition-opacity duration-300"
-      aria-hidden="true"
+    <h2 id={titleId} class="text-2xl font-heading font-bold text-neutral-800 mb-4">
+      {title}
+    </h2>
+    <button
+      type="button"
+      class="absolute top-4 right-4 text-neutral-500 hover:text-neutral-800 p-2 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+      aria-label="Close modal"
       onclick={onClose}
-    ></div>
-
-    <!-- Modal Content -->
-    <div
-      class:list={[
-        'relative bg-white rounded-lg shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto',
-        'p-6 sm:p-8 md:p-10',
-        'transform scale-95 opacity-0 animate-scale-in-fast', // Assuming animations
-        className
-      ]}
-      role="document"
     >
-      <button
-        onclick={onClose}
-        class="absolute top-4 right-4 p-2 rounded-full text-neutral-700 hover:bg-neutral-100 hover:text-primary
-               focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-        aria-label={`Close ${label}`}
-      >
-        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-      </button>
-
-      <!-- Modal title and content slot -->
-      <h2 id={titleId} class="text-2xl font-heading font-bold text-neutral-900 mb-4 pr-10">
-        <slot name="title" />
-      </h2>
-      <div id={descriptionId}>
-        <slot />
-      </div>
+      <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+    <div id={contentId}>
+      <slot />
     </div>
   </div>
-)}
+</div>
 
 <script define:vars={{ isOpen }} is:inline>
-  const modalElement = document.querySelector('[role="dialog"][aria-modal="true"]');
-  let currentFocusedElement = null; // To store the element that had focus before the modal opened
+  const modal = document.querySelector('[data-modal-open="true"]');
+  const focusableElements = 'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+  let previouslyFocusedElement;
+
+  function handleOpenModal() {
+    if (!modal) return;
+
+    previouslyFocusedElement = document.activeElement;
+    document.body.style.overflow = 'hidden'; // Prevent scrolling body
+
+    // Delay focus to ensure modal is fully rendered and visible
+    setTimeout(() => {
+      const focusable = modal.querySelectorAll(focusableElements);
+      if (focusable.length > 0) {
+        (focusable[0] as HTMLElement).focus();
+      } else {
+        modal.focus(); // Fallback focus on modal itself
+      }
+    }, 100); // Small delay to allow transition
+
+    modal.addEventListener('keydown', trapFocus);
+  }
+
+  function handleCloseModal() {
+    if (!modal) return;
+
+    document.body.style.overflow = ''; // Restore body scrolling
+    modal.removeEventListener('keydown', trapFocus);
+    if (previouslyFocusedElement) {
+      (previouslyFocusedElement as HTMLElement).focus();
+    }
+  }
 
   function trapFocus(event) {
-    if (!modalElement || !isOpen) return;
+    if (event.key !== 'Tab') return;
 
-    const focusableElements = modalElement.querySelectorAll(
-      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-    );
-    const firstFocusableElement = focusableElements[0];
-    const lastFocusableElement = focusableElements[focusableElements.length - 1];
+    const focusable = modal.querySelectorAll(focusableElements);
+    const firstFocusable = focusable[0];
+    const lastFocusable = focusable[focusable.length - 1];
 
-    if (event.key === 'Tab') {
-      if (event.shiftKey) { // Shift + Tab
-        if (document.activeElement === firstFocusableElement) {
-          lastFocusableElement.focus();
-          event.preventDefault();
-        }
-      } else { // Tab
-        if (document.activeElement === lastFocusableElement) {
-          firstFocusableElement.focus();
-          event.preventDefault();
-        }
+    if (event.shiftKey) { // Shift + Tab
+      if (document.activeElement === firstFocusable) {
+        lastFocusable.focus();
+        event.preventDefault();
+      }
+    } else { // Tab
+      if (document.activeElement === lastFocusable) {
+        firstFocusable.focus();
+        event.preventDefault();
       }
     }
   }
 
-  function handleKeydown(event) {
-    if (event.key === 'Escape' && isOpen) {
-      event.stopPropagation(); // Prevent other escape listeners
-      onClose(); // Call the onClose prop passed to the component
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && modal && modal.getAttribute('data-modal-open') === 'true') {
+      window.onClose(); // Call the Astro component's onClose prop
     }
+  });
+
+  // Observe changes to the isOpen prop
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.attributeName === 'data-modal-open') {
+        const currentIsOpen = modal.getAttribute('data-modal-open') === 'true';
+        if (currentIsOpen) {
+          handleOpenModal();
+        } else {
+          handleCloseModal();
+        }
+      }
+    });
+  });
+
+  if (modal) {
+    observer.observe(modal, { attributes: true });
   }
 
-  // Effect for when isOpen changes
+  // Initial setup if modal is open on page load (though typically modals are closed initially)
   if (isOpen) {
-    currentFocusedElement = document.activeElement; // Store currently focused element
-    document.addEventListener('keydown', handleKeydown);
-    document.addEventListener('keydown', trapFocus);
-    document.body.classList.add('overflow-hidden'); // Prevent background scroll
-
-    // Focus the first element in the modal or the modal itself
-    const firstFocusable = modalElement?.querySelector(
-      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-    );
-    if (firstFocusable) {
-      firstFocusable.focus();
-    } else {
-      modalElement?.focus(); // Focus the modal itself if no interactive elements
-    }
-  } else {
-    document.removeEventListener('keydown', handleKeydown);
-    document.removeEventListener('keydown', trapFocus);
-    document.body.classList.remove('overflow-hidden');
-
-    // Restore focus to the element that was focused before the modal opened
-    if (currentFocusedElement && currentFocusedElement.focus) {
-      currentFocusedElement.focus();
-      currentFocusedElement = null;
-    }
+    handleOpenModal();
   }
 </script>
-```
----

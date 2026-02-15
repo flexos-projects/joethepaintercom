@@ -1,130 +1,140 @@
-```astro
 ---
+// Header.astro
+// Global header component with logo, desktop navigation, and mobile hamburger menu.
 import { Image } from 'astro:assets';
-import logo from '../assets/logo-joethepainter.svg'; // Assuming an SVG logo asset
-import Button from './ui/Button.astro';
-import Nav from './Nav.astro';
+import logo from '@/assets/logo.svg'; // Assuming logo.svg is in src/assets
+import Button from '@/components/ui/Button.astro';
+import Nav from '@/components/Nav.astro';
 ---
 
-<header class="sticky top-0 z-50 bg-white shadow-sm py-4 md:py-5">
-  <div class="container flex items-center justify-between">
-    <a href="/" class="flex items-center group" aria-label="Joe the Painter homepage">
-      <Image src={logo} alt="Joe the Painter Logo" width={40} height={40} class="mr-2 transition-transform duration-200 group-hover:scale-105" />
-      <span class="font-heading text-2xl font-bold text-neutral-900 transition-colors duration-200 group-hover:text-primary">
-        JOE THE PAINTER
-      </span>
+<header class="sticky top-0 z-50 bg-white shadow-md py-4 md:py-6">
+  <div class="container mx-auto px-4 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-2 group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-md">
+      <Image src={logo} alt="Joe the Painter Logo" width={40} height={40} class="w-10 h-10 transition-transform duration-200 group-hover:scale-105" />
+      <span class="font-heading text-2xl font-bold text-neutral-800">Joe the Painter</span>
     </a>
 
     <!-- Desktop Navigation -->
-    <Nav class="hidden md:flex" />
-
-    <div class="hidden md:block">
-      <Button variant="primary" size="md" href="/consultation">
+    <nav class="hidden md:flex items-center space-x-6 lg:space-x-8" aria-label="Main navigation">
+      <Nav />
+      <Button href="/consultation" variant="primary" size="md">
         Book a Free Consultation
       </Button>
-    </div>
+    </nav>
 
     <!-- Mobile Hamburger Menu Button -->
     <button
       id="mobile-menu-button"
-      class="md:hidden p-2 rounded-md text-neutral-700 hover:bg-neutral-100 focus-visible:ring-2 focus-visible:ring-primary"
+      class="md:hidden p-2 rounded-md text-neutral-800 hover:bg-neutral-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
       aria-label="Open main menu"
       aria-controls="mobile-menu"
       aria-expanded="false"
     >
-      <svg id="hamburger-icon" class="w-6 h-6 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
-      </svg>
-      <svg id="close-icon" class="w-6 h-6 hidden transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+      <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
       </svg>
     </button>
   </div>
 
   <!-- Mobile Menu Overlay -->
-  <nav
+  <div
     id="mobile-menu"
-    class="fixed inset-0 bg-white z-40 flex flex-col items-center justify-center space-y-8
-           md:hidden transform translate-x-full transition-transform duration-300 ease-in-out"
-    aria-label="Main navigation"
+    class="fixed inset-0 bg-white z-40 hidden md:hidden flex-col items-center justify-center space-y-8 transition-transform duration-300 ease-in-out transform translate-x-full"
+    aria-labelledby="mobile-menu-button"
   >
-    <Button
+    <button
       id="mobile-menu-close-button"
-      variant="ghost"
-      size="md"
-      class="absolute top-5 right-5 text-neutral-700 hover:text-primary"
+      class="absolute top-6 right-4 p-2 rounded-md text-neutral-800 hover:bg-neutral-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
       aria-label="Close main menu"
+      aria-controls="mobile-menu"
+      aria-expanded="true"
     >
-      <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+      <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
       </svg>
-    </Button>
-
-    <a href="/" class="font-heading text-3xl text-neutral-900 hover:text-primary transition-colors" data-mobile-menu-link>Home</a>
-    <a href="/services/painting" class="font-heading text-3xl text-neutral-900 hover:text-primary transition-colors" data-mobile-menu-link>Painting Services</a>
-    <a href="/services/handy" class="font-heading text-3xl text-neutral-900 hover:text-primary transition-colors" data-mobile-menu-link>Handy Services</a>
-    <a href="/our-work" class="font-heading text-3xl text-neutral-900 hover:text-primary transition-colors" data-mobile-menu-link>Our Work</a>
-    <a href="/about" class="font-heading text-3xl text-neutral-900 hover:text-primary transition-colors" data-mobile-menu-link>About Joe</a>
-    <a href="/contact" class="font-heading text-3xl text-neutral-900 hover:text-primary transition-colors" data-mobile-menu-link>Contact</a>
-
-    <Button variant="primary" size="lg" href="/consultation" class="mt-8" data-mobile-menu-link>
-      Book a Free Consultation
-    </Button>
-  </nav>
+    </button>
+    <nav class="flex flex-col items-center space-y-6" aria-label="Mobile navigation">
+      <Nav mobile />
+      <Button href="/consultation" variant="primary" size="lg" class="w-full max-w-xs">
+        Book a Free Consultation
+      </Button>
+    </nav>
+  </div>
 </header>
 
 <script is:inline>
   const mobileMenuButton = document.getElementById('mobile-menu-button');
-  const mobileMenu = document.getElementById('mobile-menu');
   const mobileMenuCloseButton = document.getElementById('mobile-menu-close-button');
-  const hamburgerIcon = document.getElementById('hamburger-icon');
-  const closeIcon = document.getElementById('close-icon');
-  const mobileMenuLinks = document.querySelectorAll('[data-mobile-menu-link]');
-  let isMobileMenuOpen = false;
+  const mobileMenu = document.getElementById('mobile-menu');
+  const mainContent = document.getElementById('main-content');
+  const focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
-  const toggleMobileMenu = () => {
-    isMobileMenuOpen = !isMobileMenuOpen;
-    mobileMenuButton?.setAttribute('aria-expanded', String(isMobileMenuOpen));
-    mobileMenu?.classList.toggle('translate-x-full', !isMobileMenuOpen);
-    document.body.classList.toggle('overflow-hidden', isMobileMenuOpen); // Prevent body scroll
-    hamburgerIcon?.classList.toggle('hidden', isMobileMenuOpen);
-    closeIcon?.classList.toggle('hidden', !isMobileMenuOpen);
+  let previouslyFocusedElement;
 
-    if (isMobileMenuOpen) {
-      // Set focus to the first interactive element in the menu
-      const firstLink = mobileMenu?.querySelector('a, button');
-      firstLink?.focus();
-    } else {
-      // Return focus to the hamburger button when menu closes
-      mobileMenuButton?.focus();
-    }
-  };
+  function openMobileMenu() {
+    previouslyFocusedElement = document.activeElement;
+    mobileMenu.classList.remove('hidden', 'translate-x-full');
+    mobileMenu.classList.add('flex', 'translate-x-0');
+    mobileMenuButton.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden'; // Prevent scrolling body
+    mobileMenu.focus(); // Focus on the menu itself
 
-  mobileMenuButton?.addEventListener('click', toggleMobileMenu);
-  mobileMenuCloseButton?.addEventListener('click', toggleMobileMenu);
+    // Trap focus inside the modal
+    const focusable = mobileMenu.querySelectorAll(focusableElements);
+    const firstFocusable = focusable[0];
+    const lastFocusable = focusable[focusable.length - 1];
 
-  mobileMenuLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      // Close menu when a link is clicked
-      if (isMobileMenuOpen) {
-        toggleMobileMenu();
+    function handleTab(event) {
+      if (event.key === 'Tab') {
+        if (event.shiftKey) { // Shift + Tab
+          if (document.activeElement === firstFocusable) {
+            lastFocusable.focus();
+            event.preventDefault();
+          }
+        } else { // Tab
+          if (document.activeElement === lastFocusable) {
+            firstFocusable.focus();
+            event.preventDefault();
+          }
+        }
       }
-    });
-  });
+    }
 
-  // Close menu on Escape key
+    mobileMenu.addEventListener('keydown', handleTab);
+
+    // Hide main content from screen readers
+    if (mainContent) {
+      mainContent.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  function closeMobileMenu() {
+    mobileMenu.classList.remove('flex', 'translate-x-0');
+    mobileMenu.classList.add('hidden', 'translate-x-full');
+    mobileMenuButton.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = ''; // Restore body scrolling
+    if (previouslyFocusedElement) {
+      (previouslyFocusedElement as HTMLElement).focus();
+    }
+
+    // Restore main content visibility to screen readers
+    if (mainContent) {
+      mainContent.removeAttribute('aria-hidden');
+    }
+  }
+
+  mobileMenuButton?.addEventListener('click', openMobileMenu);
+  mobileMenuCloseButton?.addEventListener('click', closeMobileMenu);
+
+  // Close with Escape key
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && isMobileMenuOpen) {
-      toggleMobileMenu();
+    if (event.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
+      closeMobileMenu();
     }
   });
 
-  // Ensure menu is closed if screen resizes above mobile breakpoint
-  window.addEventListener('resize', () => {
-    if (window.innerWidth >= 768 && isMobileMenuOpen) { // md breakpoint is 768px
-      toggleMobileMenu();
-    }
+  // Close when a menu item is clicked
+  mobileMenu?.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', closeMobileMenu);
   });
 </script>
-```
----

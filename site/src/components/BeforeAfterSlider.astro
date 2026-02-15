@@ -1,155 +1,148 @@
-```astro
 ---
-import { getUniqueId } from '../utils/uniqueId';
+// BeforeAfterSlider.astro
+// Interactive image slider for before-and-after comparisons.
 
 interface Props {
   beforeImage: { src: string; alt: string; };
   afterImage: { src: string; alt: string; };
-  class?: string;
+  id: string; // Unique ID for the slider instance
+  class?: string; // Additional classes for the wrapper div
 }
 
-const { beforeImage, afterImage, class: className } = Astro.props;
-
-const sliderId = getUniqueId('before-after-slider');
-const handleId = getUniqueId('slider-handle');
+const { beforeImage, afterImage, id, class: additionalClass } = Astro.props;
 ---
 
 <div
-  id={sliderId}
   class:list={[
     'relative w-full overflow-hidden group select-none touch-pan-x',
+    'aspect-w-16 aspect-h-9', // Maintain 16:9 aspect ratio
     'rounded-lg shadow-md',
-    'aspect-video', // Maintain aspect ratio for common video sizes
-    className
+    additionalClass
   ]}
-  role="group"
-  aria-label="Before and after image comparison"
-  tabindex="0"
+  id={`before-after-slider-${id}`}
+  role="img"
+  aria-label={`Before and after comparison of ${beforeImage.alt} vs ${afterImage.alt}`}
 >
   <img
     src={beforeImage.src}
     alt={beforeImage.alt}
     class="absolute inset-0 w-full h-full object-cover z-10"
-    draggable="false"
+    loading="lazy"
   />
-  <img
-    src={afterImage.src}
-    alt={afterImage.alt}
-    class="absolute inset-0 w-full h-full object-cover z-20"
-    style="clip-path: inset(0 0 0 50%);"
-    draggable="false"
-  />
-
-  <!-- Handle -->
   <div
-    id={handleId}
-    class="absolute top-0 bottom-0 w-1 bg-white z-30 flex items-center justify-center cursor-ew-resize
-           shadow-lg transition-colors duration-200 group-hover:bg-primary-light"
-    style="left: 50%; transform: translateX(-50%);"
-    role="slider"
-    aria-label="Image comparison slider"
+    class="absolute inset-0 w-full h-full overflow-hidden z-20"
+    style="clip-path: inset(0 0 0 50%);"
+    aria-hidden="true"
+  >
+    <img
+      src={afterImage.src}
+      alt={afterImage.alt}
+      class="absolute inset-0 w-full h-full object-cover"
+      loading="lazy"
+    />
+  </div>
+
+  <!-- Slider Handle -->
+  <div
+    class="absolute top-0 bottom-0 w-1 left-1/2 -translate-x-1/2 bg-white z-30 cursor-ew-resize rounded-full shadow-lg flex items-center justify-center transition-all duration-100 ease-in-out group-hover:scale-y-110 group-focus-within:scale-y-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+    role="separator"
     aria-valuenow="50"
     aria-valuemin="0"
     aria-valuemax="100"
+    aria-orientation="vertical"
     tabindex="0"
   >
-    <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-neutral-700
-                shadow-md group-hover:bg-primary-light group-hover:text-white transition-colors duration-200">
-      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7l4-4m0 0l4 4m-4-4v18"></path>
+    <div class="w-8 h-8 rounded-full bg-white border-2 border-primary flex items-center justify-center">
+      <svg class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7l4-4m0 0l4 4m-4-4v18"></path>
       </svg>
     </div>
   </div>
 </div>
 
-<script define:vars={{ sliderId, handleId }} is:inline>
+<script define:vars={{ id }} is:inline>
   document.addEventListener('DOMContentLoaded', () => {
-    const sliderContainer = document.getElementById(sliderId);
-    const handle = document.getElementById(handleId);
-    const afterImage = sliderContainer?.querySelector('img:last-of-type');
+    const sliderContainer = document.getElementById(`before-after-slider-${id}`);
+    if (!sliderContainer) return;
+
+    const divider = sliderContainer.querySelector('[role="separator"]');
+    const afterImageClipper = sliderContainer.querySelector('div[style*="clip-path"]');
+
+    if (!divider || !afterImageClipper) return;
+
     let isDragging = false;
+    let containerRect = sliderContainer.getBoundingClientRect();
 
-    if (!sliderContainer || !handle || !afterImage) return;
+    const updateSliderPosition = (clientX) => {
+      let x = clientX - containerRect.left;
+      x = Math.max(0, Math.min(x, containerRect.width)); // Clamp x within container bounds
 
-    const updateSlider = (clientX) => {
-      const rect = sliderContainer.getBoundingClientRect();
-      let x = clientX - rect.left;
-      x = Math.max(0, Math.min(x, rect.width));
+      const percentage = (x / containerRect.width) * 100;
 
-      const percentage = (x / rect.width) * 100;
-
-      handle.style.left = `${percentage}%`;
-      afterImage.style.clipPath = `inset(0 0 0 ${percentage}%)`;
-      handle.setAttribute('aria-valuenow', Math.round(percentage).toString());
+      divider.style.left = `${percentage}%`;
+      afterImageClipper.style.clipPath = `inset(0 0 0 ${percentage}%)`;
+      divider.setAttribute('aria-valuenow', Math.round(percentage).toString());
     };
 
-    const onMouseMove = (e) => {
-      if (!isDragging) return;
-      updateSlider(e.clientX);
-    };
-
-    const onTouchMove = (e) => {
-      if (!isDragging || !e.touches[0]) return;
-      updateSlider(e.touches[0].clientX);
-    };
-
-    const onMouseUp = () => {
-      isDragging = false;
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
-    };
-
-    const onTouchEnd = () => {
-      isDragging = false;
-      document.removeEventListener('touchmove', onTouchMove);
-      document.removeEventListener('touchend', onTouchEnd);
-    };
-
-    handle.addEventListener('mousedown', (e) => {
-      e.preventDefault();
+    // Mouse events
+    divider.addEventListener('mousedown', (e) => {
       isDragging = true;
-      document.addEventListener('mousemove', onMouseMove);
-      document.addEventListener('mouseup', onMouseUp);
+      e.preventDefault(); // Prevent text selection
+      containerRect = sliderContainer.getBoundingClientRect(); // Recalculate on drag start
     });
 
-    handle.addEventListener('touchstart', (e) => {
-      e.preventDefault();
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      updateSliderPosition(e.clientX);
+    });
+
+    document.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+
+    // Touch events
+    divider.addEventListener('touchstart', (e) => {
       isDragging = true;
-      document.addEventListener('touchmove', onTouchMove);
-      document.addEventListener('touchend', onTouchEnd);
+      e.preventDefault(); // Prevent scrolling/zooming
+      containerRect = sliderContainer.getBoundingClientRect();
     }, { passive: false });
 
-    // Keyboard navigation for handle
-    handle.addEventListener('keydown', (e) => {
-      const step = 5; // Move by 5%
-      const rect = sliderContainer.getBoundingClientRect();
-      const currentLeft = parseFloat(handle.style.left); // Percentage
-      let newLeft = currentLeft;
+    document.addEventListener('touchmove', (e) => {
+      if (!isDragging || !e.touches[0]) return;
+      updateSliderPosition(e.touches[0].clientX);
+    }, { passive: false });
 
-      if (e.key === 'ArrowLeft') {
-        newLeft = Math.max(0, currentLeft - step);
-        e.preventDefault();
-      } else if (e.key === 'ArrowRight') {
-        newLeft = Math.min(100, currentLeft + step);
-        e.preventDefault();
-      } else if (e.key === 'Home') {
-        newLeft = 0;
-        e.preventDefault();
-      } else if (e.key === 'End') {
-        newLeft = 100;
-        e.preventDefault();
-      }
-
-      if (newLeft !== currentLeft) {
-        handle.style.left = `${newLeft}%`;
-        afterImage.style.clipPath = `inset(0 0 0 ${newLeft}%)`;
-        handle.setAttribute('aria-valuenow', Math.round(newLeft).toString());
-      }
+    document.addEventListener('touchend', () => {
+      isDragging = false;
     });
 
-    // Initial positioning
-    updateSlider(sliderContainer.getBoundingClientRect().width / 2 + sliderContainer.getBoundingClientRect().left);
+    // Keyboard navigation
+    divider.addEventListener('keydown', (e) => {
+      let currentPercentage = parseFloat(divider.getAttribute('aria-valuenow') || '50');
+      let step = 5; // Move by 5%
+
+      if (e.key === 'ArrowLeft') {
+        currentPercentage = Math.max(0, currentPercentage - step);
+        e.preventDefault();
+      } else if (e.key === 'ArrowRight') {
+        currentPercentage = Math.min(100, currentPercentage + step);
+        e.preventDefault();
+      } else {
+        return; // Not an arrow key
+      }
+
+      const newX = (currentPercentage / 100) * containerRect.width;
+      updateSliderPosition(containerRect.left + newX);
+    });
+
+    // Recalculate container dimensions on resize
+    window.addEventListener('resize', () => {
+      containerRect = sliderContainer.getBoundingClientRect();
+      // Optionally reset slider to 50% or maintain relative position
+      updateSliderPosition(containerRect.left + (containerRect.width / 2));
+    });
+
+    // Initial position (centered)
+    updateSliderPosition(containerRect.left + (containerRect.width / 2));
   });
 </script>
-```
----

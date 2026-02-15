@@ -1,55 +1,67 @@
 ---
-import type { HTMLAttributes } from 'astro/types';
+// Input.astro
+// Reusable input component with proper labeling and error handling.
 
-interface Props extends HTMLAttributes<'input'> {
-  label: string;
+interface Props {
   id: string;
+  label: string;
+  name: string;
   type?: 'text' | 'email' | 'tel' | 'password' | 'number';
   placeholder?: string;
   required?: boolean;
   value?: string;
-  error?: string; // For displaying validation errors
-  class?: string;
+  error?: string; // Error message
+  class?: string; // Additional classes for the input field
+  labelClass?: string; // Additional classes for the label
+  wrapperClass?: string; // Additional classes for the wrapper div
+  autocomplete?: string; // Autocomplete attribute for accessibility
 }
 
 const {
-  label,
   id,
+  label,
+  name,
   type = 'text',
   placeholder,
   required = false,
   value,
   error,
-  class: className,
-  ...props
+  class: inputClass,
+  labelClass,
+  wrapperClass,
+  autocomplete,
 } = Astro.props;
 
-const inputClasses = [
-  'form-input-base',
-  error ? 'border-error ring-error ring-opacity-50' : '',
-  className,
-];
+const baseInputClasses = 'w-full px-4 py-3 border rounded-md text-neutral-800 bg-white placeholder:text-neutral-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-colors duration-150 ease-in-out';
+const errorInputClasses = 'border-error focus-visible:ring-error';
+const finalInputClasses = [
+  baseInputClasses,
+  error ? errorInputClasses : 'border-neutral-200',
+  inputClass,
+].filter(Boolean).join(' ');
 
-// Generate a unique ID for the error message if an error exists
+const baseLabelClasses = 'block text-sm font-medium text-neutral-800 mb-1';
+const finalLabelClasses = [baseLabelClasses, labelClass].filter(Boolean).join(' ');
+
 const errorId = error ? `${id}-error` : undefined;
 ---
 
-<div class="w-full">
-  <label for={id} class="form-label-base">
+<div class={['mb-4', wrapperClass].filter(Boolean).join(' ')}>
+  <label for={id} class={finalLabelClasses}>
     {label}
-    {required && <span class="text-error ml-1" aria-hidden="true">*</span>}
+    {required && <span class="text-error ml-1">*</span>}
   </label>
   <input
-    type={type}
     id={id}
-    name={id}
+    name={name}
+    type={type}
     placeholder={placeholder}
     required={required}
     value={value}
-    class:list={inputClasses}
-    aria-invalid={!!error}
+    class={finalInputClasses}
+    aria-invalid={error ? 'true' : 'false'}
     aria-describedby={errorId}
-    {...props}
+    autocomplete={autocomplete}
   />
   {error && (
     <p id={errorId} class="text-error text-sm mt-1" role="alert">

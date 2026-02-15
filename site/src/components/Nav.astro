@@ -1,11 +1,12 @@
-```astro
 ---
-// This component is for desktop navigation links
+// Nav.astro
+// Defines the navigation links for both desktop and mobile menus.
+
 interface Props {
-  class?: string;
+  mobile?: boolean; // Flag to apply mobile-specific styling (e.g., larger text)
 }
 
-const { class: className } = Astro.props;
+const { mobile = false } = Astro.props;
 
 const navLinks = [
   { name: 'Home', href: '/' },
@@ -16,33 +17,28 @@ const navLinks = [
   { name: 'Contact', href: '/contact' },
 ];
 
-const currentPath = Astro.url.pathname;
-
-const isActive = (href: string) => {
-  if (href === '/') {
-    return currentPath === href;
-  }
-  return currentPath.startsWith(href);
-};
+const baseLinkClasses = 'relative font-body font-medium text-neutral-800 hover:text-primary transition-colors duration-150 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm';
+const desktopLinkClasses = 'text-base py-2 px-3 lg:px-4';
+const mobileLinkClasses = 'text-3xl font-heading font-semibold text-neutral-800 hover:text-primary transition-colors duration-150 ease-in-out'; // Larger for mobile menu
 ---
 
-<nav class:list={['flex items-center space-x-6 lg:space-x-8', className]} aria-label="Main navigation">
-  <ul role="list" class="flex items-center space-x-6 lg:space-x-8">
-    {navLinks.map((link) => (
-      <li>
-        <a
-          href={link.href}
-          class:list={[
-            'font-body text-base font-medium text-neutral-700 hover:text-primary transition-colors duration-200',
-            { 'text-primary border-b-2 border-primary pb-1': isActive(link.href) },
-          ]}
-          aria-current={isActive(link.href) ? 'page' : undefined}
-        >
-          {link.name}
-        </a>
-      </li>
-    ))}
-  </ul>
-</nav>
-```
----
+<ul role="list" class={mobile ? 'flex flex-col items-center space-y-6' : 'flex items-center space-x-4 lg:space-x-6'}>
+  {navLinks.map((link) => (
+    <li>
+      <a
+        href={link.href}
+        class={[
+          baseLinkClasses,
+          mobile ? mobileLinkClasses : desktopLinkClasses,
+          Astro.url.pathname === link.href ? 'text-primary' : '' // Active link styling
+        ].filter(Boolean).join(' ')}
+        aria-current={Astro.url.pathname === link.href ? 'page' : undefined}
+      >
+        {link.name}
+        {Astro.url.pathname === link.href && (
+          <span class="absolute bottom-0 left-0 w-full h-0.5 bg-primary transition-all duration-200"></span>
+        )}
+      </a>
+    </li>
+  ))}
+</ul>

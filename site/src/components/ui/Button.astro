@@ -1,70 +1,73 @@
 ---
-import type { HTMLAttributes } from 'astro/types';
+// Button.astro
+// Reusable button component with various styles and accessibility features.
 
-interface Props extends HTMLAttributes<'button'> {
+interface Props {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
-  href?: string; // Optional href for button acting as a link
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
   disabled?: boolean;
+  ariaLabel?: string; // For icon-only buttons or ambiguous text
+  onClick?: () => void;
+  class?: string; // Allow custom Tailwind classes
 }
 
 const {
   variant = 'primary',
   size = 'md',
   href,
+  type = 'button',
   disabled = false,
-  class: className,
-  ...props
+  ariaLabel,
+  onClick,
+  class: additionalClass,
 } = Astro.props;
 
-const baseClasses = 'inline-flex items-center justify-center font-body font-semibold text-center no-underline cursor-pointer border border-transparent transition-all duration-150 ease-in-out rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2';
+const baseClasses = 'inline-flex items-center justify-center font-semibold text-center text-decoration-none cursor-pointer border transition-colors transition-transform duration-150 ease-in-out rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2';
 
 const variantClasses = {
-  primary: 'bg-primary text-white border-primary ' +
-           'hover:bg-[var(--colors-primary-light)] hover:border-[var(--colors-primary-light)] hover:shadow-sm ' +
-           'active:bg-[var(--colors-primary-dark)] active:border-[var(--colors-primary-dark)] active:translate-y-px ' +
-           'disabled:bg-textSubtle disabled:border-textSubtle disabled:text-surface disabled:cursor-not-allowed',
-  secondary: 'bg-secondary text-white border-secondary ' +
-             'hover:bg-[var(--colors-secondary-dark)] hover:border-[var(--colors-secondary-dark)] hover:shadow-sm ' + // Using a placeholder for secondary hover/active as exact hex not in tokens.json, but derived from 06-design.md
-             'active:bg-[var(--colors-secondary-darker)] active:border-[var(--colors-secondary-darker)] active:translate-y-px ' + // Placeholder
-             'disabled:bg-textSubtle disabled:border-textSubtle disabled:text-surface disabled:cursor-not-allowed',
-  outline: 'bg-transparent text-primary border-primary ' +
-           'hover:bg-primary hover:text-surface hover:shadow-sm ' +
-           'active:bg-[var(--colors-primary-dark)] active:border-[var(--colors-primary-dark)] active:text-surface active:translate-y-px ' +
-           'disabled:bg-transparent disabled:text-textSubtle disabled:border-textSubtle disabled:cursor-not-allowed',
-  ghost: 'bg-transparent text-primary border-transparent ' +
-         'hover:bg-[rgba(0,71,171,0.05)] ' +
-         'active:bg-[rgba(0,71,171,0.1)] active:translate-y-px ' +
-         'disabled:bg-transparent disabled:text-textSubtle disabled:cursor-not-allowed',
-}[variant];
+  primary: 'bg-primary text-white border-primary hover:bg-primary-dark active:scale-[0.98]',
+  secondary: 'bg-neutral-500 text-white border-neutral-500 hover:bg-neutral-600 active:scale-[0.98]',
+  outline: 'bg-transparent text-primary border-primary hover:bg-primary hover:text-white active:scale-[0.98]',
+  ghost: 'bg-transparent text-primary border-transparent hover:bg-primary-light/10 active:scale-[0.98]',
+};
 
 const sizeClasses = {
   sm: 'px-3 py-2 text-sm',
   md: 'px-4 py-3 text-base',
   lg: 'px-6 py-4 text-lg',
-}[size];
+};
 
-const isDisabled = disabled || props['aria-disabled'];
+const disabledClasses = 'opacity-50 cursor-not-allowed pointer-events-none';
 
-// If href is provided, render as an <a> tag for semantic linking
-// Otherwise, render as a <button>
-const Component = href ? 'a' : 'button';
+const finalClasses = [
+  baseClasses,
+  variantClasses[variant],
+  sizeClasses[size],
+  disabled ? disabledClasses : '',
+  additionalClass,
+].filter(Boolean).join(' ');
 ---
 
-<Component
-  {...props}
-  class:list={[
-    baseClasses,
-    variantClasses,
-    sizeClasses,
-    className,
-    isDisabled && 'opacity-60 cursor-not-allowed',
-  ]}
-  {href}
-  type={Component === 'button' ? 'button' : undefined}
-  aria-disabled={isDisabled}
-  tabindex={isDisabled && href ? -1 : undefined}
-  disabled={Component === 'button' ? isDisabled : undefined}
->
-  <slot />
-</Component>
+{href ? (
+  <a
+    href={href}
+    class={finalClasses}
+    aria-label={ariaLabel}
+    role="button"
+    tabindex={disabled ? -1 : 0}
+  >
+    <slot />
+  </a>
+) : (
+  <button
+    type={type}
+    class={finalClasses}
+    disabled={disabled}
+    aria-label={ariaLabel}
+    set:html={onClick ? `onclick="${onClick.toString()}"` : undefined}
+  >
+    <slot />
+  </button>
+)}

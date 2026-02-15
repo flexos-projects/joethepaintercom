@@ -1,68 +1,107 @@
-```astro
 ---
-import type { MarkdownLayoutProps } from 'astro';
-import { ViewTransitions } from 'astro:transitions';
+import { Astro } from 'astro';
+import type { SiteMeta } from '@/types/seo';
+import '@/styles/global.css';
+import SkipLink from '@/components/common/SkipLink.astro';
 
 interface Props {
-  title: string;
-  description: string;
-  keywords?: string;
-  ogImage?: string;
+  meta: SiteMeta;
 }
 
-const { title, description, keywords, ogImage } = Astro.props;
-const canonicalURL = new URL(Astro.url.pathname, Astro.site); // Ensure Astro.site is configured in astro.config.mjs
+const { meta } = Astro.props;
+
+// Ensure canonical URL is always correct
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="index, follow" />
-
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    {keywords && <meta name="keywords" content={keywords} />}
     <link rel="canonical" href={canonicalURL} />
+
+    <title>{meta.title} | Joe the Painter: Your San Diego Craftsman Since 2001</title>
+    <meta name="description" content={meta.description} />
+    {meta.keywords && <meta name="keywords" content={meta.keywords} />}
 
     <!-- Open Graph / Social Media Tags -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={canonicalURL.toString()} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:image" content={ogImage || new URL('/images/social-share-default.jpg', Astro.site).toString()} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={meta.title} | Joe the Painter" />
+    <meta property="og:description" content={meta.description} />
+    <meta property="og:image" content={meta.ogImage || 'https://www.joethepainter.com/images/social-share-default.jpg'} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
 
     <!-- Twitter Card Tags -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content={canonicalURL.toString()} />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImage || new URL('/images/social-share-default.jpg', Astro.site).toString()} />
-    <meta name="twitter:creator" content="@JoeThePainterSD" />
+    <meta name="twitter:url" content={canonicalURL} />
+    <meta name="twitter:title" content={meta.title} | Joe the Painter" />
+    <meta name="twitter:description" content={meta.description} />
+    <meta name="twitter:image" content={meta.ogImage || 'https://www.joethepainter.com/images/social-share-default.jpg'} />
+    <meta name="twitter:creator" content="@JoeThePainterSD" /> <!-- Placeholder, update if account exists -->
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preload" href="/fonts/Lora-Bold.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/Inter-Medium.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/Inter-SemiBold.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Preload fonts to avoid FOUT -->
+    <link rel="preload" href="/fonts/Lora-Bold.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/Inter-Medium.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/Inter-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/Inter-Bold.woff2" as="font" type="font/woff2" crossorigin>
 
-    <ViewTransitions />
+    <!-- JSON-LD for Organization and Website -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Joe the Painter",
+        "url": "https://www.joethepainter.com",
+        "logo": "https://www.joethepainter.com/images/logo.svg",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+1-760-580-8173",
+          "contactType": "customer service",
+          "email": "joe@joethepainter.com",
+          "areaServed": ["San Diego County", "Central San Diego County", "North San Diego County"]
+        },
+        "slogan": "The Craftsman's Guarantee: Meticulous painting and reliable repairs, personally delivered by a licensed expert with a quarter-century of proven trust.",
+        "sameAs": [
+          "https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=802167"
+          // Add Yelp, Google Business Profile, etc. links once established
+        ]
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "url": "https://www.joethepainter.com",
+        "name": "Joe the Painter",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://www.joethepainter.com/search?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "{meta.title}",
+        "description": "{meta.description}",
+        "url": "{canonicalURL}"
+      }
+    </script>
   </head>
-  <body>
-    <!-- Skip to content link for keyboard users -->
-    <a href="#main-content" class="sr-only focus-visible:not-sr-only focus-visible:absolute focus-visible:top-4 focus-visible:left-4
-                                 focus-visible:bg-white focus-visible:text-primary focus-visible:p-3 focus-visible:rounded-md
-                                 focus-visible:z-50">
-      Skip to main content
-    </a>
-
-    <slot />
-
-    <!-- Global scripts or analytics can go here if not in a separate component -->
+  <body class="font-body text-neutral-800 bg-neutral-50 antialiased selection:bg-primary selection:text-white">
+    <SkipLink />
+    <slot name="header" />
+    <main id="main-content">
+      <slot />
+    </main>
+    <slot name="footer" />
   </body>
 </html>
-```
----

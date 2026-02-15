@@ -1,118 +1,76 @@
-```astro
 ---
-import { getUniqueId } from '../utils/uniqueId';
+// Accordion.astro
+// An accessible accordion component using <details> and <summary> for FAQs.
 
 interface Props {
-  items: {
-    question: string;
-    answer: string; // RichText in schema, but here as plain string for simplicity
-  }[];
-  multiOpen?: boolean; // Allow multiple items to be open at once
-  class?: string;
+  question: string;
+  answer: string; // RichText would be handled by markdown processing if coming from MDX
+  id: string; // Unique ID for accessibility
+  open?: boolean; // Controls initial open state
+  class?: string; // Additional classes for the details element
 }
 
-const {
-  items,
-  multiOpen = false,
-  class: className,
-} = Astro.props;
-
-const accordionId = getUniqueId('accordion');
+const { question, answer, id, open = false, class: additionalClass } = Astro.props;
 ---
 
-<div class:list={['w-full', className]} role="presentation">
-  {items.map((item, index) => {
-    const uniqueId = getUniqueId(`accordion-item-${index}`);
-    const headingId = `${uniqueId}-heading`;
-    const panelId = `${uniqueId}-panel`;
+<details
+  id={id}
+  class:list={[
+    'group bg-white rounded-lg shadow-sm border border-neutral-200 overflow-hidden',
+    additionalClass
+  ]}
+  role="group"
+  {open}
+>
+  <summary
+    class="flex items-center justify-between p-4 cursor-pointer text-lg font-medium text-neutral-800 hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-colors duration-150 ease-in-out"
+    aria-expanded={open ? 'true' : 'false'}
+    aria-controls={`accordion-content-${id}`}
+    tabindex="0"
+  >
+    {question}
+    <span class="ml-4 flex-shrink-0">
+      <svg class="h-5 w-5 text-primary transform group-open:rotate-180 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+      </svg>
+    </span>
+  </summary>
+  <div
+    id={`accordion-content-${id}`}
+    class="px-4 pb-4 pt-2 text-neutral-600 border-t border-neutral-200 group-open:animate-accordion-open"
+    role="region"
+    aria-labelledby={`accordion-summary-${id}`}
+  >
+    <p>{answer}</p>
+  </div>
+</details>
 
-    return (
-      <div class="border-b border-neutral-200 last:border-b-0" role="presentation">
-        <h3 class="text-lg font-semibold" id={headingId}>
-          <button
-            type="button"
-            class="flex justify-between items-center w-full py-4 text-left text-neutral-900 hover:text-primary transition-colors
-                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-            aria-expanded="false"
-            aria-controls={panelId}
-            data-accordion-trigger={accordionId}
-            data-accordion-target={panelId}
-            data-accordion-multi-open={multiOpen}
-          >
-            {item.question}
-            <svg class="w-5 h-5 ml-2 transform rotate-0 transition-transform duration-200"
-                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </button>
-        </h3>
-        <div
-          id={panelId}
-          role="region"
-          aria-labelledby={headingId}
-          class="grid grid-rows-[0fr] transition-[grid-template-rows] duration-200 ease-in-out overflow-hidden"
-        >
-          <div class="overflow-hidden pb-4 text-neutral-700">
-            <p>{item.answer}</p>
-          </div>
-        </div>
-      </div>
-    );
-  })}
-</div>
-
-<script define:vars={{ accordionId }} is:inline>
-  document.addEventListener('DOMContentLoaded', () => {
-    const accordionTriggers = document.querySelectorAll(`[data-accordion-trigger="${accordionId}"]`);
-
-    accordionTriggers.forEach(trigger => {
-      const targetId = trigger.dataset.accordionTarget;
-      const targetPanel = document.getElementById(targetId);
-      const isMultiOpen = trigger.dataset.accordionMultiOpen === 'true';
-      const arrowIcon = trigger.querySelector('svg');
-
-      if (targetPanel) {
-        // Initialize all panels as closed
-        targetPanel.style.gridTemplateRows = '0fr';
-        trigger.setAttribute('aria-expanded', 'false');
-        if (arrowIcon) arrowIcon.style.transform = 'rotate(0deg)';
-      }
-
-      trigger.addEventListener('click', () => {
-        const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
-
-        if (!isMultiOpen) {
-          // Close all other panels if single-open mode
-          accordionTriggers.forEach(otherTrigger => {
-            if (otherTrigger !== trigger) {
-              const otherTargetId = otherTrigger.dataset.accordionTarget;
-              const otherTargetPanel = document.getElementById(otherTargetId);
-              const otherArrowIcon = otherTrigger.querySelector('svg');
-
-              if (otherTargetPanel && otherTrigger.getAttribute('aria-expanded') === 'true') {
-                otherTargetPanel.style.gridTemplateRows = '0fr';
-                otherTrigger.setAttribute('aria-expanded', 'false');
-                if (otherArrowIcon) otherArrowIcon.style.transform = 'rotate(0deg)';
-              }
-            }
-          });
-        }
-
-        // Toggle current panel
-        if (targetPanel) {
-          if (isExpanded) {
-            targetPanel.style.gridTemplateRows = '0fr';
-            trigger.setAttribute('aria-expanded', 'false');
-            if (arrowIcon) arrowIcon.style.transform = 'rotate(0deg)';
-          } else {
-            targetPanel.style.gridTemplateRows = '1fr';
-            trigger.setAttribute('aria-expanded', 'true');
-            if (arrowIcon) arrowIcon.style.transform = 'rotate(180deg)';
-          }
-        }
-      });
-    });
-  });
-</script>
-```
----
+<style>
+  /* Optional: Custom animation for smooth open/close */
+  details[open] > summary ~ * {
+    animation: accordion-open 0.3s ease-out;
+  }
+  @keyframes accordion-open {
+    0% {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  details:not([open]) > summary ~ * {
+    animation: accordion-close 0.3s ease-out;
+  }
+  @keyframes accordion-close {
+    0% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+  }
+</style>
