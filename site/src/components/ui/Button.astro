@@ -1,88 +1,76 @@
 ---
 /**
  * Button Component
- * A reusable button component with various styles, sizes, and accessibility features.
+ * A reusable UI primitive for interactive elements.
+ * Supports various visual styles (variants) and sizes,
+ * and can act as either a button or an anchor link.
+ *
+ * @param {string} [variant='primary'] - Visual style of the button.
+ * @param {string} [size='md'] - Size of the button.
+ * @param {string} [href] - If provided, renders an <a> tag instead of <button>.
+ * @param {boolean} [disabled=false] - Disables the button/link.
+ * @param {string} [class] - Additional CSS classes to apply.
+ * @param {HTMLAttributes<'a' | 'button'>} [rest] - Other HTML attributes.
  */
-
-// Type imports
 import type { HTMLAttributes } from 'astro/types';
 
-// Props interface with JSDoc comments
-interface Props extends HTMLAttributes<'button'> {
-  /** Visual variant of the button. */
+interface Props extends HTMLAttributes<'a' | 'button'> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
-  /** Size preset for the button. */
   size?: 'sm' | 'md' | 'lg';
-  /** If true, the button will be disabled. */
+  href?: string; // Optional for anchor buttons
   disabled?: boolean;
-  /** If provided, the button will render as an `<a>` tag with this href. */
-  href?: string;
-  /** An optional accessible label for the button, especially for icon-only buttons. */
-  ariaLabel?: string;
 }
 
-// Destructure with defaults
 const {
   variant = 'primary',
   size = 'md',
-  disabled = false,
   href,
-  ariaLabel,
+  disabled = false,
   class: className,
-  ...attrs
+  ...rest
 } = Astro.props;
 
-// Base styles applied to all buttons, using design tokens
-const baseStyles = 'inline-flex items-center justify-center font-body font-semibold text-center text-decoration-none cursor-pointer border border-transparent transition-all duration-fast ease-in-out rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-DEFAULT focus-visible:ring-offset-2';
+// Base styling for all buttons
+const baseClasses = 'inline-flex items-center justify-center text-center font-body font-semibold text-white cursor-pointer border-2 border-transparent transition-all duration-fast ease-in-out rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2';
 
-// Size-specific styles, mapping to design system spacing and font sizes
+// Variant-specific styles (using Tailwind colors defined in config)
+const variantClasses = {
+  primary: `bg-primary hover:bg-primary-hover active:bg-primary-active active:scale-[0.98]`,
+  secondary: `bg-secondary hover:bg-secondary-hover active:bg-secondary-active active:scale-[0.98]`,
+  outline: `bg-transparent text-primary border-primary hover:bg-primary hover:text-white active:bg-primary-active active:text-white active:scale-[0.98]`,
+  ghost: `bg-transparent text-primary border-transparent hover:bg-primary/[0.05] active:bg-primary/[0.1] active:scale-[0.98]`,
+};
+
+// Size-specific styles
 const sizeClasses = {
   sm: 'px-3 py-2 text-sm',
   md: 'px-4 py-3 text-base',
   lg: 'px-6 py-4 text-lg',
 };
 
-// Variant-specific styles, including disabled, hover, and active states, mapping to design tokens
-const variantClasses = {
-  primary: disabled
-    ? 'bg-text-subtle text-surface-DEFAULT cursor-not-allowed'
-    : 'bg-primary-DEFAULT text-surface-DEFAULT border-primary-DEFAULT hover:bg-primary-hover hover:border-primary-hover hover:shadow-sm active:bg-primary-active active:border-primary-active active:translate-y-px',
-  secondary: disabled
-    ? 'bg-text-subtle text-surface-DEFAULT cursor-not-allowed'
-    : 'bg-secondary-DEFAULT text-surface-DEFAULT border-secondary-DEFAULT hover:bg-secondary-hover hover:border-secondary-hover hover:shadow-sm active:bg-secondary-active active:border-secondary-active active:translate-y-px',
-  outline: disabled
-    ? 'bg-transparent text-text-subtle border-text-subtle cursor-not-allowed'
-    : 'bg-transparent text-primary-DEFAULT border-primary-DEFAULT hover:bg-primary-DEFAULT hover:text-surface-DEFAULT hover:shadow-sm active:bg-primary-active active:border-primary-active active:text-surface-DEFAULT active:translate-y-px',
-  ghost: disabled
-    ? 'bg-transparent text-text-subtle cursor-not-allowed'
-    : 'bg-transparent text-primary-DEFAULT border-transparent hover:bg-primary-DEFAULT/[0.05] active:bg-primary-DEFAULT/[0.1] active:translate-y-px',
-};
+// Disabled state styles
+const disabledClasses = 'opacity-60 cursor-not-allowed';
 
-// Determine the HTML element to render (button or a)
-const Element = href ? 'a' : 'button';
+// Combine all classes
+const classes = [
+  baseClasses,
+  variantClasses[variant],
+  sizeClasses[size],
+  disabled && disabledClasses, // Apply disabled classes conditionally
+  className, // Allow external classes to be passed
+].filter(Boolean).join(' '); // Filter out any falsey values and join
+
+// Determine whether to render an <a> or <button> element
+const Component = href ? 'a' : 'button';
 ---
 
-<Element
-  class:list={[
-    baseStyles,
-    sizeClasses[size],
-    variantClasses[variant],
-    className,
-  ]}
-  {...attrs}
-  {...href && { href }}
-  {...disabled && { 'aria-disabled': 'true', disabled: true }}
-  {...ariaLabel && { 'aria-label': ariaLabel }}
+<Component
+  {...rest}
+  {href}
+  {disabled}
+  class={classes}
+  tabindex={disabled ? -1 : undefined}
+  aria-disabled={disabled}
 >
   <slot />
-</Element>
-
-<style>
-  /* Reduced motion preference */
-  @media (prefers-reduced-motion: reduce) {
-    .transition-all {
-      transition: none !important;
-    }
-  }
-</style>
----
+</Component>

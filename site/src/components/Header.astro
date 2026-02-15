@@ -1,35 +1,65 @@
 ---
 /**
- * Header Component (Placeholder)
- * Will be fully implemented in TASK-006: Header & Global Navigation (Desktop)
+ * Header Component
+ * Provides the global header navigation for the website.
+ * Includes the brand logo, desktop navigation links, a prominent CTA,
+ * and a mobile hamburger menu icon (hidden on desktop).
+ *
+ * @param {string} [currentPage] - The path of the current page to highlight active navigation link.
  */
+
+import Logo from './ui/Logo.astro';
+import NavLinks from './NavLinks.astro';
+import Button from './ui/Button.astro';
+
+interface Props {
+  currentPage?: string;
+}
+
+const { currentPage } = Astro.props;
 ---
-<header class="bg-surface shadow-sm">
-  <div class="container mx-auto px-4 py-4 flex items-center justify-between">
-    <a href="/" class="text-2xl font-heading font-bold text-text">
-      JOE THE PAINTER
-    </a>
-    <nav class="hidden md:block">
-      <!-- Desktop navigation links will go here -->
-      <ul role="list" class="flex space-x-6">
-        <li><a href="/" class="text-text hover:text-primary transition-colors">Home</a></li>
-        <li><a href="/services/painting" class="text-text hover:text-primary transition-colors">Painting Services</a></li>
-        <li><a href="/services/handy" class="text-text hover:text-primary transition-colors">Handy Services</a></li>
-        <li><a href="/our-work" class="text-text hover:text-primary transition-colors">Our Work</a></li>
-        <li><a href="/about" class="text-text hover:text-primary transition-colors">About Joe</a></li>
-        <li><a href="/contact" class="text-text hover:text-primary transition-colors">Contact</a></li>
-      </ul>
+
+<header class="sticky top-0 z-50 bg-neutral-surface shadow-sm" aria-label="Global Header Navigation">
+  <div class="container mx-auto px-4 py-4 flex items-center justify-between lg:px-8">
+    <Logo />
+
+    <!-- Desktop Navigation -->
+    <nav class="hidden lg:flex items-center space-x-6" aria-label="Main Navigation">
+      <NavLinks {currentPage} />
+      <Button variant="primary" size="lg" href="/consultation" class="ml-4">
+        Book a Free Consultation
+      </Button>
     </nav>
-    <button class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition-colors hidden md:block">
-      Book a Free Consultation
-    </button>
-    <!-- Mobile Hamburger/Menu will be added in TASK-008 -->
-    <div class="md:hidden">
-      <button aria-label="Open mobile menu" class="text-text">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+    <!-- Mobile Menu Button (Hidden on Desktop) -->
+    <div class="lg:hidden">
+      <button
+        id="mobile-menu-button"
+        aria-label="Open mobile menu"
+        aria-expanded="false"
+        class="p-2 text-neutral-text hover:text-primary focus-visible:text-primary transition-colors duration-fast"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-7 w-7"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
         </svg>
       </button>
     </div>
   </div>
 </header>
+
+<script is:inline>
+  // This script will be extended in TASK-008 for full mobile menu functionality.
+  // For now, it ensures the button is a valid reference for future JS.
+  const mobileMenuButton = document.getElementById('mobile-menu-button');
+  if (mobileMenuButton) {
+    // Placeholder for mobile menu logic (e.g., toggling a modal/drawer)
+    // The actual mobile menu overlay will be implemented in TASK-008
+  }
+</script>

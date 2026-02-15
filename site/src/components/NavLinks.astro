@@ -1,0 +1,49 @@
+---
+/**
+ * NavLinks Component
+ * Renders a list of navigation links. Designed to be flexible for both
+ * desktop and mobile navigation menus.
+ *
+ * @param {string} [currentPage] - The href of the current page for active state highlighting.
+ * @param {boolean} [isMobile=false] - Flag to apply mobile-specific styling adjustments.
+ */
+
+interface Props {
+  currentPage?: string;
+  isMobile?: boolean; // To adjust styling for mobile menu
+}
+
+const { currentPage, isMobile = false } = Astro.props;
+
+// Define the navigation items and their paths
+const navItems = [
+  { name: 'Home', href: '/' },
+  { name: 'Painting Services', href: '/services/painting' },
+  { name: 'Handy Services', href: '/services/handy' },
+  { name: 'Our Work', href: '/our-work' },
+  { name: 'About Joe', href: '/about' },
+  { name: 'Contact', href: '/contact' },
+];
+---
+
+<ul role="list" class:list={[
+  'flex',
+  isMobile ? 'flex-col items-center space-y-8' : 'items-center space-x-2'
+]}>
+  {navItems.map((item) => (
+    <li role="none">
+      <a
+        href={item.href}
+        class:list={[
+          'font-body font-medium text-neutral-text hover:text-primary focus-visible:text-primary transition-colors duration-fast',
+          isMobile ? 'text-3xl px-6 py-3' : 'text-base px-3 py-2', // Mobile links larger, desktop smaller
+          currentPage === item.href && 'text-primary border-b-2 border-primary' // Active state
+        ]}
+        aria-current={currentPage === item.href ? 'page' : false}
+        role="menuitem"
+      >
+        {item.name}
+      </a>
+    </li>
+  ))}
+</ul>
