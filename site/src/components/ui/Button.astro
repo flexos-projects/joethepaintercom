@@ -1,4 +1,3 @@
-```astro
 ---
 import type { HTMLAttributes } from 'astro/types';
 
@@ -21,35 +20,37 @@ const {
 } = Astro.props;
 
 const baseClasses = `
-  inline-flex items-center justify-center text-center whitespace-nowrap
+  inline-flex items-center justify-center text-center whitespace-nowrap no-underline
   font-body font-semibold rounded-md cursor-pointer
-  border border-solid motion-safe:transition-all motion-reduce:transition-none duration-200
+  border border-transparent
+  motion-safe:transition-all motion-reduce:transition-none duration-150 ease-out
   focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary
+  hover:-translate-y-0.5 active:translate-y-px
 `;
 
 const variantClasses = {
   primary: `
     bg-primary text-surface border-primary
-    hover:bg-[#003B8D] hover:border-[#003B8D]
-    active:bg-[#002A6B] active:border-[#002A6B] active:scale-[0.98]
+    hover:bg-[#003B8D] hover:border-[#003B8D] hover:shadow-sm
+    active:bg-[#002A6B] active:border-[#002A6B]
     disabled:bg-textSubtle disabled:border-textSubtle disabled:text-surface disabled:cursor-not-allowed
   `,
   secondary: `
     bg-secondary text-surface border-secondary
     hover:bg-[#5A616E] hover:border-[#5A616E]
-    active:bg-[#4D535E] active:border-[#4D535E] active:scale-[0.98]
+    active:bg-[#4D535E] active:border-[#4D535E]
     disabled:bg-textSubtle disabled:border-textSubtle disabled:text-surface disabled:cursor-not-allowed
   `,
   outline: `
     bg-transparent text-primary border-primary
     hover:bg-primary hover:text-surface
-    active:bg-[#002A6B] active:border-[#002A6B] active:text-surface active:scale-[0.98]
+    active:bg-[#002A6B] active:border-[#002A6B] active:text-surface
     disabled:text-textSubtle disabled:border-textSubtle disabled:cursor-not-allowed
   `,
   ghost: `
     bg-transparent text-primary border-transparent
     hover:bg-[rgba(0,71,171,0.05)]
-    active:bg-[rgba(0,71,171,0.1)] active:scale-[0.98]
+    active:bg-[rgba(0,71,171,0.1)]
     disabled:text-textSubtle disabled:cursor-not-allowed
   `,
 };
@@ -78,4 +79,3 @@ const Element = href ? 'a' : 'button';
 >
   <slot />
 </Element>
-```

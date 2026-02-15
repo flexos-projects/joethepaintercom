@@ -1,4 +1,3 @@
-```astro
 ---
 import type { HTMLAttributes } from 'astro/types';
 
@@ -20,10 +19,13 @@ const navItems = [
 const linkClasses = `
   font-body font-medium text-text-dark hover:text-primary focus-visible:text-primary
   motion-safe:transition-colors motion-reduce:transition-none
+  relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-px after:bg-primary after:scale-x-0 after:origin-left after:transition-transform after:duration-300 after:ease-out
+  hover:after:scale-x-100 focus-visible:after:scale-x-100
 `;
 const mobileLinkClasses = `
   font-heading text-3xl font-bold text-text-dark hover:text-primary focus-visible:text-primary
   motion-safe:transition-colors motion-reduce:transition-none py-4 w-full text-center
+  block
 `;
 ---
 
@@ -38,7 +40,7 @@ const mobileLinkClasses = `
         href={item.href}
         class:list={[
           isMobile ? mobileLinkClasses : linkClasses,
-          Astro.url.pathname === item.href ? 'text-primary' : '' // Active state
+          Astro.url.pathname === item.href ? (isMobile ? 'text-primary' : 'text-primary after:scale-x-100') : '' // Active state
         ]}
         aria-current={Astro.url.pathname === item.href ? 'page' : false}
       >
@@ -47,4 +49,3 @@ const mobileLinkClasses = `
     </li>
   ))}
 </ul>
-```

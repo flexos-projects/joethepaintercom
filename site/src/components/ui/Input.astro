@@ -1,4 +1,3 @@
-```astro
 ---
 import type { HTMLAttributes } from 'astro/types';
 
@@ -50,7 +49,7 @@ const errorClasses = error ? 'border-error focus-visible:ring-error' : '';
 <div class:list={['w-full', className]} >
   <label for={id} class="block text-sm font-medium text-text-dark mb-1">
     {label}
-    {required && <span class="text-error ml-1">*</span>}
+    {required && <span class="text-error ml-1" aria-hidden="true">*</span>}
   </label>
   {as === 'input' && (
     <input
@@ -114,4 +113,3 @@ const errorClasses = error ? 'border-error focus-visible:ring-error' : '';
     </p>
   )}
 </div>
-```
