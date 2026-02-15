@@ -46,8 +46,8 @@ import '@/styles/global.css';
     <meta name="twitter:title" content={`${meta.title} | ${SITE_NAME}`} />
     <meta name="twitter:description" content={meta.description} />
     <meta name="twitter:image" content={meta.ogImage || defaultOgImage} />
-    {/* If a Twitter account is created */}
-    {/* <meta name="twitter:creator" content="@JoeThePainterSD" /> */}
+    <!-- If a Twitter account is created -->
+    <!-- <meta name="twitter:creator" content="@JoeThePainterSD" /> -->
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -59,15 +59,6 @@ import '@/styles/global.css';
     <link rel="preload" href="/fonts/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin />
     <!-- Inter Semibold for navigation and CTAs -->
     <link rel="preload" href="/fonts/Inter-SemiBold.woff2" as="font" type="font/woff2" crossorigin />
-
-    {/* Google Analytics - Placeholder, will be added via component for production only */}
-    {/* <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-XXXXXXXXXX');
-    </script> */}
   </head>
   <body class="flex flex-col min-h-full">
     <slot />

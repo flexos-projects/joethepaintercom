@@ -9,34 +9,27 @@ export default {
       colors: {
         primary: {
           DEFAULT: '#0047AB', // Primary Blue
-          light: '#3B82F6', // Lighter variant for accents or hover states, based on info color from design spec
-          dark: '#003B8D', // Darker variant for contrast or backgrounds
+          light: '#3366CC', // Derived lighter variant for accents or hover states
+          dark: '#003B8D', // Derived darker variant for contrast or backgrounds
         },
         secondary: {
           DEFAULT: '#6B7280', // Secondary Gray
-          light: '#9CA3AF', // Lighter variant for subtle text/borders
-          dark: '#4B5563', // Darker variant for emphasis
+          light: '#9CA3AF', // Derived lighter variant of secondary gray
+          dark: '#4B5563', // Derived darker variant of secondary gray
         },
         accent: {
           DEFAULT: '#E5B80B', // Accent Gold
           light: '#FFD700', // Brighter variant for highlights
           dark: '#B38B00', // Deeper variant for subtle contrast
         },
-        neutral: {
-          50: '#F9FAFB', // Background White
-          100: '#F3F4F6',
-          200: '#E5E7EB', // Border Light
-          300: '#D1D5DB',
-          400: '#9CA3AF', // Text Subtle
-          500: '#6B7280', // Text Muted
-          600: '#4B5563',
-          700: '#374151',
-          800: '#1F2937', // Text Dark
-          900: '#111827', // Near black for strong contrast text
-        },
-        white: '#FFFFFF', // Surface Light
-        black: '#000000',
-        // Semantic colors
+        background: '#F9FAFB', // Background White
+        surface: '#FFFFFF', // Surface Light
+        text: '#1F2937', // Text Dark
+        textMuted: '#6B7280', // Text Muted
+        textSubtle: '#9CA3AF', // Text Subtle
+        border: '#E5E7EB', // Border Light
+
+        // Semantic feedback colors
         success: '#10B981',
         warning: '#F59E0B',
         error: '#EF4444',
@@ -50,16 +43,16 @@ export default {
         mono: ['"Space Mono"', ...defaultTheme.fontFamily.mono],
       },
       fontSize: {
-        'xs': ['0.75rem', { lineHeight: '1rem' }], // 12px
-        'sm': ['0.875rem', { lineHeight: '1.25rem' }], // 14px
-        'base': ['1rem', { lineHeight: '1.5rem' }], // 16px (default body)
-        'lg': ['1.125rem', { lineHeight: '1.75rem' }], // 18px
-        'xl': ['1.25rem', { lineHeight: '1.75rem' }], // 20px
-        '2xl': ['1.5rem', { lineHeight: '2rem' }], // 24px (H4 mobile)
-        '3xl': ['1.875rem', { lineHeight: '2.25rem' }], // 30px (H3 mobile, H4 desktop)
-        '4xl': ['2.25rem', { lineHeight: '2.5rem' }], // 36px (H2 mobile, H3 desktop)
-        '5xl': ['3rem', { lineHeight: '1' }], // 48px (H1 mobile, H2 desktop)
-        '6xl': ['3.75rem', { lineHeight: '1' }], // 60px (Hero H1 desktop)
+        'xs': ['0.75rem', { lineHeight: '1.5' }], // 12px | 1.5
+        'sm': ['0.875rem', { lineHeight: '1.5' }], // 14px | 1.5
+        'base': ['1rem', { lineHeight: '1.6' }], // 16px (default body) | 1.6
+        'lg': ['1.125rem', { lineHeight: '1.6' }], // 18px | 1.6
+        'xl': ['1.25rem', { lineHeight: '1.4' }], // 20px | 1.4
+        '2xl': ['1.5rem', { lineHeight: '1.3' }], // 24px (H4 mobile) | 1.3
+        '3xl': ['1.875rem', { lineHeight: '1.3' }], // 30px (H3 mobile, H4 desktop) | 1.3
+        '4xl': ['2.25rem', { lineHeight: '1.2' }], // 36px (H2 mobile, H3 desktop) | 1.2
+        '5xl': ['3rem', { lineHeight: '1.1' }], // 48px (H1 mobile, H2 desktop) | 1.1
+        '6xl': ['3.75rem', { lineHeight: '1.1' }], // 60px (Hero H1 desktop) | 1.1
       },
       fontWeight: {
         normal: '400',
@@ -142,8 +135,8 @@ export default {
       },
       animation: {
         'fade-in': 'fadeIn 300ms ease-out forwards',
-        'slide-in-up': 'slideInUp 500ms ease-out forwards',
-        'scale-in': 'scaleIn 200ms ease-out forwards',
+        'slide-in-up': 'slideInUp 300ms ease-out forwards', // Changed to normal (300ms)
+        'scale-in': 'scaleIn 150ms ease-out forwards', // Changed to fast (150ms)
       },
 
       // --- Breakpoints ---
