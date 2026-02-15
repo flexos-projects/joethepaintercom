@@ -1,0 +1,276 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.svg'; // Assuming logo.svg is in src/assets
+import Button from './ui/Button.astro';
+
+// Helper function to determine if a link is active
+const isActive = (path: string) => {
+  // Handles root path specifically
+  if (path === '/') {
+    return Astro.url.pathname === '/';
+  }
+  // Handles other paths
+  return Astro.url.pathname.startsWith(path);
+};
+---
+
+<header class="sticky top-0 z-50 bg-surface-light shadow-sm">
+  <div class="container mx-auto px-4 py-4 md:px-8">
+    <nav class="flex items-center justify-between" aria-label="Main navigation">
+      <a href="/" class="flex items-center" aria-label="Joe the Painter homepage">
+        <Image src={logo} alt="Joe the Painter Logo" width={40} height={40} class="mr-3" />
+        <span class="font-heading text-2xl font-bold text-text-dark">JOE THE PAINTER</span>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <ul class="hidden lg:flex items-center space-x-6" role="list">
+        <li>
+          <a
+            href="/"
+            class:list={[
+              "font-body text-base font-medium text-text-dark hover:text-primary-blue transition-colors duration-fast px-3 py-2 -my-2",
+              { "text-primary-blue border-b-2 border-primary-blue": isActive('/') }
+            ]}
+          >
+            Home
+          </a>
+        </li>
+        <li>
+          <a
+            href="/services/painting"
+            class:list={[
+              "font-body text-base font-medium text-text-dark hover:text-primary-blue transition-colors duration-fast px-3 py-2 -my-2",
+              { "text-primary-blue border-b-2 border-primary-blue": isActive('/services/painting') }
+            ]}
+          >
+            Painting Services
+          </a>
+        </li>
+        <li>
+          <a
+            href="/services/handy"
+            class:list={[
+              "font-body text-base font-medium text-text-dark hover:text-primary-blue transition-colors duration-fast px-3 py-2 -my-2",
+              { "text-primary-blue border-b-2 border-primary-blue": isActive('/services/handy') }
+            ]}
+          >
+            Handy Services
+          </a>
+        </li>
+        <li>
+          <a
+            href="/our-work"
+            class:list={[
+              "font-body text-base font-medium text-text-dark hover:text-primary-blue transition-colors duration-fast px-3 py-2 -my-2",
+              { "text-primary-blue border-b-2 border-primary-blue": isActive('/our-work') }
+            ]}
+          >
+            Our Work
+          </a>
+        </li>
+        <li>
+          <a
+            href="/about"
+            class:list={[
+              "font-body text-base font-medium text-text-dark hover:text-primary-blue transition-colors duration-fast px-3 py-2 -my-2",
+              { "text-primary-blue border-b-2 border-primary-blue": isActive('/about') }
+            ]}
+          >
+            About Joe
+          </a>
+        </li>
+        <li>
+          <a
+            href="/contact"
+            class:list={[
+              "font-body text-base font-medium text-text-dark hover:text-primary-blue transition-colors duration-fast px-3 py-2 -my-2",
+              { "text-primary-blue border-b-2 border-primary-blue": isActive('/contact') }
+            ]}
+          >
+            Contact
+          </a>
+        </li>
+        <li>
+          <Button href="/consultation" variant="primary" size="lg" class="ml-4">
+            Book a Free Consultation
+          </Button>
+        </li>
+      </ul>
+
+      <!-- Mobile Hamburger Menu Button -->
+      <div class="lg:hidden flex items-center">
+        <button
+          id="mobile-menu-button"
+          aria-label="Open main menu"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          class="p-2 text-text-dark hover:text-primary-blue focus:outline-none focus:ring-2 focus:ring-primary-blue rounded-md transition-colors duration-fast"
+        >
+          <svg
+            class="h-7 w-7"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              id="hamburger-icon"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            ></path>
+            <path
+              id="close-icon"
+              class="hidden"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Mobile Overlay Menu -->
+  <div
+    id="mobile-menu"
+    class="fixed inset-0 bg-surface-light z-[101] transform translate-x-full transition-transform duration-normal ease-out flex flex-col items-center justify-center p-8 lg:hidden"
+    aria-hidden="true"
+  >
+    <button
+      id="close-mobile-menu-button"
+      aria-label="Close menu"
+      class="absolute top-4 right-4 p-2 text-text-dark hover:text-primary-blue focus:outline-none focus:ring-2 focus:ring-primary-blue rounded-md transition-colors duration-fast"
+    >
+      <svg
+        class="h-7 w-7"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 18L18 6M6 6l12 12"
+        ></path>
+      </svg>
+    </button>
+
+    <ul class="space-y-6 text-center" role="list">
+      <li>
+        <a
+          href="/"
+          class="font-heading text-3xl text-text-dark hover:text-primary-blue transition-colors duration-fast"
+        >
+          Home
+        </a>
+      </li>
+      <li>
+        <a
+          href="/services/painting"
+          class="font-heading text-3xl text-text-dark hover:text-primary-blue transition-colors duration-fast"
+        >
+          Painting Services
+        </a>
+      </li>
+      <li>
+        <a
+          href="/services/handy"
+          class="font-heading text-3xl text-text-dark hover:text-primary-blue transition-colors duration-fast"
+        >
+          Handy Services
+        </a>
+      </li>
+      <li>
+        <a
+          href="/our-work"
+          class="font-heading text-3xl text-text-dark hover:text-primary-blue transition-colors duration-fast"
+        >
+          Our Work
+        </a>
+      </li>
+      <li>
+        <a
+          href="/about"
+          class="font-heading text-3xl text-text-dark hover:text-primary-blue transition-colors duration-fast"
+        >
+          About Joe
+        </a>
+      </li>
+      <li>
+        <a
+          href="/contact"
+          class="font-heading text-3xl text-text-dark hover:text-primary-blue transition-colors duration-fast"
+        >
+          Contact
+        </a>
+      </li>
+      <li class="mt-8">
+        <Button href="/consultation" variant="primary" size="lg">
+          Book a Free Consultation
+        </Button>
+      </li>
+    </ul>
+  </div>
+</header>
+
+<script is:inline>
+  const mobileMenuButton = document.getElementById('mobile-menu-button');
+  const closeMobileMenuButton = document.getElementById('close-mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const hamburgerIcon = document.getElementById('hamburger-icon');
+  const closeIcon = document.getElementById('close-icon');
+  // Targeting the main content area to hide it from screen readers when menu is open
+  const mainContent = document.querySelector('main'); 
+
+  const openMobileMenu = () => {
+    mobileMenu?.classList.remove('translate-x-full');
+    mobileMenu?.classList.add('translate-x-0');
+    mobileMenuButton?.setAttribute('aria-expanded', 'true');
+    mobileMenu?.setAttribute('aria-hidden', 'false');
+    hamburgerIcon?.classList.add('hidden');
+    closeIcon?.classList.remove('hidden');
+    // Disable scroll on body and hide main content from screen readers
+    document.body.style.overflow = 'hidden';
+    mainContent?.setAttribute('aria-hidden', 'true');
+  };
+
+  const closeMobileMenu = () => {
+    mobileMenu?.classList.remove('translate-x-0');
+    mobileMenu?.classList.add('translate-x-full');
+    mobileMenuButton?.setAttribute('aria-expanded', 'false');
+    mobileMenu?.setAttribute('aria-hidden', 'true');
+    hamburgerIcon?.classList.remove('hidden');
+    closeIcon?.classList.add('hidden');
+    // Re-enable scroll on body and show main content to screen readers
+    document.body.style.overflow = '';
+    mainContent?.removeAttribute('aria-hidden');
+  };
+
+  mobileMenuButton?.addEventListener('click', openMobileMenu);
+  closeMobileMenuButton?.addEventListener('click', closeMobileMenu);
+
+  // Close menu if a link is clicked within the mobile menu
+  mobileMenu?.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', closeMobileMenu);
+  });
+
+  // Close menu on Escape key
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && mobileMenu?.getAttribute('aria-hidden') === 'false') {
+      closeMobileMenu();
+    }
+  });
+
+  // Handle resize to close menu on desktop if it becomes visible
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 1024 && mobileMenu?.getAttribute('aria-hidden') === 'false') {
+      closeMobileMenu();
+    }
+  });
+</script>

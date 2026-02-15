@@ -1,71 +1,135 @@
 ---
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets'; // Imported for potential use in page content, though not directly in BaseLayout's static assets.
+
+// Component imports for global structure
 import Header from '@components/Header.astro';
 import Footer from '@components/Footer.astro';
+
+// Analytics integration
 import AnalyticsScript from '@components/common/AnalyticsScript.astro';
-import { getStructuredData } from '@utils/seo'; // Assuming src/utils/seo.ts exists and provides getStructuredData
 
 interface Props {
   title: string;
   description: string;
-  ogImage?: string;
-  ogType?: 'website' | 'article';
-  jsonLd?: Record<string, any> | Record<string, any>[]; // Can be single object or array for page-specific schema
-  licenseNum?: string; // Passed to Header/Footer, defaults to 802167
+  keywords?: string;
+  ogImage?: string; // Full URL to the Open Graph image
+  structuredData?: Record<string, any>; // For page-specific structured data
 }
 
 const {
   title,
   description,
+  keywords,
   ogImage,
-  ogType = 'website',
-  jsonLd,
-  licenseNum = '802167' // Default license number from specs
+  structuredData,
 } = Astro.props;
 
+// Construct canonical URL based on Astro's site config and current path
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-// JSON-LD for Organization, WebSite, and WebPage (site-wide)
-const organizationSchema = getStructuredData('Organization', {
-  name: "Joe the Painter",
-  url: Astro.site,
-  logo: `${Astro.site}images/logo.svg`, // Assuming logo exists in public/images
-  contactPoint: {
+// Global structured data as specified in 07-technical.md
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Joe the Painter",
+  "url": "https://www.joethepainter.com",
+  "logo": "https://www.joethepainter.com/favicon.svg", // Using favicon as logo for simplicity here
+  "contactPoint": {
     "@type": "ContactPoint",
     "telephone": "+1-760-580-8173",
     "contactType": "customer service",
     "email": "joe@joethepainter.com",
     "areaServed": ["San Diego County", "Central San Diego County", "North San Diego County"]
   },
-  slogan: "The Craftsman's Guarantee: Meticulous painting and reliable repairs, personally delivered by a licensed expert with a quarter-century of proven trust.", // From Brand Essence
-  sameAs: [
-    `https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=${licenseNum}`
-    // Add Yelp, Google Business Profile, etc. links once established as per 07-technical.md
+  "slogan": "Prompt, Professional, and Affordable",
+  "sameAs": [
+    "https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=802167"
+    // Add Yelp, Google Business Profile, etc. links once established
   ]
-});
+};
 
-const websiteSchema = getStructuredData('WebSite', {
-  url: Astro.site,
-  name: "Joe the Painter",
-  potentialAction: {
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "url": "https://www.joethepainter.com",
+  "name": "Joe the Painter",
+  "potentialAction": {
     "@type": "SearchAction",
-    "target": `${Astro.site}search?q={search_term_string}`, // Placeholder for search functionality if implemented (P2)
+    "target": "https://www.joethepainter.com/search?q={search_term_string}",
     "query-input": "required name=search_term_string"
   }
-});
+};
 
-const webPageSchema = getStructuredData('WebPage', {
-  name: title,
-  description: description,
-  url: canonicalURL.toString()
-});
+const webPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": title,
+  "description": description,
+  "url": canonicalURL.toString()
+};
 
-const combinedJsonLd = [
+const localBusinessSchema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Joe the Painter",
+  // Using a placeholder image for Joe's profile, should be replaced with actual image path
+  "image": "https://www.joethepainter.com/images/joe-profile.jpg",
+  "url": "https://www.joethepainter.com",
+  "telephone": "+1-760-580-8173",
+  "email": "joe@joethepainter.com",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "San Diego County",
+    "addressRegion": "CA",
+    "addressCountry": "US"
+  },
+  "priceRange": "$$",
+  "hasMap": "https://www.google.com/maps/search/?api=1&query=Joe+the+Painter+San+Diego",
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "opens": "08:00",
+      "closes": "17:00"
+    }
+  ],
+  "areaServed": [
+    { "@type": "State", "name": "California" },
+    { "@type": "City", "name": "Carlsbad" },
+    { "@type": "City", "name": "Encinitas" },
+    { "@type": "City", "name": "Vista" },
+    { "@type": "City", "name": "San Marcos" },
+    { "@type": "City", "name": "Oceanside" },
+    { "@type": "City", "name": "Escondido" },
+    { "@type": "City", "name": "Poway" },
+    { "@type": "City", "name": "Rancho Bernardo" },
+    { "@type": "City", "name": "Del Mar" },
+    { "@type": "City", "name": "Solana Beach" }
+  ],
+  "geo": {
+    "@type": "GeoCircle",
+    "geoMidpoint": {
+      "@type": "GeoCoordinates",
+      "latitude": 33.0903,
+      "longitude": -117.2519
+    },
+    "geoRadius": 50000
+  },
+  "review": [], // To be populated dynamically from testimonials
+  "aggregateRating": {} // To be populated dynamically from testimonials
+};
+
+// Combine global and page-specific structured data
+const allStructuredData = [
   organizationSchema,
   websiteSchema,
   webPageSchema,
-  ...(jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [])
+  localBusinessSchema,
+  ...(structuredData ? [structuredData] : [])
 ];
 ---
+
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
   <head>
@@ -73,141 +137,54 @@ const combinedJsonLd = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href={canonicalURL.toString()} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <title>{title} | Joe the Painter: Your San Diego Craftsman Since 2001</title>
+    <!-- Page-specific Meta Tags -->
+    <title>{`${title} | Joe the Painter: Your San Diego Craftsman Since 2001`}</title>
     <meta name="description" content={description} />
+    {keywords && <meta name="keywords" content={keywords} />}
 
     <!-- Open Graph / Social Media Tags -->
-    <meta property="og:type" content={ogType} />
+    <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL.toString()} />
-    <meta property="og:title" content={title} />
+    <meta property="og:title" content={`${title} | Joe the Painter`} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={ogImage || `${Astro.site}images/social-share-default.jpg`} />
+    <meta property="og:image" content={ogImage || 'https://www.joethepainter.com/images/social-share-default.jpg'} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
 
     <!-- Twitter Card Tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content={canonicalURL.toString()} />
-    <meta name="twitter:title" content={title} />
+    <meta name="twitter:title" content={`${title} | Joe the Painter`} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImage || `${Astro.site}images/social-share-default.jpg`} />
-    <meta name="twitter:creator" content="@JoeThePainterSD" /> <!-- If a Twitter account is created -->
+    <meta name="twitter:image" content={ogImage || 'https://www.joethepainter.com/images/social-share-default.jpg'} />
+    <meta name="twitter:creator" content="@JoeThePainterSD" />
 
-    <!-- JSON-LD Structured Data -->
-    {combinedJsonLd.map((schema, index) => (
-      <script key={`json-ld-${index}`} type="application/ld+json" set:html={JSON.stringify(schema)} />
-    ))}
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
-    <!-- Preload Fonts -->
-    <!-- Lora (Heading) -->
-    <link rel="preload" href="/fonts/Lora-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Fonts preloading (as per 07-technical.md and 06-design.md) -->
     <link rel="preload" href="/fonts/Lora-Bold.woff2" as="font" type="font/woff2" crossorigin />
-    <!-- Inter (Body) -->
+    <link rel="preload" href="/fonts/Lora-SemiBold.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/Inter-Medium.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/Inter-SemiBold.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/Inter-Bold.woff2" as="font" type="font/woff2" crossorigin />
 
+    <!-- Google Analytics 4 (Conditional based on environment) -->
     <AnalyticsScript />
 
-    <style is:global>
-      /* Font-face definitions from design system (06-design.md & tokens.json) */
-      @font-face {
-        font-family: 'Lora';
-        src: url('/fonts/Lora-Regular.woff2') format('woff2');
-        font-weight: 400; /* Normal */
-        font-display: swap;
-        font-style: normal;
-      }
-      @font-face {
-        font-family: 'Lora';
-        src: url('/fonts/Lora-Bold.woff2') format('woff2');
-        font-weight: 700; /* Bold */
-        font-display: swap;
-        font-style: normal;
-      }
-
-      @font-face {
-        font-family: 'Inter';
-        src: url('/fonts/Inter-Regular.woff2') format('woff2');
-        font-weight: 400; /* Normal */
-        font-display: swap;
-        font-style: normal;
-      }
-      @font-face {
-        font-family: 'Inter';
-        src: url('/fonts/Inter-Medium.woff2') format('woff2');
-        font-weight: 500; /* Medium */
-        font-display: swap;
-        font-style: normal;
-      }
-      @font-face {
-        font-family: 'Inter';
-        src: url('/fonts/Inter-SemiBold.woff2') format('woff2');
-        font-weight: 600; /* SemiBold */
-        font-display: swap;
-        font-style: normal;
-      }
-      @font-face {
-        font-family: 'Inter';
-        src: url('/fonts/Inter-Bold.woff2') format('woff2');
-        font-weight: 700; /* Bold */
-        font-display: swap;
-        font-style: normal;
-      }
-
-      /* Global base styles for semantic elements, using CSS variables defined in tokens.css */
-      /* These ensure consistent baseline before Tailwind utilities apply for improved FOUT/CLS */
-      html {
-        scroll-behavior: smooth;
-      }
-      body {
-        font-family: var(--font-family-body);
-        color: var(--color-text);
-        background-color: var(--color-background);
-        line-height: var(--line-height-base);
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-      }
-      h1, h2, h3, h4, h5, h6 {
-        font-family: var(--font-family-heading);
-        color: var(--color-text);
-        /* Line height can be further refined per heading level using Tailwind utilities or specific CSS */
-      }
-      /* Ensure anchor tags have default styling for accessibility and readability */
-      a {
-        color: var(--color-primary);
-        text-decoration: none;
-        transition: color var(--transition-fast);
-      }
-      a:hover {
-        color: #003B8D; /* Darker variant of primary blue from 06-design.md button hover state */
-        text-decoration: underline;
-      }
-      /* Add focus styles for accessibility (WCAG 2.1 AA) */
-      :focus-visible {
-        outline: 2px solid var(--color-accent); /* Accent Gold for high visibility */
-        outline-offset: 2px;
-        border-radius: var(--border-radius-sm); /* Subtle rounding for consistency */
-      }
-      /* Reset for elements that handle their own focus styles or don't need default outline */
-      button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
-        outline-offset: 2px; /* Standard offset for form elements and buttons */
-      }
-    </style>
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json" set:html={JSON.stringify(allStructuredData)}></script>
   </head>
-  <body>
-    <Header licenseNum={licenseNum} />
-    <main id="main-content" class="flex-grow">
+  <body class="min-h-screen flex flex-col antialiased bg-background text-text-dark">
+    <!-- Accessibility skip link -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-[999] focus:top-4 focus:left-4 focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-md">Skip to main content</a>
+
+    <Header />
+
+    <main id="main-content" class="flex-1 overflow-x-hidden">
       <slot />
     </main>
-    <Footer licenseNum={licenseNum} />
+
+    <Footer />
   </body>
 </html>

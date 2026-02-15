@@ -1,0 +1,86 @@
+---
+// src/components/ui/Button.astro
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'button' | 'a'> {
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  href?: string; // If provided, renders an <a> tag
+  type?: 'button' | 'submit' | 'reset'; // Only for <button> tag
+  disabled?: boolean;
+  ariaLabel?: string;
+  class?: string; // Additional classes for customization
+  // The onClick prop will be passed directly to the element.
+  // If `onClick` requires client-side JavaScript execution,
+  // the component using this Button must be hydrated (e.g., via client:load).
+  onClick?: (event: MouseEvent) => void;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  type = 'button',
+  disabled = false,
+  ariaLabel,
+  class: additionalClasses,
+  onClick,
+  ...attrs
+} = Astro.props;
+
+// Base styles applied to all buttons and links acting as buttons
+const baseStyles = 'inline-flex items-center justify-center font-body font-semibold text-center text-decoration-none cursor-pointer border border-transparent transition-all duration-150 ease-in-out rounded-md';
+
+// Variant-specific styles using design tokens and specified hex values for hover/active
+const variantStyles = {
+  primary: `bg-primary text-white border-primary
+            hover:bg-[#003B8D] hover:border-[#003B8D] hover:shadow-sm
+            active:bg-[#002A6B] active:border-[#002A6B] active:translate-y-px
+            disabled:bg-neutral-400 disabled:border-neutral-400 disabled:text-white disabled:cursor-not-allowed`,
+  secondary: `bg-neutral-500 text-white border-neutral-500
+              hover:bg-[#5A616E] hover:border-[#5A616E] hover:shadow-sm
+              active:bg-[#4D535E] active:border-[#4D535E] active:translate-y-px
+              disabled:bg-neutral-400 disabled:border-neutral-400 disabled:text-white disabled:cursor-not-allowed`,
+  outline: `bg-transparent text-primary border-primary
+            hover:bg-primary hover:text-white hover:shadow-sm
+            active:bg-[#002A6B] active:border-[#002A6B] active:text-white active:translate-y-px
+            disabled:bg-transparent disabled:text-neutral-400 disabled:border-neutral-400 disabled:cursor-not-allowed`,
+  ghost: `bg-transparent text-primary border-transparent
+          hover:bg-[rgba(0,71,171,0.05)]
+          active:bg-[rgba(0,71,171,0.1)] active:translate-y-px
+          disabled:bg-transparent disabled:text-neutral-400 disabled:cursor-not-allowed`,
+};
+
+// Size-specific styles
+const sizeStyles = {
+  sm: 'py-2 px-3 text-sm',
+  md: 'py-3 px-4 text-base',
+  lg: 'py-4 px-6 text-lg',
+};
+
+// Combine all classes
+const finalClasses = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${additionalClasses || ''}`;
+---
+
+{href ? (
+  <a
+    href={href}
+    class={finalClasses}
+    aria-label={ariaLabel}
+    role="button"
+    {...attrs}
+  >
+    <slot />
+  </a>
+) : (
+  <button
+    type={type}
+    class={finalClasses}
+    disabled={disabled}
+    aria-label={ariaLabel}
+    onclick={onClick}
+    {...attrs}
+  >
+    <slot />
+  </button>
+)}
