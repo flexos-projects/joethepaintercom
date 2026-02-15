@@ -1,0 +1,59 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import Icon from './ui/Icon.astro'; // Assuming an Icon component for SVGs
+
+interface Props extends HTMLAttributes<'div'> {
+  title: string;
+  url: URL;
+  twitterHandle?: string; // Optional Twitter handle for mentions
+}
+
+const { title, url, twitterHandle, ...attrs } = Astro.props;
+
+const encodedTitle = encodeURIComponent(title);
+const encodedUrl = encodeURIComponent(url.toString());
+const twitterText = encodedTitle + (twitterHandle ? ` by @${twitterHandle}` : '');
+
+const shareLinks = [
+  {
+    name: 'Twitter',
+    icon: 'twitter', // Assuming 'twitter' icon exists
+    href: `https://twitter.com/intent/tweet?text=${twitterText}&url=${encodedUrl}`,
+    label: `Share "${title}" on Twitter`,
+  },
+  {
+    name: 'Facebook',
+    icon: 'facebook', // Assuming 'facebook' icon exists
+    href: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+    label: `Share "${title}" on Facebook`,
+  },
+  {
+    name: 'LinkedIn',
+    icon: 'linkedin', // Assuming 'linkedin' icon exists
+    href: `https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedTitle}&summary=${encodedTitle}&source=${encodedUrl}`,
+    label: `Share "${title}" on LinkedIn`,
+  },
+  {
+    name: 'Email',
+    icon: 'mail', // Assuming 'mail' icon exists
+    href: `mailto:?subject=${encodedTitle}&body=Check out this article from Joe the Painter: ${encodedUrl}`,
+    label: `Share "${title}" via Email`,
+  },
+];
+---
+
+<div {...attrs} class="flex flex-wrap gap-x-spacing-4 gap-y-spacing-2 justify-center lg:justify-start">
+  <span class="font-body text-text-dark font-medium text-lg sr-only">Share this article:</span>
+  {shareLinks.map((link) => (
+    <a
+      href={link.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="flex items-center gap-spacing-1.5 text-text-muted hover:text-primary transition-colors duration-normal group"
+      aria-label={link.label}
+    >
+      <Icon name={link.icon} class="w-spacing-6 h-spacing-6 group-hover:scale-105 transition-transform duration-fast" />
+      <span class="font-body text-sm font-medium sr-only">{link.name}</span>
+    </a>
+  ))}
+</div>

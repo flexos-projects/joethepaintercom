@@ -1,39 +1,25 @@
 ---
-import Button from '../ui/Button.astro';
+import Button from '../components/ui/Button.astro';
+import Section from './Section.astro';
 
 interface Props {
   headline: string;
   description: string;
   ctaText: string;
   ctaHref: string;
-  /** The background color variant for the banner. */
-  background?: 'primary' | 'dark';
 }
 
-const {
-  headline,
-  description,
-  ctaText,
-  ctaHref,
-  background = 'primary',
-} = Astro.props;
-
-const backgroundClasses = {
-  primary: 'bg-primary text-white',
-  dark: 'bg-neutral-800 text-white',
-};
+const { headline, description, ctaText, ctaHref } = Astro.props;
 ---
 
-<section class:list={['py-16 md:py-20 text-center', backgroundClasses[background]]}>
-  <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-    <h2 class="font-heading text-4xl lg:text-5xl font-bold mb-4 leading-tight">
-      {headline}
-    </h2>
-    <p class="font-body text-lg lg:text-xl text-neutral-100 mb-8 max-w-2xl mx-auto">
-      {description}
-    </p>
-    <Button href={ctaHref} variant="secondary" size="lg" class="inline-flex">
-      {ctaText}
-    </Button>
-  </div>
-</section>
+<Section background="primary" class="text-center text-surface py-spacing-16 md:py-spacing-24">
+  <h2 class="font-heading text-5xl md:text-6xl font-bold mb-spacing-6 leading-tight">
+    {headline}
+  </h2>
+  <p class="font-body text-xl md:text-2xl mb-spacing-10 max-w-4xl mx-auto opacity-90">
+    {description}
+  </p>
+  <Button href={ctaHref} variant="secondary" size="lg" class="text-primary-blue bg-accent hover:bg-accent-dark border-accent hover:border-accent-dark">
+    {ctaText}
+  </Button>
+</Section>
