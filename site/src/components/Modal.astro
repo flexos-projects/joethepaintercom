@@ -18,9 +18,9 @@
 import { type HTMLAttributes, type AstroBuiltinAttributes } from 'astro/types';
 
 // Component imports
-import Button from './ui/Button.astro'; // Assuming TASK-004 output
-import type { Props as ButtonProps } from './ui/Button.astro'; // Import ButtonProps for type safety
-import { getUniqueId } from '../utils/uniqueId'; // Assuming a utility for generating unique IDs
+import Button from './ui/Button.astro';
+import type { Props as ButtonProps } from './ui/Button.astro';
+import { getUniqueId } from '../utils/uniqueId'; // Utility for generating unique IDs
 
 // Props interface with JSDoc comments
 interface Props extends AstroBuiltinAttributes<'div'> {
