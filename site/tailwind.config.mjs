@@ -8,28 +8,28 @@ export default {
       // --- Colors ---
       colors: {
         primary: {
-          DEFAULT: '#0047AB', // Primary Blue
-          dark: '#003B8D',    // Derived from Primary hover state in 06-design.md
-          darker: '#002A6B',  // Derived from Primary active state in 06-design.md
+          DEFAULT: '#0047AB',
+          dark: '#003B8D',
+          darker: '#002A6B',
         },
         secondary: {
-          DEFAULT: '#6B7280', // Secondary Gray
-          dark: '#5A616E',    // Derived from Secondary hover state in 06-design.md
-          darker: '#4D535E',  // Derived from Secondary active state in 06-design.md
+          DEFAULT: '#6B7280',
+          dark: '#5A616E',
+          darker: '#4D535E',
         },
         accent: {
-          DEFAULT: '#E5B80B', // Accent Gold
+          DEFAULT: '#E5B80B',
         },
-        background: '#F9FAFB', // Background White
-        surface: '#FFFFFF',    // Surface Light
-        text: '#1F2937',       // Text Dark
-        'text-muted': '#6B7280', // Text Muted (same as secondary.DEFAULT)
-        'text-subtle': '#9CA3AF', // Text Subtle
-        'border-light': '#E5E7EB', // Border Light
-        error: '#EF4444',      // Error
-        success: '#10B981',    // Success
-        warning: '#F59E0B',    // Warning
-        info: '#3B82F6',       // Info
+        background: '#F9FAFB',
+        surface: '#FFFFFF',
+        text: '#1F2937',
+        'text-muted': '#6B7280',
+        'text-subtle': '#9CA3AF',
+        'border-light': '#E5E7EB',
+        error: '#EF4444',
+        success: '#10B981',
+        warning: '#F59E0B',
+        info: '#3B82F6',
         // Keeping a full neutral scale for general utility where specific semantic colors aren't needed
         neutral: {
           50: '#F9FAFB',
@@ -49,21 +49,21 @@ export default {
 
       // --- Typography ---
       fontFamily: {
-        heading: ['"Lora"', ...defaultTheme.fontFamily.serif], // Elegant serif for headings
-        body: ['"Inter"', ...defaultTheme.fontFamily.sans], // Modern sans-serif for body
-        mono: ['"Space Mono"', ...defaultTheme.fontFamily.mono], // Monospace for specific data displays
+        heading: ['"Lora"', ...defaultTheme.fontFamily.serif],
+        body: ['"Inter"', ...defaultTheme.fontFamily.sans],
+        mono: ['"Space Mono"', ...defaultTheme.fontFamily.mono],
       },
       fontSize: {
-        'xs': ['0.75rem', { lineHeight: '1.5' }], // 12px
-        'sm': ['0.875rem', { lineHeight: '1.5' }], // 14px
-        'base': ['1rem', { lineHeight: '1.6' }], // 16px (default body)
-        'lg': ['1.125rem', { lineHeight: '1.6' }], // 18px
-        'xl': ['1.25rem', { lineHeight: '1.4' }], // 20px
-        '2xl': ['1.5rem', { lineHeight: '1.3' }], // 24px (H4)
-        '3xl': ['1.875rem', { lineHeight: '1.3' }], // 30px (H3)
-        '4xl': ['2.25rem', { lineHeight: '1.2' }], // 36px (H2)
-        '5xl': ['3rem', { lineHeight: '1.1' }], // 48px (H1)
-        '6xl': ['3.75rem', { lineHeight: '1.1' }], // 60px (Display/Hero H1)
+        'xs': ['0.75rem', { lineHeight: '1.5' }],
+        'sm': ['0.875rem', { lineHeight: '1.5' }],
+        'base': ['1rem', { lineHeight: '1.6' }],
+        'lg': ['1.125rem', { lineHeight: '1.6' }],
+        'xl': ['1.25rem', { lineHeight: '1.4' }],
+        '2xl': ['1.5rem', { lineHeight: '1.3' }],
+        '3xl': ['1.875rem', { lineHeight: '1.3' }],
+        '4xl': ['2.25rem', { lineHeight: '1.2' }],
+        '5xl': ['3rem', { lineHeight: '1.1' }],
+        '6xl': ['3.75rem', { lineHeight: '1.1' }],
       },
       fontWeight: {
         normal: '400',
@@ -111,18 +111,30 @@ export default {
 
       // --- Transitions ---
       transitionDuration: {
-        'fast': '150ms', // For quick feedback
-        'normal': '300ms', // For standard UI transitions
-        'slow': '500ms', // For more deliberate changes
+        'fast': '150ms',
+        'normal': '300ms',
+        'slow': '500ms',
       },
       transitionTimingFunction: {
-        'in-out': 'cubic-bezier(0.4, 0, 0.2, 1)', // Default cubic-bezier
+        'in-out': 'cubic-bezier(0.4, 0, 0.2, 1)',
         'in': 'cubic-bezier(0.4, 0, 1, 1)',
         'out': 'cubic-bezier(0, 0, 0.2, 1)',
-        'bounce': 'cubic-bezier(0.34, 1.56, 0.64, 1)', // Use with caution
+        'bounce': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+      },
+
+      // --- Breakpoints ---
+      screens: {
+        'sm': '640px',
+        'md': '768px',
+        'lg': '1024px',
+        'xl': '1280px',
+        '2xl': '1536px',
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography'),
+    require('@tailwindcss/aspect-ratio'),
+  ],
 };
----

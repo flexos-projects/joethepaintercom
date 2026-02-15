@@ -32,30 +32,30 @@ const {
   ...attrs
 } = Astro.props;
 
-// Base styles applied to all buttons
-const baseStyles = 'inline-flex items-center justify-center font-body font-semibold text-center text-decoration-none cursor-pointer border border-transparent transition-all duration-fast ease-in-out rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2';
+// Base styles applied to all buttons, using design tokens
+const baseStyles = 'inline-flex items-center justify-center font-body font-semibold text-center text-decoration-none cursor-pointer border border-transparent transition-all duration-fast ease-in-out rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-DEFAULT focus-visible:ring-offset-2';
 
-// Size-specific styles
+// Size-specific styles, mapping to design system spacing and font sizes
 const sizeClasses = {
   sm: 'px-3 py-2 text-sm',
   md: 'px-4 py-3 text-base',
   lg: 'px-6 py-4 text-lg',
 };
 
-// Variant-specific styles, including disabled, hover, and active states
+// Variant-specific styles, including disabled, hover, and active states, mapping to design tokens
 const variantClasses = {
   primary: disabled
-    ? 'bg-text-subtle text-surface cursor-not-allowed'
-    : 'bg-primary text-surface border-primary hover:bg-primary-dark hover:shadow-sm active:bg-primary-darker active:translate-y-px',
+    ? 'bg-text-subtle text-surface-DEFAULT cursor-not-allowed'
+    : 'bg-primary-DEFAULT text-surface-DEFAULT border-primary-DEFAULT hover:bg-primary-hover hover:border-primary-hover hover:shadow-sm active:bg-primary-active active:border-primary-active active:translate-y-px',
   secondary: disabled
-    ? 'bg-text-subtle text-surface cursor-not-allowed'
-    : 'bg-secondary text-surface border-secondary hover:bg-secondary-dark hover:shadow-sm active:bg-secondary-darker active:translate-y-px',
+    ? 'bg-text-subtle text-surface-DEFAULT cursor-not-allowed'
+    : 'bg-secondary-DEFAULT text-surface-DEFAULT border-secondary-DEFAULT hover:bg-secondary-hover hover:border-secondary-hover hover:shadow-sm active:bg-secondary-active active:border-secondary-active active:translate-y-px',
   outline: disabled
     ? 'bg-transparent text-text-subtle border-text-subtle cursor-not-allowed'
-    : 'bg-transparent text-primary border-primary hover:bg-primary hover:text-surface hover:shadow-sm active:bg-primary-darker active:translate-y-px',
+    : 'bg-transparent text-primary-DEFAULT border-primary-DEFAULT hover:bg-primary-DEFAULT hover:text-surface-DEFAULT hover:shadow-sm active:bg-primary-active active:border-primary-active active:text-surface-DEFAULT active:translate-y-px',
   ghost: disabled
     ? 'bg-transparent text-text-subtle cursor-not-allowed'
-    : 'bg-transparent text-primary border-transparent hover:bg-primary/[0.05] active:bg-primary/[0.1] active:translate-y-px',
+    : 'bg-transparent text-primary-DEFAULT border-transparent hover:bg-primary-DEFAULT/[0.05] active:bg-primary-DEFAULT/[0.1] active:translate-y-px',
 };
 
 // Determine the HTML element to render (button or a)
