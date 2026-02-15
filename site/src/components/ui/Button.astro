@@ -1,147 +1,83 @@
 ---
-/**
- * Button
- * A reusable component for various interactive buttons.
- */
-
-import type { HTMLAttributes } from 'astro/types';
-// Assuming Icon component is available and correctly typed elsewhere.
-// If not, this import needs to be uncommented and the component created.
-// import Icon from './Icon.astro'; 
-
-interface Props extends HTMLAttributes<'button'> {
-  /** Visual variant of the button. */
+interface Props {
+  href?: string;
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
-  /** Size of the button. */
   size?: 'sm' | 'md' | 'lg';
-  /** Whether the button is disabled. */
-  disabled?: boolean;
-  /** Type of the button (e.g., 'submit', 'button'). */
   type?: 'button' | 'submit' | 'reset';
-  /** Optional icon name to display before the text. */
-  iconLeft?: string;
-  /** Optional icon name to display after the text. */
-  iconRight?: string;
-  /** If true, button will take full width of its parent. */
-  fullWidth?: boolean;
+  disabled?: boolean;
+  class?: string;
 }
 
 const {
+  href,
   variant = 'primary',
   size = 'md',
-  disabled = false,
   type = 'button',
-  iconLeft,
-  iconRight,
-  fullWidth = false,
+  disabled = false,
   class: className,
   ...attrs
 } = Astro.props;
 
-const baseStyles = [
-  'inline-flex',
-  'items-center',
-  'justify-center',
-  'font-body',
-  'font-semibold',
-  'text-center',
-  'no-underline',
-  'cursor-pointer',
-  'border',
-  'border-transparent',
-  'rounded-md',
-  'transition-all',
-  'duration-150',
-  'ease-in-out',
-  'motion-reduce:transition-none', // Respect reduced motion
-  fullWidth ? 'w-full' : '',
-];
+// Base classes for all buttons
+const baseClasses = `
+  inline-flex items-center justify-center font-body font-semibold text-center no-underline cursor-pointer
+  border border-transparent transition-all duration-150 ease-in-out rounded-md
+  focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-light
+  whitespace-nowrap
+`;
 
-const sizeStyles = {
-  sm: 'py-2 px-3 text-sm',
-  md: 'py-3 px-4 text-base',
-  lg: 'py-4 px-6 text-lg',
+// Variant-specific classes
+const variantClasses = {
+  primary: `
+    bg-primary text-white border-primary
+    hover:bg-primary-dark hover:border-primary-dark hover:shadow-sm
+    active:scale-[0.98] active:bg-primary-dark active:border-primary-dark
+  `,
+  secondary: `
+    bg-neutral-500 text-white border-neutral-500
+    hover:bg-neutral-600 hover:border-neutral-600 hover:shadow-sm
+    active:scale-[0.98] active:bg-neutral-700 active:border-neutral-700
+  `,
+  outline: `
+    bg-transparent text-primary border-primary
+    hover:bg-primary hover:text-white hover:shadow-sm
+    active:scale-[0.98] active:bg-primary-dark active:border-primary-dark
+  `,
+  ghost: `
+    bg-transparent text-primary border-transparent
+    hover:bg-primary/[0.05]
+    active:scale-[0.98] active:bg-primary/[0.1]
+  `,
 };
 
-const variantStyles = {
-  primary: [
-    'bg-primary',
-    'text-white', // Maps to surface-light in design system
-    'border-primary',
-    'hover:bg-primary-hover',
-    'hover:border-primary-hover',
-    'hover:shadow-sm',
-    'active:bg-primary-active',
-    'active:border-primary-active',
-    'active:translate-y-px',
-    'active:shadow-none',
-    'focus:ring-2',
-    'focus:ring-primary/50',
-  ],
-  secondary: [
-    'bg-secondary',
-    'text-white', // Maps to surface-light in design system
-    'border-secondary',
-    'hover:bg-secondary-hover',
-    'hover:border-secondary-hover',
-    'hover:shadow-sm',
-    'active:bg-secondary-active',
-    'active:border-secondary-active',
-    'active:translate-y-px',
-    'active:shadow-none',
-    'focus:ring-2',
-    'focus:ring-secondary/50',
-  ],
-  outline: [
-    'bg-transparent',
-    'text-primary',
-    'border-primary',
-    'hover:bg-primary',
-    'hover:text-white', // Maps to surface-light in design system
-    'hover:shadow-sm',
-    'active:bg-primary-active',
-    'active:border-primary-active',
-    'active:text-white', // Maps to surface-light in design system
-    'active:translate-y-px',
-    'active:shadow-none',
-    'focus:ring-2',
-    'focus:ring-primary/50',
-  ],
-  ghost: [
-    'bg-transparent',
-    'text-primary',
-    'border-transparent',
-    'hover:bg-primary/[0.05]', // rgba(0, 71, 171, 0.05)
-    'active:bg-primary/[0.1]', // rgba(0, 71, 171, 0.1)
-    'active:translate-y-px',
-    'focus:ring-2',
-    'focus:ring-primary/50',
-  ],
+// Size-specific classes
+const sizeClasses = {
+  sm: 'px-3 py-2 text-sm',
+  md: 'px-4 py-3 text-base',
+  lg: 'px-6 py-4 text-lg',
 };
 
-const disabledStyles = [
-  'bg-textSubtle',
-  'border-textSubtle',
-  'text-white', // Maps to surface-light in design system
-  'cursor-not-allowed',
-  'opacity-75',
-  'hover:bg-textSubtle', // Override hover
-  'hover:border-textSubtle',
-  'active:translate-y-0', // Remove press effect
-  'active:shadow-none', // Ensure no shadow on active disabled
-];
+// Disabled state classes
+const disabledClasses = disabled
+  ? 'opacity-60 cursor-not-allowed pointer-events-none'
+  : '';
 
-const currentStyles = disabled ? disabledStyles : variantStyles[variant];
+// Determine if it's a link or a button
+const Element = href ? 'a' : 'button';
 ---
 
-<button
-  type={type}
-  disabled={disabled}
-  class:list={[...baseStyles, sizeStyles[size], ...currentStyles, className]}
+<Element
   {...attrs}
+  {href}
+  {type}
+  disabled={disabled}
+  class:list={[
+    baseClasses,
+    variantClasses[variant],
+    sizeClasses[size],
+    disabledClasses,
+    className
+  ]}
 >
-  {/* The Icon component is assumed to be defined and available for use */}
-  {iconLeft && <Icon name={iconLeft as any} class="mr-2" />}
   <slot />
-  {iconRight && <Icon name={iconRight as any} class="ml-2" />}
-</button>
+</Element>

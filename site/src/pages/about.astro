@@ -1,0 +1,121 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Section from '../components/sections/Section.astro';
+import Button from '../components/ui/Button.astro';
+import CTABanner from '../components/sections/CTABanner.astro';
+
+// Assets
+// Assuming joe-profile.jpg and joe-action.jpg are in public/images/
+import joeHeadshot from '../../public/images/joe-profile.jpg'; 
+import joeActionShot from '../../public/images/joe-action.jpg'; 
+
+// Constants
+const CSLB_LINK = "https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=802167";
+const JOE_PHONE = "+1 (760) 580-8173"; 
+const JOE_EMAIL = "joe@joethepainter.com"; 
+
+// Page metadata
+const meta = {
+  title: 'About Joe | Joe the Painter: Your San Diego Craftsman Since 2001',
+  description: 'Meet Joe, a licensed C33 Painting and Decorating contractor serving San Diego County since 2001. Learn about his commitment to craftsmanship, integrity, and personal service.',
+  ogImage: '/images/og/about-joe.jpg', // Assuming this asset exists
+};
+---
+
+<BaseLayout {...meta}>
+  <Section background="background" class="pt-24 pb-16">
+    <div class="max-w-4xl mx-auto text-center">
+      <Image
+        src={joeHeadshot}
+        alt="Professional headshot of Joe the Painter, a friendly and experienced contractor."
+        width={200}
+        height={200}
+        class="rounded-full w-48 h-48 object-cover shadow-xl border-4 border-accent mx-auto mb-8"
+      />
+      <h1 class="font-heading text-5xl sm:text-6xl font-bold text-text mb-6">
+        Meet Joe: Your Trusted Craftsman
+      </h1>
+      <p class="font-body text-xl text-text-muted leading-relaxed max-w-3xl mx-auto">
+        With over two decades of licensed experience, Joe the Painter isn't just a contractor; he's a dedicated craftsman committed to transforming your home or business with unparalleled precision and a personal touch.
+      </p>
+      <p class="font-body text-lg text-text-muted mt-8">
+        <strong class="text-accent">Serving San Diego County Since March 2001</strong><br />
+        <a href={CSLB_LINK} target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary-dark font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-light">
+          CA Lic. # 802167 <span class="sr-only">(Verify License on CSLB website)</span>
+        </a>
+      </p>
+    </div>
+  </Section>
+
+  <Section title="Our Story: A Legacy of Quality" background="surface">
+    <div class="grid md:grid-cols-2 gap-12 items-center">
+      <div>
+        <p class="font-body text-lg text-text-muted mb-4 leading-relaxed">
+          Established in March 2001, Joe the Painter began as a sole proprietorship founded on a simple principle: deliver superior craftsmanship with integrity and a personal commitment to every client. Unlike larger, impersonal companies, when you hire Joe the Painter, you work directly with Joe—the expert who personally oversees and executes your project. This hands-on approach ensures consistent quality, clear communication, and a level of personal accountability that has built a legacy of trust in the San Diego community.
+        </p>
+        <p class="font-body text-lg text-text-muted leading-relaxed">
+          Joe's passion for his craft extends beyond just painting. His unique ability to seamlessly integrate essential handyman repairs means your property receives a comprehensive solution, ensuring a lasting and flawless finish. It's this "fix-it-first, then-paint-it-perfect" philosophy that truly sets Joe apart, providing peace of mind and exceptional results.
+        </p>
+      </div>
+      <div class="flex justify-center">
+        <Image
+          src={joeActionShot}
+          alt="Joe the Painter meticulously working on a project, demonstrating craftsmanship."
+          width={500}
+          height={350}
+          class="rounded-lg shadow-lg w-full max-w-md object-cover"
+        />
+      </div>
+    </div>
+  </Section>
+
+  <Section title="Our Core Values" background="background" centered>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+      <div class="bg-surface p-8 rounded-lg shadow-md text-center">
+        <h3 class="font-heading text-2xl font-semibold text-text mb-3">Integrity</h3>
+        <p class="font-body text-text-muted leading-relaxed">
+          Our foundation is built on honesty, transparency, and clear communication. We do what's right, always, ensuring trust in every interaction.
+        </p>
+      </div>
+      <div class="bg-surface p-8 rounded-lg shadow-md text-center">
+        <h3 class="font-heading text-2xl font-semibold text-text mb-3">Craftsmanship</h3>
+        <p class="font-body text-text-muted leading-relaxed">
+          We are committed to superior quality, meticulous attention to detail, and delivering results that exceed expectations in every brushstroke and repair.
+        </p>
+      </div>
+      <div class="bg-surface p-8 rounded-lg shadow-md text-center">
+        <h3 class="font-heading text-2xl font-semibold text-text mb-3">Customer Focus</h3>
+        <p class="font-body text-text-muted leading-relaxed">
+          The needs and satisfaction of our clients are paramount, driving every decision and action we take to ensure a comfortable and collaborative experience.
+        </p>
+      </div>
+      <div class="bg-surface p-8 rounded-lg shadow-md text-center">
+        <h3 class="font-heading text-2xl font-semibold text-text mb-3">Reliability</h3>
+        <p class="font-body text-text-muted leading-relaxed">
+          Consistently delivering on promises, showing up on time, and completing projects efficiently and effectively, so you can count on us.
+        </p>
+      </div>
+      <div class="bg-surface p-8 rounded-lg shadow-md text-center">
+        <h3 class="font-heading text-2xl font-semibold text-text mb-3">Experience</h3>
+        <p class="font-body text-text-muted leading-relaxed">
+          Possessing deep, practical knowledge and skill honed over decades, offering confident solutions and expert advice for any project.
+        </p>
+      </div>
+      <div class="bg-surface p-8 rounded-lg shadow-md text-center">
+        <h3 class="font-heading text-2xl font-semibold text-text mb-3">Approachability</h3>
+        <p class="font-body text-text-muted leading-relaxed">
+          Joe's personal involvement and clear communication make him easy to work with, fostering a comfortable and collaborative client experience from start to finish.
+        </p>
+      </div>
+    </div>
+  </Section>
+
+  <CTABanner
+    headline="Ready for the Craftsman's Guarantee?"
+    description="Discuss your next project with Joe and experience the difference of true professionalism and personal commitment."
+    ctaText="Book Your Free Consultation"
+    ctaHref="/consultation"
+  />
+</BaseLayout>
+---

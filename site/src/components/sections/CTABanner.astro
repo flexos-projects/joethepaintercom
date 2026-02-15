@@ -1,0 +1,26 @@
+---
+import Button from '../ui/Button.astro';
+
+interface Props {
+  headline: string;
+  description: string;
+  ctaText: string;
+  ctaHref: string;
+}
+
+const { headline, description, ctaText, ctaHref } = Astro.props;
+---
+
+<section class="bg-primary-dark text-white py-16 px-4 sm:px-6 lg:px-8 text-center">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="font-heading text-4xl sm:text-5xl font-bold mb-4">
+      {headline}
+    </h2>
+    <p class="font-body text-lg sm:text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+      {description}
+    </p>
+    <Button href={ctaHref} variant="primary" size="lg">
+      {ctaText}
+    </Button>
+  </div>
+</section>
