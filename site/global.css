@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Global Styles for Joe the Painter
+  Defined based on 06-design.md and 07-technical.md (tailwind.config.mjs).
+  Ensures consistent typography, colors, and accessibility throughout the site.
+*/
+
+html {
+  /* Smooth scrolling for anchor links, respecting user's motion preference */
+  scroll-behavior: smooth;
+}
+
+body {
+  /*
+    Base body styles:
+    - Font family: Inter (body font)
+    - Text color: Text Dark (#1F2937) -> neutral-800 in tailwind.config.mjs
+    - Background color: Background White (#F9FAFB) -> neutral-50 in tailwind.config.mjs
+    - Font size: base (16px)
+    - Line height: 1.6 (as per 06-design.md)
+  */
+  @apply font-body text-neutral-800 bg-neutral-50 text-base leading-[1.6];
+}
+
+/* Headings (h1-h6) - Lora font, Text Dark color, specific sizes, weights, and line heights */
+h1, h2, h3, h4, h5, h6 {
+  @apply font-heading text-neutral-800;
+}
+
+h1 {
+  /* H1: 5xl (3rem), Mobile: 4xl (2.25rem), line-height: 1.1, font-weight: 700 */
+  @apply text-4xl md:text-5xl leading-[1.1] font-bold;
+}
+
+h2 {
+  /* H2: 4xl (2.25rem), Mobile: 3xl (1.875rem), line-height: 1.2, font-weight: 700 */
+  @apply text-3xl md:text-4xl leading-[1.2] font-bold;
+}
+
+h3 {
+  /* H3: 3xl (1.875rem), Mobile: 2xl (1.5rem), line-height: 1.3, font-weight: 600 */
+  @apply text-2xl md:text-3xl leading-[1.3] font-semibold;
+}
+
+h4 {
+  /* H4: 2xl (1.5rem), Mobile: xl (1.25rem), line-height: 1.3, font-weight: 600 */
+  @apply text-xl md:text-2xl leading-[1.3] font-semibold;
+}
+
+h5 {
+  /* H5: xl (1.25rem), Mobile: lg (1.125rem), line-height: 1.4, font-weight: 500 */
+  @apply text-lg md:text-xl leading-[1.4] font-medium;
+}
+
+h6 {
+  /* H6: lg (1.125rem), Mobile: base (1rem), line-height: 1.5, font-weight: 500 */
+  @apply text-base md:text-lg leading-[1.5] font-medium;
+}
+
+/* Anchor links */
+a {
+  /*
+    Links: Primary Blue (#0047AB) -> primary color in tailwind.config.mjs
+    Hover state: Underline, smooth color transition
+  */
+  @apply text-primary hover:underline transition-colors duration-200;
+}
+
+/* Accessible focus states for all interactive elements */
+:focus-visible {
+  /*
+    Custom focus ring to improve visibility for keyboard users.
+    Ring color: Primary Blue (#0047AB)
+  */
+  @apply outline-none ring-2 ring-primary ring-offset-2;
+}
+
+/* Image styling for responsiveness */
+img {
+  @apply max-w-full h-auto;
+}
+
+/* Responsive video embeds (e.g., YouTube, Vimeo) */
+.embed-responsive {
+  @apply relative w-full overflow-hidden;
+  padding-top: 56.25%; /* 16:9 aspect ratio */
+}
+
+.embed-responsive iframe,
+.embed-responsive video {
+  @apply absolute top-0 left-0 w-full h-full;
+}
+
+/* Accessibility: Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    /* Disable animations and transitions for users who prefer reduced motion */
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Tailwind typography plugin for markdown content (e.g., blog posts) */
+.prose {
+  /* Override default max-width to allow content to fill its container */
+  @apply max-w-none;
+}

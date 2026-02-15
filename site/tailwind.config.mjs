@@ -1,4 +1,3 @@
-```javascript
 /** @type {import('tailwindcss').Config} */
 import defaultTheme from 'tailwindcss/defaultTheme';
 
@@ -10,29 +9,23 @@ export default {
       colors: {
         // Semantic colors referencing CSS variables defined in src/styles/tokens.css
         primary: {
-          DEFAULT: 'var(--color-primary-blue)',
-          light: 'var(--color-primary-blue-light)', // Derived for hover states
-          dark: 'var(--color-primary-blue-dark)',   // Derived for active states
+          DEFAULT: 'var(--color-primary)', // #0047AB
+          hover: '#003B8D', // As per 06-design.md, Component Styles -> Buttons -> Primary Hover
+          active: '#002A6B', // As per 06-design.md, Component Styles -> Buttons -> Primary Active
         },
-        // 'Secondary Gray' from design spec is mapped to Tailwind's neutral.500 or text-muted
+        secondary: 'var(--color-secondary)', // #6B7280
         accent: {
-          DEFAULT: 'var(--color-accent-gold)',
-          light: 'var(--color-accent-gold-light)', // Derived for hover states
-          dark: 'var(--color-accent-gold-dark)',   // Derived for active states
+          DEFAULT: 'var(--color-accent)', // #E5B80B
+          hover: '#F5C62C', // Derived from accent gold for consistent hover effect
+          active: '#D4A700', // Derived from accent gold for consistent active effect
         },
-        neutral: {
-          50: 'var(--color-background-white)',
-          100: 'var(--color-surface-light)',
-          200: 'var(--color-border-light)',
-          300: 'var(--color-text-subtle)',
-          400: 'var(--color-text-muted)',
-          500: 'var(--color-secondary-gray)', // Direct mapping for Secondary Gray
-          600: 'var(--color-text)',
-          700: 'var(--color-text)',
-          800: 'var(--color-text)',
-          900: 'var(--color-text)',
-        },
-        white: 'var(--color-surface-light)', // Surface Light
+        background: 'var(--color-background)', // #F9FAFB
+        surface: 'var(--color-surface)',     // #FFFFFF
+        text: 'var(--color-text)',           // #1F2937 (Text Dark)
+        textMuted: 'var(--color-textMuted)', // #6B7280 (Text Muted)
+        textSubtle: 'var(--color-textSubtle)', // #9CA3AF
+        border: 'var(--color-border)',       // #E5E7EB
+        white: 'var(--color-surface)',       // Explicitly map white to surface for consistency
         black: '#000000', // Pure black for specific high-contrast needs, not general text
         
         // Semantic feedback colors
@@ -115,14 +108,14 @@ export default {
         'all': 'all', // Ensure 'transition-all' works as expected
       },
       transitionTimingFunction: {
-        'DEFAULT': 'var(--ease-default)',
+        'DEFAULT': 'var(--ease-default)', // As per 06-design.md, Motion -> Easing -> Default
         'in': 'var(--ease-in)',
         'out': 'var(--ease-out)',
-        'in-out': 'var(--ease-in-out)', // This will be the default for transition-all
+        'in-out': 'var(--ease-in-out)', 
         'bounce': 'var(--ease-bounce)',
       },
       transitionDuration: {
-        'DEFAULT': 'var(--duration-normal)',
+        'DEFAULT': 'var(--duration-normal)', // As per 06-design.md, Motion -> Timing -> Duration normal
         'fast': 'var(--duration-fast)',
         'normal': 'var(--duration-normal)',
         'slow': 'var(--duration-slow)',
@@ -131,4 +124,3 @@ export default {
   },
   plugins: [],
 };
-```
