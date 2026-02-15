@@ -1,0 +1,95 @@
+---
+/**
+ * TestimonialCard Component
+ * Displays a single client testimonial including the quote, client's name,
+ * location, and an optional project type.
+ */
+
+// Type imports
+import type { HTMLAttributes } from 'astro/types';
+
+// Props interface with JSDoc comments
+interface Props extends HTMLAttributes<'div'> {
+  /** The client's testimonial quote, can contain RichText (HTML). */
+  quote: string;
+  /** The name or initial of the client. */
+  clientName: string;
+  /** The location of the client (e.g., "Homeowner, Carlsbad"). */
+  clientLocation: string;
+  /** Optional type of project the testimonial relates to. */
+  projectType?: string;
+}
+
+// Destructure props
+const {
+  quote,
+  clientName,
+  clientLocation,
+  projectType,
+  class: className,
+  ...attrs
+} = Astro.props;
+---
+
+<div
+  class:list={[
+    'testimonial-card',
+    className,
+  ]}
+  {...attrs}
+>
+  <p class="testimonial-quote" set:html={quote}></p>
+  <div class="testimonial-author">
+    <p class="testimonial-name">{clientName}</p>
+    <p class="testimonial-location">{clientLocation}</p>
+    {projectType && <p class="testimonial-project-type">{projectType}</p>}
+  </div>
+</div>
+
+<style>
+  .testimonial-card {
+    @apply bg-surface shadow-md rounded-lg p-6 flex flex-col justify-between h-full;
+    border: var(--spacing-px) solid var(--colors-border);
+    transition: all var(--animation-duration-normal) var(--animation-easing-default);
+  }
+
+  .testimonial-card:has(.testimonial-quote :global(p):last-child:empty) .testimonial-quote :global(p):last-child {
+    display: none; /* Hide empty paragraphs from RichText */
+  }
+
+  .testimonial-quote {
+    @apply text-base text-text leading-base mb-4 italic;
+    font-family: var(--typography-fontFamily-body);
+  }
+
+  /* Ensure RichText content (e.g., paragraphs) within the quote is styled consistently */
+  .testimonial-quote :global(p) {
+    @apply mb-0; /* Remove default margin from last paragraph in quote */
+  }
+
+  .testimonial-author {
+    @apply flex flex-col items-start mt-auto; /* Pushes author info to the bottom */
+  }
+
+  .testimonial-name {
+    @apply text-sm text-text font-medium;
+    font-family: var(--typography-fontFamily-body);
+  }
+
+  .testimonial-location {
+    @apply text-sm text-textMuted;
+    font-family: var(--typography-fontFamily-body);
+  }
+
+  .testimonial-project-type {
+    @apply text-xs text-textSubtle mt-1;
+    font-family: var(--typography-fontFamily-body);
+  }
+
+  /* Reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    .testimonial-card {
+      transition: none;
+    }
+  }
+</style>

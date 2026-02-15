@@ -1,38 +1,39 @@
 ---
 /**
- * Icon
- * A reusable component for rendering SVG icons.
+ * Icon Component
+ * Renders SVG icons based on a provided name.
+ * Assumes a minimal set of icons for specific use cases within the project.
  */
 
+// Type imports
 import type { HTMLAttributes } from 'astro/types';
 
-interface Props extends HTMLAttributes<'svg'> {
-  /** The name of the icon to render (e.g., 'close', 'menu', 'arrow-right'). */
-  name: 'close' | 'menu' | 'arrow-right' | 'check' | 'warning' | 'info' | 'error';
-  /** Optional size for the icon (e.g., 'w-4 h-4'). */
-  size?: string;
+// Props interface with JSDoc comments
+interface Props extends HTMLAttributes<'div'> {
+  /** The name of the icon to render. */
+  name: 'arrow-left' | 'arrow-right';
+  /** Additional CSS classes to apply to the icon container. */
+  class?: string;
 }
 
-const { name, size = 'w-5 h-5', class: className, ...attrs } = Astro.props;
+// Destructure with defaults
+const { name, class: className, ...attrs } = Astro.props;
 
-const iconPaths: Record<Props['name'], string> = {
-  'close': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />',
-  'menu': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />',
-  'arrow-right': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />',
-  'check': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />',
-  'warning': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />',
-  'info': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />',
-  'error': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />',
+// SVG definitions for the icons.
+// These are simple paths, typically optimized for a 24x24 viewBox.
+const icons: Record<Props['name'], string> = {
+  'arrow-left': `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /></svg>`,
+  'arrow-right': `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>`,
 };
 ---
 
-<svg
-  xmlns="http://www.w3.org/2000/svg"
-  fill="none"
-  viewBox="0 0 24 24"
-  stroke="currentColor"
-  aria-hidden="true"
-  class:list={[size, className]}
-  set:html={iconPaths[name]}
-  {...attrs}
-/>
+<div class={className} set:html={icons[name]} {...attrs}></div>
+
+<style>
+  /* Base styles for the icon container if needed, e.g., for default sizing */
+  div :global(svg) {
+    display: block; /* Ensure SVG fills its container correctly */
+    width: 100%;
+    height: 100%;
+  }
+</style>
