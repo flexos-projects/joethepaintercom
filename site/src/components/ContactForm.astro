@@ -1,225 +1,82 @@
 ---
-// src/components/ContactForm.astro
 import Label from './ui/Label.astro';
 import Input from './ui/Input.astro';
 import Textarea from './ui/Textarea.astro';
 import Button from './ui/Button.astro';
 
-// Environment variable for Formspree endpoint
-const FORMSPREE_ENDPOINT_URL = import.meta.env.PUBLIC_FORMSPREE_CONTACT_FORM_ID
-  ? `https://formspree.io/f/${import.meta.env.PUBLIC_FORMSPREE_CONTACT_FORM_ID}`
-  : 'https://formspree.io/f/YOUR_FORMSPREE_CONTACT_FORM_ID'; // Placeholder for development, MUST be replaced in production
+interface Props {
+  id?: string;
+  formspreeEndpoint?: string; // Optional override, otherwise uses env var
+  onSuccess?: string; // URL to redirect on success
+}
 
+const { id = 'contact-form', formspreeEndpoint, onSuccess = '/thank-you-contact' } = Astro.props;
+
+// Use environment variable for Formspree endpoint, or provide a default if not set for dev
+const endpoint = formspreeEndpoint || import.meta.env.FORMSPREE_ENDPOINT_URL || 'https://formspree.io/f/yourcontactformid';
+const recaptchaSiteKey = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY;
 ---
 
-<div class="max-w-xl mx-auto">
-  <form id="contact-form" class="space-y-6 bg-surface p-8 rounded-lg shadow-md" method="POST" action={FORMSPREE_ENDPOINT_URL}>
-    <div class="space-y-2">
-      <Label for="name">Your Name</Label>
-      <Input
-        id="name"
-        name="name"
-        type="text"
-        placeholder="John Doe"
-        required
-        minlength="2"
-        aria-required="true"
-        autocomplete="name"
-      />
-      <p id="name-error" class="text-error text-xs mt-1 hidden" aria-live="polite"></p>
-    </div>
+<form id={id} method="POST" action={endpoint} class="space-y-spacing-4 bg-surface p-spacing-6 rounded-lg shadow-md">
+  <input type="hidden" name="g-recaptcha-response" id={`${id}-recaptcha-response`} />
 
-    <div class="space-y-2">
-      <Label for="email">Your Email</Label>
-      <Input
-        id="email"
-        name="email"
-        type="email"
-        placeholder="john.doe@example.com"
-        required
-        aria-required="true"
-        autocomplete="email"
-      />
-      <p id="email-error" class="text-error text-xs mt-1 hidden" aria-live="polite"></p>
-    </div>
-
-    <div class="space-y-2">
-      <Label for="message">Your Message</Label>
-      <Textarea
-        id="message"
-        name="message"
-        placeholder="I'd like to inquire about..."
-        required
-        minlength="10"
-        maxlength="1000"
-        rows="6"
-        aria-required="true"
-      />
-      <p id="message-error" class="text-error text-xs mt-1 hidden" aria-live="polite"></p>
-    </div>
-
-    <Button type="submit" variant="primary" size="lg" class="w-full" id="contact-submit-btn">
-      Send My Message
-    </Button>
-
-    <p id="form-error-general" class="bg-error/[0.1] border-l-4 border-error text-error text-base p-4 rounded-md hidden" aria-live="polite" role="alert">
-      Oops! Something went wrong on our end. Please try again or call Joe directly at <a href="tel:+17605808173" class="underline font-medium">(760) 580-8173</a>.
-    </p>
-  </form>
-
-  <div id="form-success-container" class="bg-success/[0.1] border-l-4 border-success text-success text-base p-8 rounded-lg shadow-md text-center hidden animate-fade-in">
-    <div class="text-5xl mb-4" aria-hidden="true">✓</div>
-    <h2 class="text-2xl font-semibold mb-2">Thank You! Your message has been sent to Joe.</h2>
-    <p class="text-lg">He aims to respond to all inquiries within 2 business days.</p>
-    <a href="/" class="inline-block mt-6 px-6 py-3 bg-primary text-white rounded-md hover:bg-primary-dark transition-colors">Return to Homepage</a>
+  <div>
+    <Label for={`${id}-name`} required>Your Name</Label>
+    <Input id={`${id}-name`} name="name" type="text" placeholder="Jane Doe" required autocomplete="name" />
   </div>
-</div>
 
-<script is:inline>
-  const contactForm = document.getElementById('contact-form');
-  const contactSubmitBtn = document.getElementById('contact-submit-btn');
-  const formSuccessContainer = document.getElementById('form-success-container');
-  const generalErrorMessage = document.getElementById('form-error-general');
+  <div>
+    <Label for={`${id}-email`} required>Your Email</Label>
+    <Input id={`${id}-email`} name="email" type="email" placeholder="jane.doe@example.com" required autocomplete="email" />
+  </div>
 
-  const fieldsConfig = [
-    { id: 'name', minLength: 2, errorMsg: 'Please enter your name (at least 2 characters).' },
-    { id: 'email', type: 'email', errorMsg: 'Please enter a valid email address.' },
-    { id: 'message', minLength: 10, maxLength: 1000, errorMsg: 'Please enter your message (10-1000 characters).' }
-  ];
+  <div>
+    <Label for={`${id}-phone`}>Your Phone (Optional)</Label>
+    <Input id={`${id}-phone`} name="phone" type="tel" placeholder="(760) 555-1234" autocomplete="tel" />
+  </div>
 
-  const getFieldElements = (id) => {
-    const input = document.getElementById(id);
-    const errorMsgElement = document.getElementById(`${id}-error`);
-    return { input, errorMsgElement };
-  };
+  <div>
+    <Label for={`${id}-subject`} required>Subject</Label>
+    <Input id={`${id}-subject`} name="subject" type="text" placeholder="Inquiry about painting services" required />
+  </div>
 
-  const validateField = (fieldId) => {
-    const { input, errorMsgElement } = getFieldElements(fieldId);
-    if (!input || !errorMsgElement) return true; // Should not happen if IDs are correct
+  <div>
+    <Label for={`${id}-message`} required>Your Message</Label>
+    <Textarea id={`${id}-message`} name="message" rows={5} placeholder="I'd like to ask about..." required />
+  </div>
 
-    let isValid = true;
-    let errorMessage = '';
+  <Button type="submit" variant="primary" size="lg" class="w-full">
+    Send My Message
+  </Button>
+</form>
 
-    // Reset error state
-    input.classList.remove('border-error');
-    errorMsgElement.classList.add('hidden');
-    input.setAttribute('aria-invalid', 'false');
+<script is:inline define:vars={{ formId: id, recaptchaSiteKey: recaptchaSiteKey, onSuccessUrl: onSuccess }}>
+  const form = document.getElementById(formId);
+  const recaptchaResponseInput = document.getElementById(`${formId}-recaptcha-response`);
 
-    const config = fieldsConfig.find(f => f.id === fieldId);
-    const value = input.value.trim();
+  if (form && recaptchaResponseInput && recaptchaSiteKey) {
+    form.addEventListener('submit', function (event) {
+      event.preventDefault(); // Prevent default form submission
 
-    if (input.required && !value) {
-      isValid = false;
-      errorMessage = config.errorMsg;
-    } else if (config.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      isValid = false;
-      errorMessage = config.errorMsg;
-    } else if (config.minLength && value.length < config.minLength) {
-      isValid = false;
-      errorMessage = config.errorMsg;
-    } else if (config.maxLength && value.length > config.maxLength) {
-      isValid = false;
-      errorMessage = config.errorMsg;
-    }
-
-    if (!isValid) {
-      input.classList.add('border-error');
-      errorMsgElement.textContent = errorMessage;
-      errorMsgElement.classList.remove('hidden');
-      input.setAttribute('aria-invalid', 'true');
-    }
-    return isValid;
-  };
-
-  const validateForm = () => {
-    let isFormValid = true;
-    fieldsConfig.forEach(field => {
-      if (!validateField(field.id)) {
-        isFormValid = false;
-      }
-    });
-    return isFormValid;
-  };
-
-  contactForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    generalErrorMessage.classList.add('hidden');
-    formSuccessContainer.classList.add('hidden');
-
-    if (!validateForm()) {
-      const firstInvalid = contactForm.querySelector('[aria-invalid="true"]');
-      if (firstInvalid) {
-        firstInvalid.focus();
-      }
-      return;
-    }
-
-    contactSubmitBtn.disabled = true;
-    contactSubmitBtn.innerHTML = `
-      <svg class="animate-spin h-5 w-5 mr-3 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2v4m0 12v4m8.485-2.485l-2.828-2.828M5.828 18.172L3 15.344M2.485 12H6m12 0h3.515M3.929 5.828l2.828 2.828M18.172 18.172l2.828 2.828"/>
-      </svg>
-      Sending Message...
-    `;
-    contactSubmitBtn.classList.add('pointer-events-none');
-
-    try {
-      const formData = new FormData(contactForm);
-      const response = await fetch(contactForm.action, {
-        method: contactForm.method,
-        body: formData,
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-
-      if (response.ok) {
-        contactForm.classList.add('hidden'); // Hide the form
-        formSuccessContainer.classList.remove('hidden'); // Show success message
-        contactForm.reset(); // Clear form fields
-        // Clear all field-specific error messages
-        fieldsConfig.forEach(field => {
-          const { input, errorMsgElement } = getFieldElements(field.id);
-          if (input) input.classList.remove('border-error');
-          if (errorMsgElement) errorMsgElement.classList.add('hidden');
+      if (typeof grecaptcha !== 'undefined' && grecaptcha.ready) {
+        grecaptcha.ready(function() {
+          grecaptcha.execute(recaptchaSiteKey, { action: 'submit_contact' }).then(function(token) {
+            recaptchaResponseInput.value = token;
+            form.submit(); // Submit the form after getting the token
+          }).catch(function(error) {
+            console.error('reCAPTCHA execution failed:', error);
+            // Fallback: submit form without recaptcha token if it fails
+            form.submit();
+          });
         });
       } else {
-        const data = await response.json();
-        if (data && data.errors) {
-          data.errors.forEach(error => {
-            const { input, errorMsgElement } = getFieldElements(error.field);
-            if (input && errorMsgElement) {
-              input.classList.add('border-error');
-              errorMsgElement.textContent = error.message;
-              errorMsgElement.classList.remove('hidden');
-              input.setAttribute('aria-invalid', 'true');
-            }
-          });
-        } else {
-          generalErrorMessage.classList.remove('hidden');
-        }
+        console.warn('reCAPTCHA script not fully loaded or ready. Submitting form without token.');
+        form.submit(); // Fallback: submit form without recaptcha token
       }
-    } catch (error) {
-      console.error('Form submission error:', error);
-      generalErrorMessage.classList.remove('hidden');
-    } finally {
-      contactSubmitBtn.disabled = false;
-      contactSubmitBtn.innerHTML = 'Send My Message';
-      contactSubmitBtn.classList.remove('pointer-events-none');
-    }
-  });
-
-  // Real-time validation on blur for better UX
-  fieldsConfig.forEach(field => {
-    const { input } = getFieldElements(field.id);
-    if (input) {
-      input.addEventListener('blur', () => validateField(field.id));
-      // Optional: Re-validate on input for immediate feedback after initial error
-      input.addEventListener('input', () => {
-        if (input.classList.contains('border-error')) {
-          validateField(field.id);
-        }
-      });
-    }
-  });
+    });
+  } else {
+    // This warning should only appear if PUBLIC_RECAPTCHA_SITE_KEY is not set (e.g., in development)
+    // or if the DOM elements are missing.
+    console.warn('reCAPTCHA integration skipped: form, recaptcha input, or site key missing. Ensure PUBLIC_RECAPTCHA_SITE_KEY is set in your .env file for production.');
+  }
 </script>

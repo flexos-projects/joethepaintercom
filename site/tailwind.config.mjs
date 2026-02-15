@@ -5,100 +5,138 @@ export default {
   content: ['./src/**/*.{astro,html,js,jsx,md,mdx,ts,tsx}'],
   theme: {
     extend: {
-      // --- Colors from 06-design.md ---
+      // --- Colors ---
       colors: {
-        'primary': '#0047AB',
-        'secondary': '#6B7280',
-        'accent': '#E5B80B',
-        'background': '#F9FAFB',
-        'surface': '#FFFFFF',
-        'text': '#1F2937',
-        'textMuted': '#6B7280',
-        'textSubtle': '#9CA3AF',
-        'border': '#E5E7EB',
-        'success': '#10B981',
-        'warning': '#F59E0B',
-        'error': '#EF4444',
-        'info': '#3B82F6',
+        primary: {
+          DEFAULT: 'var(--color-primary)', // #0047AB
+          hover: '#003B8D', // Explicit hover state from design.md
+          active: '#002A6B', // Explicit active state from design.md
+        },
+        secondary: {
+          DEFAULT: 'var(--color-secondary)', // #6B7280
+          hover: '#5A616E', // Explicit hover state from design.md
+          active: '#4D535E', // Explicit active state from design.md
+        },
+        accent: {
+          DEFAULT: 'var(--color-accent)', // #E5B80B
+          light: '#FFD700', // Brighter variant for highlights
+          dark: '#B38B00', // Deeper variant for subtle contrast
+        },
+        background: 'var(--color-background)',
+        surface: 'var(--color-surface)',
+        text: 'var(--color-text)',
+        textMuted: 'var(--color-text-muted)',
+        textSubtle: 'var(--color-text-subtle)',
+        border: 'var(--color-border)',
+        error: 'var(--color-error)',
+        success: 'var(--color-success)',
+        warning: 'var(--color-warning)',
+        info: 'var(--color-info)',
+        white: '#FFFFFF', // Explicit white
+        black: '#000000', // Explicit black
       },
 
       // --- Typography ---
       fontFamily: {
-        heading: ['"Lora"', ...defaultTheme.fontFamily.serif],
-        body: ['"Inter"', ...defaultTheme.fontFamily.sans],
-        mono: ['"Space Mono"', ...defaultTheme.fontFamily.mono],
+        heading: ['var(--font-family-heading)', ...defaultTheme.fontFamily.serif],
+        body: ['var(--font-family-body)', ...defaultTheme.fontFamily.sans],
+        mono: ['var(--font-family-mono)', ...defaultTheme.fontFamily.mono],
       },
       fontSize: {
-        'xs': ['0.75rem', { lineHeight: '1.5' }], // 12px
-        'sm': ['0.875rem', { lineHeight: '1.5' }], // 14px
-        'base': ['1rem', { lineHeight: '1.6' }], // 16px (default body)
-        'lg': ['1.125rem', { lineHeight: '1.6' }], // 18px
-        'xl': ['1.25rem', { lineHeight: '1.4' }], // 20px
-        '2xl': ['1.5rem', { lineHeight: '1.3' }], // 24px
-        '3xl': ['1.875rem', { lineHeight: '1.3' }], // 30px
-        '4xl': ['2.25rem', { lineHeight: '1.2' }], // 36px (h2)
-        '5xl': ['3rem', { lineHeight: '1.1' }], // 48px (h1)
-        '6xl': ['3.75rem', { lineHeight: '1.1' }], // 60px (hero h1)
+        'xs': 'var(--font-size-xs)',
+        'sm': 'var(--font-size-sm)',
+        'base': 'var(--font-size-base)',
+        'lg': 'var(--font-size-lg)',
+        'xl': 'var(--font-size-xl)',
+        '2xl': 'var(--font-size-2xl)',
+        '3xl': 'var(--font-size-3xl)',
+        '4xl': 'var(--font-size-4xl)',
+        '5xl': 'var(--font-size-5xl)',
+        '6xl': 'var(--font-size-6xl)',
       },
       fontWeight: {
-        normal: '400',
-        medium: '500',
-        semibold: '600',
-        bold: '700',
+        normal: 'var(--font-weight-normal)',
+        medium: 'var(--font-weight-medium)',
+        semibold: 'var(--font-weight-semibold)',
+        bold: 'var(--font-weight-bold)',
+      },
+      lineHeight: {
+        'tight': 'var(--line-height-tight)',
+        'normal': 'var(--line-height-normal)',
+        'relaxed': 'var(--line-height-relaxed)',
+        'xs': 'var(--line-height-xs)',
+        'sm': 'var(--line-height-sm)',
+        'base': 'var(--line-height-base)',
+        'lg': 'var(--line-height-lg)',
+        'xl': 'var(--line-height-xl)',
+        '2xl': 'var(--line-height-2xl)',
+        '3xl': 'var(--line-height-3xl)',
+        '4xl': 'var(--line-height-4xl)',
+        '5xl': 'var(--line-height-5xl)',
+        '6xl': 'var(--line-height-6xl)',
       },
 
-      // --- Spacing (from 06-design.md) ---
+      // --- Spacing (based on 4px grid) ---
       spacing: {
-        'px': '1px',
-        '0.5': '0.125rem', // 2px
-        '1': '0.25rem', // 4px
-        '2': '0.5rem', // 8px
-        '3': '0.75rem', // 12px
-        '4': '1rem', // 16px
-        '5': '1.25rem', // 20px
-        '6': '1.5rem', // 24px
-        '8': '2rem', // 32px
-        '10': '2.5rem', // 40px
-        '12': '3rem', // 48px
-        '16': '4rem', // 64px
-        '20': '5rem', // 80px
-        '24': '6rem', // 96px
+        'px': 'var(--spacing-px)',
+        '0-5': 'var(--spacing-0-5)',
+        '1': 'var(--spacing-1)',
+        '2': 'var(--spacing-2)',
+        '3': 'var(--spacing-3)',
+        '4': 'var(--spacing-4)',
+        '5': 'var(--spacing-5)',
+        '6': 'var(--spacing-6)',
+        '8': 'var(--spacing-8)',
+        '10': 'var(--spacing-10)',
+        '12': 'var(--spacing-12)',
+        '16': 'var(--spacing-16)',
+        '20': 'var(--spacing-20)',
+        '24': 'var(--spacing-24)',
       },
 
       // --- Border Radius ---
       borderRadius: {
-        'none': '0',
-        'sm': '0.125rem', // 2px
-        'md': '0.375rem', // 6px
-        'lg': '0.5rem', // 8px
-        'xl': '0.75rem', // 12px
-        '2xl': '1rem', // 16px
-        'full': '9999px',
+        'none': 'var(--border-radius-none)',
+        'sm': 'var(--border-radius-sm)',
+        'md': 'var(--border-radius-md)',
+        'lg': 'var(--border-radius-lg)',
+        'xl': 'var(--border-radius-xl)',
+        '2xl': 'var(--border-radius-2xl)',
+        'full': 'var(--border-radius-full)',
       },
 
       // --- Shadows ---
       boxShadow: {
-        'sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-        'md': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-        'lg': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
-        'xl': '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+        'sm': 'var(--shadow-sm)',
+        'md': 'var(--shadow-md)',
+        'lg': 'var(--shadow-lg)',
+        'xl': 'var(--shadow-xl)',
+        '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)', // Default Tailwind 2xl
+        'inner': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)', // Default Tailwind inner
+        'none': 'none',
+        'outline': '0 0 0 3px rgba(0, 71, 171, 0.5)', // Custom focus outline using primary blue
       },
 
-      // --- Transitions (from 06-design.md Motion section) ---
-      transitionDuration: {
-        'fast': '150ms',
-        'normal': '300ms',
-        'slow': '500ms',
+      // --- Transitions ---
+      transitionProperty: {
+        'height': 'height',
+        'spacing': 'margin, padding',
       },
       transitionTimingFunction: {
-        'default': 'cubic-bezier(0.4, 0, 0.2, 1)',
-        'in': 'cubic-bezier(0.4, 0, 1, 1)',
-        'out': 'cubic-bezier(0, 0, 0.2, 1)',
-        'in-out': 'cubic-bezier(0.4, 0, 0.2, 1)', // Same as default
-        'bounce': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+        'DEFAULT': 'var(--easing-default)',
+        'ease-in': 'var(--easing-in)',
+        'ease-out': 'var(--easing-out)',
+        'ease-in-out': 'var(--easing-default)', // Re-map to default easing
+        'bounce': 'var(--easing-bounce)',
+      },
+      transitionDuration: {
+        'DEFAULT': 'var(--transition-normal)',
+        'fast': 'var(--transition-fast)',
+        'normal': 'var(--transition-normal)',
+        'slow': 'var(--transition-slow)',
       },
 
-      // --- Breakpoints (from 06-design.md Layout System) ---
+      // --- Breakpoints ---
       screens: {
         'sm': '640px',
         'md': '768px',

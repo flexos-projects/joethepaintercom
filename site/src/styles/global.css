@@ -1,104 +1,56 @@
+/* src/styles/global.css */
+@import './tokens.css'; /* Import CSS variables */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Custom font imports */
-/* Lora for headings */
-@font-face {
-  font-family: 'Lora';
-  font-style: normal;
-  font-weight: 400;
-  src: url('/fonts/Lora-Regular.woff2') format('woff2');
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Lora';
-  font-style: normal;
-  font-weight: 700;
-  src: url('/fonts/Lora-Bold.woff2') format('woff2');
-  font-display: swap;
+/* Base styles using CSS variables */
+html {
+  scroll-behavior: smooth;
 }
 
-/* Inter for body text */
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 400;
-  src: url('/fonts/Inter-Regular.woff2') format('woff2');
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 500;
-  src: url('/fonts/Inter-Medium.woff2') format('woff2');
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 600;
-  src: url('/fonts/Inter-SemiBold.woff2') format('woff2');
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 700;
-  src: url('/fonts/Inter-Bold.woff2') format('woff2');
-  font-display: swap;
-}
-
-/* Base styles for the document body */
 body {
-  @apply font-body text-text bg-background;
+  font-family: var(--font-family-body);
+  color: var(--color-text);
+  background-color: var(--color-background);
+  line-height: var(--line-height-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Headings base styles */
 h1, h2, h3, h4, h5, h6 {
-  @apply font-heading text-text;
+  font-family: var(--font-family-heading);
+  color: var(--color-text);
+  line-height: var(--line-height-tight);
 }
 
-/* Custom focus-visible styling for accessibility */
-/* This ensures a clear focus indicator even when default browser outlines are suppressed */
+/* Specific heading sizes and weights from design system */
+h1 { font-size: var(--font-size-5xl); font-weight: var(--font-weight-bold); line-height: var(--line-height-5xl); }
+h2 { font-size: var(--font-size-4xl); font-weight: var(--font-weight-bold); line-height: var(--line-height-4xl); }
+h3 { font-size: var(--font-size-3xl); font-weight: var(--font-weight-semibold); line-height: var(--line-height-3xl); }
+h4 { font-size: var(--font-size-2xl); font-weight: var(--font-weight-semibold); line-height: var(--line-height-2xl); }
+h5 { font-size: var(--font-size-xl); font-weight: var(--font-weight-medium); line-height: var(--line-height-xl); }
+h6 { font-size: var(--font-size-lg); font-weight: var(--font-weight-medium); line-height: var(--line-height-lg); }
+
+/* Responsive typography scaling */
+@media (max-width: 767px) { /* md breakpoint in Tailwind is 768px */
+  h1 { font-size: var(--font-size-4xl); line-height: var(--line-height-4xl); }
+  h2 { font-size: var(--font-size-3xl); line-height: var(--line-height-3xl); }
+  h3 { font-size: var(--font-size-2xl); line-height: var(--line-height-2xl); }
+  h4 { font-size: var(--font-size-xl); line-height: var(--line-height-xl); }
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* Focus styles for accessibility */
 *:focus-visible {
-  outline: 2px solid theme('colors.primary.DEFAULT');
-  outline-offset: 3px;
-  border-radius: theme('borderRadius.md');
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
-
-/* For elements where outline is hidden by default (e.g., buttons, links) */
-/* Ensure they still get a visible focus indicator */
-[role="button"]:focus-visible,
-a:focus-visible,
-button:focus-visible {
-  outline: 2px solid theme('colors.primary.DEFAULT');
-  outline-offset: 3px;
-  border-radius: theme('borderRadius.md');
-}
-
-/* Skip-link for keyboard users */
-.skip-link {
-  @apply sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[999]
-         focus:bg-surface focus:text-primary focus:p-3 focus:rounded-md focus:shadow-lg
-         focus:text-base focus:font-medium;
-}
-
-/* Global transitions for interactive elements */
-.transition-all-colors-transform {
-  @apply transition-all duration-fast ease-default motion-reduce:transition-none;
-}
-
-/* Utility for visually hidden but screen-reader accessible content */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
----

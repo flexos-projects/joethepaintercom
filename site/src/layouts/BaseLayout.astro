@@ -1,26 +1,27 @@
 ---
-import { ViewTransitions } from 'astro:transitions';
+import '../styles/global.css'; // Import global styles which includes tokens.css
+import { Astro } from 'astro';
 
 interface Props {
   title: string;
   description: string;
   keywords?: string;
   ogImage?: string;
-  skipToContentId?: string;
 }
 
-const { title, description, keywords, ogImage, skipToContentId = 'main-content' } = Astro.props;
-
+const { title, description, keywords, ogImage } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
----
 
-<!doctype html>
+const recaptchaSiteKey = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY;
+const isProduction = import.meta.env.PROD;
+---
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href={canonicalURL.href} />
+    <link rel="canonical" href={canonicalURL} />
 
     <title>{title} | Joe the Painter: Your San Diego Craftsman Since 2001</title>
     <meta name="description" content={description} />
@@ -28,37 +29,32 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
     <!-- Open Graph / Social Media Tags -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={canonicalURL.href} />
-    <meta property="og:title" content={title} | Joe the Painter />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={ogImage || new URL('/images/social-share-default.jpg', Astro.site).href} />
+    <meta property="og:image" content={ogImage || 'https://www.joethepainter.com/images/social-share-default.jpg'} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
 
     <!-- Twitter Card Tags -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content={canonicalURL.href} />
-    <meta name="twitter:title" content={title} | Joe the Painter />
+    <meta name="twitter:url" content={canonicalURL} />
+    <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImage || new URL('/images/social-share-default.jpg', Astro.site).href} />
+    <meta name="twitter:image" content={ogImage || 'https://www.joethepainter.com/images/social-share-default.jpg'} />
     <meta name="twitter:creator" content="@JoeThePainterSD" />
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@400;600;700&display=swap" rel="stylesheet">
 
-    <!-- Preload fonts for performance -->
-    <link rel="preload" href="/fonts/Lora-Regular.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/Lora-Bold.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/Inter-Medium.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/Inter-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/Inter-Bold.woff2" as="font" type="font/woff2" crossorigin>
-
-    <ViewTransitions />
+    <!-- reCAPTCHA v3 Script -->
+    {isProduction && recaptchaSiteKey && (
+      <script is:inline src={`https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`}></script>
+    )}
   </head>
   <body>
-    <a href={`#${skipToContentId}`} class="skip-link">Skip to main content</a>
     <slot />
   </body>
 </html>
----

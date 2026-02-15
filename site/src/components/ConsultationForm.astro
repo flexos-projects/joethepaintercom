@@ -1,265 +1,121 @@
 ---
-import Input from './ui/Input.astro';
 import Label from './ui/Label.astro';
+import Input from './ui/Input.astro';
+import Textarea from './ui/Textarea.astro';
 import Button from './ui/Button.astro';
-import type { HTMLAttributes } from 'astro/types';
 
-interface FormProps extends HTMLAttributes<'form'> {
-  formId: string; // Unique ID for the form, for Formspree endpoint
-  successRedirectUrl?: string; // Optional URL to redirect to on success
+interface Props {
+  id?: string;
+  formspreeEndpoint?: string; // Optional override, otherwise uses env var
+  onSuccess?: string; // URL to redirect on success
 }
 
-const { formId, successRedirectUrl, ...rest } = Astro.props;
+const { id = 'consultation-form', formspreeEndpoint, onSuccess = '/thank-you' } = Astro.props;
 
-// Formspree endpoint. This MUST be replaced with your actual Formspree endpoint in production.
-// For development and initial setup, using a generic ID from Formspree is common.
-// This example uses a placeholder `formId` for illustration, but in a real scenario,
-// `formId` would map to a specific Formspree form ID (e.g., "abcdefg").
-// The `joe@joethepainter.com` email should be configured in Formspree for this form ID.
-const formspreeEndpoint = `https://formspree.io/f/${formId}`;
-
-// Client-side script for form submission feedback and validation
-// This script needs to be inline for dynamic behavior without client-side framework hydration.
+// Use environment variable for Formspree endpoint, or provide a default if not set for dev
+const endpoint = formspreeEndpoint || import.meta.env.FORMSPREE_ENDPOINT_URL || 'https://formspree.io/f/yourformid';
+const recaptchaSiteKey = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY;
 ---
-<form
-  id={`form-${formId}`}
-  action={formspreeEndpoint}
-  method="POST"
-  class="space-y-6"
-  data-success-redirect-url={successRedirectUrl}
-  {...rest}
->
-  <h2 class="font-heading text-3xl font-bold text-text text-center mb-6">Book Your Free Consultation</h2>
-  <p class="text-textMuted text-center mb-8">
-    Tell us about your project, and Joe will get in touch to discuss your needs and provide a no-obligation estimate.
-  </p>
 
-  <Input
-    label="Full Name"
-    name="name"
-    type="text"
-    placeholder="John Doe"
-    required
-  />
-
-  <Input
-    label="Email Address"
-    name="email"
-    type="email"
-    placeholder="Your email address"
-    required
-  />
-
-  <Input
-    label="Phone Number"
-    name="phone"
-    type="tel"
-    placeholder="(760) 555-1234"
-    required
-  />
+<form id={id} method="POST" action={endpoint} class="space-y-spacing-4 bg-surface p-spacing-6 rounded-lg shadow-md">
+  <input type="hidden" name="g-recaptcha-response" id={`${id}-recaptcha-response`} />
 
   <div>
-    <Label for={`service-type-${formId}`} required>Project Type</Label>
-    <select
-      id={`service-type-${formId}`}
-      name="service_type"
-      required
-      class="w-full px-4 py-3 border border-border rounded-md text-text bg-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all-colors-transform"
-      aria-describedby={`service-type-${formId}-error`}
-    >
-      <option value="">Select a service type...</option>
-      <option value="painting">Painting Services</option>
-      <option value="handy_services">Handy Services</option>
-      <option value="both">Both Painting & Handy Services</option>
-    </select>
-    <p id={`service-type-${formId}-error`} class="text-error text-sm mt-1 hidden" role="alert"></p>
+    <Label for={`${id}-name`} required>Full Name</Label>
+    <Input id={`${id}-name`} name="name" type="text" placeholder="John Doe" required autocomplete="name" />
   </div>
-
-  <Input
-    label="Service Location (City or Zip Code)"
-    name="location"
-    type="text"
-    placeholder="Carlsbad, CA or 92008"
-    required
-  />
 
   <div>
-    <Label for={`project-description-${formId}`} required>Project Details</Label>
-    <textarea
-      id={`project-description-${formId}`}
-      name="project_description"
-      rows={5}
-      placeholder="Describe your project here (e.g., exterior house painting, drywall repair in living room)"
-      required
-      class="w-full px-4 py-3 border border-border rounded-md text-text bg-surface placeholder:text-textMuted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all-colors-transform"
-      aria-describedby={`project-description-${formId}-error`}
-    ></textarea>
-    <p id={`project-description-${formId}-error`} class="text-error text-sm mt-1 hidden" role="alert"></p>
+    <Label for={`${id}-email`} required>Email Address</Label>
+    <Input id={`${id}-email`} name="email" type="email" placeholder="john.doe@example.com" required autocomplete="email" />
   </div>
 
-  <fieldset class="mb-4">
-    <legend class="block text-sm font-medium text-text mb-1.5">Preferred Contact Method <span class="text-error ml-1" aria-hidden="true">*</span></legend>
-    <div class="mt-2 space-y-2">
-      <div class="flex items-center">
-        <input
-          id={`contact-phone-${formId}`}
-          name="preferred_contact"
-          type="radio"
-          value="phone"
-          required
-          class="h-4 w-4 text-primary border-border focus:ring-primary"
-          aria-describedby={`preferred-contact-${formId}-error`}
-        />
-        <label for={`contact-phone-${formId}`} class="ml-2 block text-base text-text">Phone Call</label>
-      </div>
-      <div class="flex items-center">
-        <input
-          id={`contact-email-${formId}`}
-          name="preferred_contact"
-          type="radio"
-          value="email"
-          required
-          class="h-4 w-4 text-primary border-border focus:ring-primary"
-          aria-describedby={`preferred-contact-${formId}-error`}
-        />
-        <label for={`contact-email-${formId}`} class="ml-2 block text-base text-text">Email</label>
+  <div>
+    <Label for={`${id}-phone`} required>Phone Number</Label>
+    <Input id={`${id}-phone`} name="phone" type="tel" placeholder="(760) 555-1234" required autocomplete="tel" />
+  </div>
+
+  <div>
+    <Label for={`${id}-project-type`} required>Project Type</Label>
+    <div class="relative">
+      <select
+        id={`${id}-project-type`}
+        name="projectType"
+        required
+        class="block appearance-none w-full px-spacing-3 py-spacing-2 border rounded-md text-text bg-surface border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-normal pr-spacing-8"
+      >
+        <option value="">Select a service type</option>
+        <option value="Painting Services">Painting Services</option>
+        <option value="Handy Services">Handy Services</option>
+        <option value="Both Painting & Handy Services">Both Painting & Handy Services</option>
+      </select>
+      <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-spacing-2 text-text-muted">
+        <svg class="fill-current h-spacing-4 w-spacing-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
       </div>
     </div>
-    <p id={`preferred-contact-${formId}-error`} class="text-error text-sm mt-1 hidden" role="alert"></p>
-  </fieldset>
+  </div>
 
-  <input type="text" name="_gotcha" class="hidden" tabindex="-1" autocomplete="off" /> <!-- Honeypot field -->
+  <div>
+    <Label for={`${id}-location`} required>Service Location</Label>
+    <Input id={`${id}-location`} name="location" type="text" placeholder="Carlsbad, CA or 92008" required />
+  </div>
 
-  <Button type="submit" variant="primary" size="lg" fullWidth disabled={false}>
+  <div>
+    <Label for={`${id}-description`} required>Project Details</Label>
+    <Textarea id={`${id}-description`} name="projectDetails" rows={5} placeholder="Tell Joe about your project (e.g., 'Exterior house paint, 3 bedrooms')" required />
+  </div>
+
+  <div>
+    <Label>Preferred Contact Method</Label>
+    <div class="flex flex-col space-y-spacing-2 mt-spacing-2">
+      <div class="flex items-center">
+        <input type="radio" id={`${id}-contact-phone`} name="preferredContact" value="Phone Call" class="h-spacing-4 w-spacing-4 text-primary border-border focus:ring-primary" required />
+        <label for={`${id}-contact-phone`} class="ml-spacing-2 text-text-muted">Phone Call</label>
+      </div>
+      <div class="flex items-center">
+        <input type="radio" id={`${id}-contact-email`} name="preferredContact" value="Email" class="h-spacing-4 w-spacing-4 text-primary border-border focus:ring-primary" />
+        <label for={`${id}-contact-email`} class="ml-spacing-2 text-text-muted">Email</label>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <Label for={`${id}-how-heard`}>How Did You Hear About Joe? (Optional)</Label>
+    <Input id={`${id}-how-heard`} name="howHeard" type="text" placeholder="e.g., Google, Friend's referral, Yelp" />
+  </div>
+
+  <Button type="submit" variant="primary" size="lg" class="w-full">
     Request My Free Consultation
   </Button>
-
-  <div id={`form-status-${formId}`} role="status" aria-live="polite" class="mt-4 text-center"></div>
 </form>
 
-<script is:inline>
-  const formElement = document.getElementById('form-{formId}');
-  const statusDivElement = document.getElementById('form-status-{formId}');
-  const submitButtonElement = formElement.querySelector('button[type="submit"]');
+<script is:inline define:vars={{ formId: id, recaptchaSiteKey: recaptchaSiteKey, onSuccessUrl: onSuccess }}>
+  const form = document.getElementById(formId);
+  const recaptchaResponseInput = document.getElementById(`${formId}-recaptcha-response`);
 
-  // Helper to find the correct error element for an input or fieldset
-  function getErrorElement(input) {
-    let errorElement = document.getElementById(`${input.id}-error`);
-    if (!errorElement && input.type === 'radio') {
-      errorElement = input.closest('fieldset')?.querySelector('[role="alert"]');
-    }
-    // Fallback if specific ID not found, but prefer explicit IDs
-    if (!errorElement && input.nextElementSibling?.tagName === 'P' && input.nextElementSibling.getAttribute('role') === 'alert') {
-      errorElement = input.nextElementSibling;
-    }
-    return errorElement;
-  }
+  if (form && recaptchaResponseInput && recaptchaSiteKey) {
+    form.addEventListener('submit', function (event) {
+      event.preventDefault(); // Prevent default form submission
 
-  // Client-side validation for required fields
-  function validateForm() {
-    let isValid = true;
-    formElement.querySelectorAll('[required]').forEach(input => {
-      const errorElement = getErrorElement(input);
-
-      if (input.type === 'radio') {
-        const radioGroup = formElement.querySelector(`input[name="${input.name}"]:checked`);
-        if (!radioGroup) {
-          isValid = false;
-          if (errorElement) {
-            errorElement.textContent = 'Please select a contact method.';
-            errorElement.classList.remove('hidden');
-          }
-        } else {
-          if (errorElement) {
-            errorElement.textContent = '';
-            errorElement.classList.add('hidden');
-          }
-        }
-      } else if (!input.value.trim()) {
-        isValid = false;
-        input.classList.add('border-error');
-        if (errorElement) {
-          errorElement.textContent = `${input.previousElementSibling?.textContent.replace('*', '').trim() || input.placeholder || input.name} is required.`;
-          errorElement.classList.remove('hidden');
-        }
+      if (typeof grecaptcha !== 'undefined' && grecaptcha.ready) {
+        grecaptcha.ready(function() {
+          grecaptcha.execute(recaptchaSiteKey, { action: 'submit_form' }).then(function(token) {
+            recaptchaResponseInput.value = token;
+            form.submit(); // Submit the form after getting the token
+          }).catch(function(error) {
+            console.error('reCAPTCHA execution failed:', error);
+            // Fallback: submit form without recaptcha token if it fails
+            form.submit();
+          });
+        });
       } else {
-        input.classList.remove('border-error');
-        if (errorElement) {
-          errorElement.textContent = '';
-          errorElement.classList.add('hidden');
-        }
+        console.warn('reCAPTCHA script not fully loaded or ready. Submitting form without token.');
+        form.submit(); // Fallback: submit form without recaptcha token
       }
     });
-    return isValid;
+  } else {
+    // This warning should only appear if PUBLIC_RECAPTCHA_SITE_KEY is not set (e.g., in development)
+    // or if the DOM elements are missing.
+    console.warn('reCAPTCHA integration skipped: form, recaptcha input, or site key missing. Ensure PUBLIC_RECAPTCHA_SITE_KEY is set in your .env file for production.');
   }
-
-  formElement.addEventListener('input', (event) => {
-    const input = event.target;
-    if (input.hasAttribute('required')) {
-      const errorElement = getErrorElement(input);
-
-      if (input.type === 'radio') {
-        const radioGroup = formElement.querySelector(`input[name="${input.name}"]:checked`);
-        if (radioGroup && errorElement) {
-          errorElement.textContent = '';
-          errorElement.classList.add('hidden');
-        }
-      } else if (input.value.trim()) {
-        input.classList.remove('border-error');
-        if (errorElement) errorElement.classList.add('hidden');
-      }
-    }
-  });
-
-
-  formElement.addEventListener('submit', async (event) => {
-    event.preventDefault(); // Prevent default form submission
-
-    if (!validateForm()) {
-      statusDivElement.innerHTML = '<p class="text-error">Please fill out all required fields.</p>';
-      return;
-    }
-
-    submitButtonElement.disabled = true;
-    submitButtonElement.innerHTML = '<span class="flex items-center justify-center"><svg class="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Sending Request...</span>';
-    statusDivElement.innerHTML = '';
-
-    try {
-      const response = await fetch(formElement.action, {
-        method: formElement.method,
-        body: new FormData(formElement),
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-
-      if (response.ok) {
-        statusDivElement.innerHTML = '<p class="text-success">Thank You! Your request has been received. Joe will contact you shortly.</p>';
-        formElement.reset();
-        
-        // Dispatch a custom event for parent components to listen to
-        document.dispatchEvent(new CustomEvent('consultation-form-success', {
-          detail: { formId: '{formId}' }
-        }));
-
-        const successRedirectUrl = formElement.dataset.successRedirectUrl;
-        if (successRedirectUrl) {
-          window.location.href = successRedirectUrl;
-        }
-      } else {
-        const data = await response.json();
-        if (data.errors) {
-          statusDivElement.innerHTML = `<p class="text-error">Error: ${data.errors.map(e => e.field).join(', ')} failed validation.</p>`;
-        } else {
-          statusDivElement.innerHTML = '<p class="text-error">Oops! Something went wrong. Please try again or call Joe directly.</p>';
-        }
-      }
-    } catch (error) {
-      statusDivElement.innerHTML = '<p class="text-error">Network error. Please try again later.</p>';
-      console.error('Form submission error:', error);
-    } finally {
-      submitButtonElement.disabled = false;
-      submitButtonElement.innerHTML = 'Request My Free Consultation';
-    }
-  });
 </script>

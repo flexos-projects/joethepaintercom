@@ -1,23 +1,19 @@
 ---
-import type { HTMLAttributes } from 'astro/types';
-
-interface Props extends HTMLAttributes<'label'> {
+interface Props {
   for: string;
-  required?: boolean;
   class?: string;
+  required?: boolean;
 }
 
-const { for: htmlFor, required = false, class: className, ...rest } = Astro.props;
+const { for: id, class: className, required = false } = Astro.props;
 ---
-
 <label
-  for={htmlFor}
+  for={id}
   class:list={[
-    'block text-sm font-medium text-text mb-1',
-    className,
+    "block font-medium text-sm text-text mb-spacing-1",
+    className
   ]}
-  {...rest}
 >
   <slot />
-  {required && <span class="text-error ml-1" aria-hidden="true">*</span>}
+  {required && <span class="text-error ml-spacing-0-5">*</span>}
 </label>

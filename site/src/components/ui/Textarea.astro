@@ -1,81 +1,43 @@
 ---
-/**
- * Textarea
- * A reusable component for multi-line text input fields, designed for clear communication of project details and inquiries.
- */
-
-import type { HTMLAttributes } from 'astro/types';
-import Label from './Label.astro';
-
-interface Props extends HTMLAttributes<'textarea'> {
-  /** The label text for the textarea. */
-  label: string;
-  /** The ID of the textarea, used for associating with the label. */
+interface Props {
   id: string;
-  /** Optional placeholder text. */
+  name: string;
   placeholder?: string;
-  /** Number of rows for the textarea. */
-  rows?: number;
-  /** Whether the textarea is required. */
-  required?: boolean;
-  /** Current value of the textarea. */
   value?: string;
-  /** Optional error message to display below the textarea. */
-  errorMessage?: string;
+  rows?: number;
+  required?: boolean;
+  class?: string;
+  error?: string; // For displaying validation errors
 }
 
 const {
-  label,
   id,
+  name,
   placeholder,
+  value,
   rows = 4,
   required = false,
-  value,
-  errorMessage,
   class: className,
-  ...attrs
+  error,
 } = Astro.props;
 ---
-
-<div class="mb-4">
-  <Label for={id}>
-    {label}
-    {required && <span class="text-error ml-1">*</span>}
-  </Label>
-  <textarea
-    id={id}
-    name={id}
-    placeholder={placeholder}
-    rows={rows}
-    required={required}
-    aria-invalid={!!errorMessage}
-    aria-describedby={errorMessage ? `${id}-error` : undefined}
-    class:list={[
-      'w-full',
-      'px-3',
-      'py-2',
-      'border',
-      'border-border',
-      'rounded-md',
-      'font-body',
-      'text-base',
-      'text-text',
-      'bg-surface',
-      'focus:outline-none',
-      'focus:ring-2',
-      'focus:ring-primary',
-      'focus:border-transparent',
-      'transition-all',
-      'duration-150',
-      'ease-in-out',
-      errorMessage && 'border-error',
-      className,
-    ]}
-    {...attrs}
-  >{value}</textarea>
-  {errorMessage && (
-    <p id={`${id}-error`} class="text-error text-sm mt-1" role="alert">
-      {errorMessage}
-    </p>
-  )}
-</div>
+<textarea
+  id={id}
+  name={name}
+  placeholder={placeholder}
+  rows={rows}
+  required={required}
+  class:list={[
+    "w-full px-spacing-3 py-spacing-2 border rounded-md text-text bg-surface",
+    "border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-normal",
+    error ? "border-error focus:ring-error" : "", // Use ring-error for consistency
+    className
+  ]}
+  aria-invalid={error ? "true" : "false"}
+  aria-describedby={error ? `${id}-error` : undefined}
+>{value}</textarea>
+{error && (
+  <p id={`${id}-error`} class="text-error text-xs mt-spacing-1" role="alert">
+    {error}
+  </p>
+)}
