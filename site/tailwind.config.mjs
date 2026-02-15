@@ -9,8 +9,8 @@ export default {
       colors: {
         primary: {
           DEFAULT: '#0047AB', // Primary Blue from 06-design.md
-          light: '#3B6FB5',   // Derived from Primary Blue for hover
-          dark: '#003B8D',    // Derived from Primary Blue for active
+          hover: '#003B8D',   // Derived from 06-design.md > Component Styles > Buttons > Primary > Hover
+          active: '#002A6B',  // Derived from 06-design.md > Component Styles > Buttons > Primary > Active
         },
         secondary: '#6B7280', // Secondary Gray from 06-design.md
         accent: '#E5B80B',    // Accent Gold from 06-design.md
@@ -70,9 +70,10 @@ export default {
       },
 
       // --- Border Radius ---
-      borderRadius: { // From 06-design.md
+      borderRadius: { // From 06-design.md and 07-technical.md
         'none': '0',
         'sm': '0.125rem', // 2px
+        'DEFAULT': '0.25rem', // 4px, added based on 07-technical.md sample
         'md': '0.375rem', // 6px
         'lg': '0.5rem', // 8px
         'xl': '0.75rem', // 12px
@@ -103,5 +104,9 @@ export default {
       },
     },
   },
-  plugins: [], // Forms plugin will be added later for default styles. For now, rely on manual classes.
+  plugins: [
+    require('@tailwindcss/forms'), // From 07-technical.md
+    require('@tailwindcss/typography'), // From 07-technical.md
+    require('@tailwindcss/aspect-ratio'), // From 07-technical.md
+  ],
 };
