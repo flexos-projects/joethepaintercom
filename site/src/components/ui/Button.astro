@@ -22,13 +22,13 @@ const baseClasses =
 
 const variantClasses = {
   primary:
-    'bg-primary text-surface border-primary hover:bg-[#003B8D] hover:border-[#003B8D] active:bg-[#002A6B] active:border-[#002A6B] shadow-md hover:shadow-lg',
+    'bg-primary text-surface border-primary hover:bg-[#003B8D] hover:border-[#003B8D] active:bg-[#002A6B] active:border-[#002A6B] hover:shadow-sm active:translate-y-px',
   secondary:
-    'bg-secondary text-surface border-secondary hover:bg-[#5A616E] hover:border-[#5A616E] active:bg-[#4D535E] active:border-[#4D535E] shadow-md hover:shadow-lg',
+    'bg-secondary text-surface border-secondary hover:bg-[#5A616E] hover:border-[#5A616E] active:bg-[#4D535E] active:border-[#4D535E] hover:shadow-sm active:translate-y-px',
   outline:
-    'bg-transparent text-primary border-primary hover:bg-primary hover:text-surface hover:shadow-md',
+    'bg-transparent text-primary border-primary hover:bg-primary hover:text-surface hover:shadow-sm active:bg-[#002A6B] active:border-[#002A6B] active:text-surface active:translate-y-px',
   ghost:
-    'bg-transparent text-primary border-transparent hover:bg-primary/[0.05] active:bg-primary/[0.1]',
+    'bg-transparent text-primary border-transparent hover:bg-primary/[0.05] active:bg-primary/[0.1] active:translate-y-px',
 };
 
 const sizeClasses = {
@@ -38,7 +38,7 @@ const sizeClasses = {
 };
 
 const disabledClasses = disabled
-  ? 'opacity-60 cursor-not-allowed pointer-events-none'
+  ? 'bg-textSubtle border-textSubtle text-surface cursor-not-allowed pointer-events-none'
   : '';
 
 const combinedClasses = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${disabledClasses} ${className || ''}`;
