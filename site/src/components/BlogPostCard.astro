@@ -1,0 +1,54 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+
+const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<article class="bg-surface-light rounded-lg shadow-md overflow-hidden flex flex-col h-full hover:shadow-lg transition-shadow duration-300 ease-in-out">
+  <a href={`/blog/${post.slug}`} aria-label={`Read more about ${post.data.title}`} class="block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-t-lg">
+    {post.data.image && (
+      <Image
+        src={post.data.image.src}
+        alt={post.data.image.alt}
+        width={600}
+        height={400}
+        format="webp"
+        loading="lazy"
+        widths={[300, 600, 900]}
+        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+        class="w-full h-48 object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
+      />
+    )}
+  </a>
+  <div class="p-6 flex-1 flex flex-col">
+    <time datetime={post.data.pubDate.toISOString()} class="text-sm text-text-muted">
+      {formattedDate}
+    </time>
+    <h2 class="font-heading text-xl font-semibold mt-2 leading-tight">
+      <a href={`/blog/${post.slug}`} class="text-text hover:text-primary transition-colors duration-200 ease-in-out">
+        {post.data.title}
+      </a>
+    </h2>
+    <p class="text-text-muted mt-3 text-base flex-1">
+      {post.data.description}
+    </p>
+    <div class="flex flex-wrap gap-2 mt-4">
+      {post.data.tags.map((tag) => (
+        <span class="text-xs bg-background-white text-text-muted px-2 py-1 rounded-md border border-border">
+          {tag}
+        </span>
+      ))}
+    </div>
+  </div>
+</article>

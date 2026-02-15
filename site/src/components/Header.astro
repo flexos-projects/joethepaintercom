@@ -1,38 +1,154 @@
 ---
 import { Image } from 'astro:assets';
-import logoText from '@images/logo-text.svg'; // Assuming a text-based logo for accessibility
 import Button from './ui/Button.astro';
-import Nav from './Nav.astro';
-import MobileNav from './MobileNav.astro';
+import logoText from '@images/logo-text.svg'; // Assuming a logo-text SVG is available
 
-// Ensure the logo is a semantic SVG for accessibility and scalability
-// Or use an actual image and ensure alt text is present
+interface NavLink {
+  text: string;
+  href: string;
+}
+
+const navLinks: NavLink[] = [
+  { text: 'Home', href: '/' },
+  { text: 'Painting Services', href: '/services/painting' },
+  { text: 'Handy Services', href: '/services/handy' },
+  { text: 'Our Work', href: '/our-work' },
+  { text: 'About Joe', href: '/about' },
+  { text: 'Blog', href: '/blog' }, // Added Blog link
+  { text: 'Contact', href: '/contact' },
+];
+
+const currentPath = Astro.url.pathname;
+
+// Check if a path starts with any of the service paths for active state
+const isServiceActive = (href: string) => {
+  if (href === '/services/painting' || href === '/services/handy') {
+    return currentPath.startsWith('/services/');
+  }
+  return currentPath === href;
+};
 ---
 
-<header class="sticky top-0 z-50 bg-surface shadow-sm transition-all-colors-transform" role="banner">
-  <div class="container mx-auto px-4 py-3 md:py-4 flex items-center justify-between">
-    <a href="/" class="flex items-center group" aria-label="Joe the Painter homepage">
-      <Image
-        src={logoText}
-        alt="Joe the Painter Logo"
-        width={180}
-        height={40}
-        class="h-8 md:h-10 w-auto transition-transform group-hover:scale-105 motion-reduce:transition-none"
-        loading="eager"
-        fetchpriority="high"
-      />
+<header class="sticky top-0 z-50 bg-surface-light shadow-md">
+  <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+    <a href="/" class="flex items-center group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm" aria-label="Joe the Painter Homepage">
+      <img src={logoText.src} alt="Joe the Painter Logo" width="180" height="32" class="h-8 md:h-9 transition-transform duration-200 group-hover:scale-105" />
     </a>
 
     <!-- Desktop Navigation -->
-    <nav class="hidden lg:flex items-center space-x-6" aria-label="Main navigation">
-      <Nav />
-      <Button href="/contact" variant="primary" size="md">
+    <nav class="hidden lg:flex items-center gap-x-8" aria-label="Main navigation">
+      <ul role="list" class="flex gap-x-8">
+        {navLinks.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class:list={[
+                'font-body text-base font-medium text-text hover:text-primary transition-colors duration-200 ease-in-out',
+                { 'text-primary border-b-2 border-primary pb-1': isServiceActive(link.href) },
+              ]}
+              aria-current={currentPath === link.href ? 'page' : false}
+            >
+              {link.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+      <Button href="/consultation" variant="primary" size="md">
         Book a Free Consultation
       </Button>
     </nav>
 
-    <!-- Mobile Navigation Trigger -->
-    <MobileNav />
+    <!-- Mobile Navigation Toggle -->
+    <div class="lg:hidden flex items-center">
+      <Button href="/consultation" variant="primary" size="sm" class="mr-4">
+        Book
+      </Button>
+      <button
+        id="mobile-menu-button"
+        aria-label="Open mobile menu"
+        aria-expanded="false"
+        class="p-2 text-text hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md transition-colors duration-200 ease-in-out"
+      >
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu Overlay -->
+  <div
+    id="mobile-menu"
+    class="fixed inset-0 bg-surface-light transform translate-x-full transition-transform duration-300 ease-in-out z-50 lg:hidden"
+    aria-hidden="true"
+  >
+    <div class="relative h-full flex flex-col items-center justify-center p-8">
+      <button
+        id="mobile-menu-close-button"
+        aria-label="Close mobile menu"
+        class="absolute top-4 right-4 p-2 text-text hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md transition-colors duration-200 ease-in-out"
+      >
+        <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <nav aria-label="Mobile navigation" class="flex flex-col items-center space-y-8">
+        <ul role="list" class="flex flex-col items-center space-y-6">
+          {navLinks.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class:list={[
+                  'font-heading text-3xl font-semibold text-text hover:text-primary transition-colors duration-200 ease-in-out',
+                  { 'text-primary': currentPath === link.href },
+                ]}
+                aria-current={currentPath === link.href ? 'page' : false}
+              >
+                {link.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+        <Button href="/consultation" variant="primary" size="lg" class="mt-8 w-full max-w-xs">
+          Book a Free Consultation
+        </Button>
+      </nav>
+    </div>
   </div>
 </header>
----
+
+<script is:inline>
+  const mobileMenuButton = document.getElementById('mobile-menu-button');
+  const mobileMenuCloseButton = document.getElementById('mobile-menu-close-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  const toggleMobileMenu = () => {
+    const isExpanded = mobileMenuButton?.getAttribute('aria-expanded') === 'true';
+    mobileMenuButton?.setAttribute('aria-expanded', String(!isExpanded));
+    mobileMenu?.classList.toggle('translate-x-full');
+    mobileMenu?.setAttribute('aria-hidden', String(isExpanded));
+
+    // Disable body scroll when menu is open
+    document.body.style.overflow = isExpanded ? '' : 'hidden';
+  };
+
+  mobileMenuButton?.addEventListener('click', toggleMobileMenu);
+  mobileMenuCloseButton?.addEventListener('click', toggleMobileMenu);
+
+  // Close menu if a link is clicked
+  mobileMenu?.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      if (!mobileMenu.classList.contains('translate-x-full')) {
+        toggleMobileMenu();
+      }
+    });
+  });
+
+  // Close menu on ESC key
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !mobileMenu.classList.contains('translate-x-full')) {
+      toggleMobileMenu();
+    }
+  });
+</script>

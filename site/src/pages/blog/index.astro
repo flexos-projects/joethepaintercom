@@ -1,0 +1,37 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import BlogPostCard from '@components/BlogPostCard.astro';
+import CtaBlock from '@components/sections/CtaBlock.astro'; // Assuming CtaBlock exists from other tasks
+
+// Get all non-draft posts, sorted by date
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const pageTitle = "Blog & Resources | Joe the Painter";
+const pageDescription = "Expert tips and insights on painting, home repairs, and property maintenance from Joe the Painter. Stay informed and inspired for your next project.";
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <main class="container mx-auto px-4 py-12 md:py-16 lg:py-24 max-w-7xl">
+    <header class="text-center mb-12 md:mb-16">
+      <h1 class="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-text mb-4">
+        Blog & Resources
+      </h1>
+      <p class="text-lg md:text-xl text-text-muted max-w-3xl mx-auto">
+        Expert tips, insights, and guides on meticulous painting, reliable home repairs, and property maintenance from Joe, your trusted San Diego craftsman.
+      </p>
+    </header>
+
+    <section aria-labelledby="latest-posts-heading" class="mb-16">
+      <h2 id="latest-posts-heading" class="sr-only">Latest Blog Posts</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+        {posts.map((post) => (
+          <BlogPostCard post={post} />
+        ))}
+      </div>
+    </section>
+
+    <CtaBlock />
+  </main>
+</BaseLayout>

@@ -1,79 +1,123 @@
 ---
 import { Image } from 'astro:assets';
-import logoText from '@images/logo-text-light.svg'; // Assuming a light version of the logo for dark background
 import Button from './ui/Button.astro';
+import logoTextWhite from '@images/logo-text-white.svg'; // Assuming a white version of the logo
+
+interface FooterLink {
+  text: string;
+  href: string;
+}
+
+const companyLinks: FooterLink[] = [
+  { text: 'Home', href: '/' },
+  { text: 'About Joe', href: '/about' },
+  { text: 'Our Work', href: '/our-work' },
+  { text: 'Blog', href: '/blog' }, // Added Blog link
+  { text: 'Contact', href: '/contact' },
+];
+
+const serviceLinks: FooterLink[] = [
+  { text: 'Painting Services', href: '/services/painting' },
+  { text: 'Handy Services', href: '/services/handy' },
+  // Add specific local service areas here when implemented
+  // { text: 'Carlsbad Painter', href: '/areas/carlsbad' },
+];
 ---
 
-<footer class="bg-text text-textMuted py-12 md:py-16" role="contentinfo">
-  <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
-    <div class="col-span-full md:col-span-1 flex flex-col items-start">
-      <a href="/" class="mb-4" aria-label="Joe the Painter homepage">
-        <Image
-          src={logoText}
-          alt="Joe the Painter Logo"
-          width={200}
-          height={45}
-          class="h-9 w-auto"
-          loading="lazy"
-        />
-      </a>
-      <p class="text-sm leading-relaxed mb-4">
-        Your trusted craftsman for meticulous painting and reliable repairs in San Diego County.
-      </p>
-      <Button href="/contact" variant="primary" size="sm">
-        Book Your Free Consultation
-      </Button>
+<footer class="bg-text py-12 md:py-16 lg:py-20 text-text-muted">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 lg:gap-16 pb-8 md:pb-12 lg:pb-16 border-b border-text-muted/20">
+      <!-- Company Info & Logo -->
+      <div class="col-span-full md:col-span-1 flex flex-col items-start">
+        <a href="/" class="mb-4 group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm" aria-label="Joe the Painter Homepage">
+          <img src={logoTextWhite.src} alt="Joe the Painter Logo" width="180" height="32" class="h-8 md:h-9 transition-transform duration-200 group-hover:scale-105" />
+        </a>
+        <p class="text-sm leading-relaxed mb-4">
+          Meticulous painting and reliable repairs, personally delivered by a licensed craftsman dedicated to your peace of mind in San Diego County.
+        </p>
+        <p class="text-sm font-semibold">
+          <a href="tel:+17605808173" class="hover:text-surface-light transition-colors duration-200 ease-in-out">
+            +1 (760) 580-8173
+          </a>
+        </p>
+        <p class="text-sm">
+          <a href="mailto:joe@joethepainter.com" class="hover:text-surface-light transition-colors duration-200 ease-in-out">
+            joe@joethepainter.com
+          </a>
+        </p>
+      </div>
+
+      <!-- Company Navigation -->
+      <div>
+        <h3 class="font-heading text-lg font-semibold text-surface-light mb-4">Company</h3>
+        <ul role="list" class="space-y-2">
+          {companyLinks.map((link) => (
+            <li>
+              <a href={link.href} class="text-sm hover:text-surface-light transition-colors duration-200 ease-in-out">
+                {link.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Services Navigation -->
+      <div>
+        <h3 class="font-heading text-lg font-semibold text-surface-light mb-4">Services</h3>
+        <ul role="list" class="space-y-2">
+          {serviceLinks.map((link) => (
+            <li>
+              <a href={link.href} class="text-sm hover:text-surface-light transition-colors duration-200 ease-in-out">
+                {link.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Call to Action / Newsletter -->
+      <div class="col-span-full md:col-span-1">
+        <h3 class="font-heading text-lg font-semibold text-surface-light mb-4">Ready to Start?</h3>
+        <p class="text-sm mb-4">
+          Let's discuss your vision and bring it to life with Joe's unmatched craftsmanship.
+        </p>
+        <Button href="/consultation" variant="primary" size="md" class="w-full">
+          Book Your Free Consultation
+        </Button>
+        <!-- Newsletter Signup (P2 - not yet implemented, placeholder) -->
+        <!-- <div class="mt-8">
+          <h3 class="font-heading text-lg font-semibold text-surface-light mb-4">Stay in the Loop</h3>
+          <p class="text-sm mb-4">Get Joe's pro tips and updates directly to your inbox.</p>
+          <form class="flex flex-col sm:flex-row gap-2">
+            <input type="email" placeholder="Your email address" aria-label="Enter your email for newsletter"
+                   class="flex-1 px-4 py-3 rounded-md bg-text-muted/10 border border-text-muted/30 text-surface-light placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary" />
+            <Button type="submit" variant="accent" size="md">Subscribe</Button>
+          </form>
+        </div> -->
+      </div>
     </div>
 
-    <nav class="md:col-span-1" aria-labelledby="footer-nav-heading">
-      <h3 id="footer-nav-heading" class="font-semibold text-surface text-lg mb-4">Quick Links</h3>
-      <ul role="list" class="space-y-2">
-        <li><a href="/" class="text-textMuted hover:text-surface transition-all-colors-transform">Home</a></li>
-        <li><a href="/services/painting" class="text-textMuted hover:text-surface transition-all-colors-transform">Painting Services</a></li>
-        <li><a href="/services/handy" class="text-textMuted hover:text-surface transition-all-colors-transform">Handy Services</a></li>
-        <li><a href="/our-work" class="text-textMuted hover:text-surface transition-all-colors-transform">Our Work</a></li>
-        <li><a href="/about" class="text-textMuted hover:text-surface transition-all-colors-transform">About Joe</a></li>
-        <li><a href="/contact" class="text-textMuted hover:text-surface transition-all-colors-transform">Contact</a></li>
-      </ul>
-    </nav>
-
-    <div class="md:col-span-1" aria-labelledby="footer-contact-heading">
-      <h3 id="footer-contact-heading" class="font-semibold text-surface text-lg mb-4">Contact Joe</h3>
-      <ul role="list" class="space-y-2">
-        <li>
-          <a href="tel:+17605808173" class="text-textMuted hover:text-surface transition-all-colors-transform">
-            <span class="font-medium">Phone:</span> (760) 580-8173
-          </a>
-        </li>
-        <li>
-          <a href="mailto:joe@joethepainter.com" class="text-textMuted hover:text-surface transition-all-colors-transform">
-            <span class="font-medium">Email:</span> joe@joethepainter.com
-          </a>
-        </li>
-        <li class="flex items-center">
-          <span class="font-medium text-textMuted">License:</span>
+    <!-- Legal & Copyright -->
+    <div class="flex flex-col md:flex-row items-center justify-between pt-8 text-sm">
+      <p class="mb-4 md:mb-0">&copy; {new Date().getFullYear()} Joe the Painter. All rights reserved.</p>
+      <div class="flex flex-col md:flex-row items-center gap-2 md:gap-4">
+        <p class="mb-2 md:mb-0">
           <a
             href="https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=802167"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-textMuted hover:text-surface transition-all-colors-transform ml-1"
-            aria-label="Verify Joe's California Contractor License (opens in new tab)"
+            class="text-text-muted hover:text-surface-light transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
+            aria-label="Verify Joe the Painter's California Contractor License"
           >
-            CA Lic. #802167
+            CA Lic. # 802167
           </a>
-        </li>
-      </ul>
+        </p>
+        <!-- Social Media Links (P2 - not yet implemented, placeholder) -->
+        <!-- <div class="flex gap-4">
+          <a href="#" class="text-text-muted hover:text-surface-light" aria-label="Facebook"><svg class="h-5 w-5"></svg></a>
+          <a href="#" class="text-text-muted hover:text-surface-light" aria-label="Instagram"><svg class="h-5 w-5"></svg></a>
+        </div> -->
+      </div>
     </div>
-
-    <div class="md:col-span-1" aria-labelledby="footer-hours-heading">
-      <h3 id="footer-hours-heading" class="font-semibold text-surface text-lg mb-4">Business Hours</h3>
-      <p class="text-textMuted">Monday - Friday: 8 AM - 5 PM</p>
-      <p class="text-textMuted">Saturday - Sunday: Closed</p>
-    </div>
-  </div>
-
-  <div class="container mx-auto px-4 mt-12 pt-8 border-t border-secondary-dark text-center text-sm">
-    <p>&copy; {new Date().getFullYear()} Joe the Painter. All rights reserved.</p>
   </div>
 </footer>
----
