@@ -1,0 +1,45 @@
+---
+/**
+ * Label.astro
+ * Reusable label component for form fields, ensuring accessibility and consistent styling.
+ */
+
+// Type imports
+import type { HTMLAttributes } from 'astro/types';
+
+// Props interface with JSDoc comments
+interface Props extends HTMLAttributes<'label'> {
+  /** The ID of the form control the label is associated with. */
+  for: string;
+  /** The text content of the label. */
+  text: string;
+  /** Optional boolean to indicate if the field is required. */
+  required?: boolean;
+}
+
+// Destructure with defaults
+const {
+  for: htmlFor, // Rename 'for' to 'htmlFor' to avoid conflict with JS keyword
+  text,
+  required = false,
+  class: className,
+  ...attrs
+} = Astro.props;
+---
+
+<label
+  for={htmlFor}
+  class:list={[
+    'block',
+    'font-body',
+    'text-sm',
+    'font-medium',
+    'text-text',
+    'mb-1',
+    className,
+  ]}
+  {...attrs}
+>
+  {text}
+  {required && <span class="text-error ml-0.5" aria-hidden="true">*</span>}
+</label>

@@ -8,52 +8,31 @@ export default {
       // --- Colors ---
       colors: {
         primary: {
-          DEFAULT: '#0047AB',
-          dark: '#003B8D',
-          darker: '#002A6B',
+          DEFAULT: '#0047AB', // Primary Blue from 06-design.md
+          light: '#3B6FB5',   // Derived from Primary Blue for hover
+          dark: '#003B8D',    // Derived from Primary Blue for active
         },
-        secondary: {
-          DEFAULT: '#6B7280',
-          dark: '#5A616E',
-          darker: '#4D535E',
-        },
-        accent: {
-          DEFAULT: '#E5B80B',
-        },
-        background: '#F9FAFB',
-        surface: '#FFFFFF',
-        text: '#1F2937',
-        'text-muted': '#6B7280',
-        'text-subtle': '#9CA3AF',
-        'border-light': '#E5E7EB',
-        error: '#EF4444',
-        success: '#10B981',
-        warning: '#F59E0B',
-        info: '#3B82F6',
-        // Keeping a full neutral scale for general utility where specific semantic colors aren't needed
-        neutral: {
-          50: '#F9FAFB',
-          100: '#F3F4F6',
-          200: '#E5E7EB',
-          300: '#D1D5DB',
-          400: '#9CA3AF',
-          500: '#6B7280',
-          600: '#4B5563',
-          700: '#374151',
-          800: '#1F2937',
-          900: '#111827',
-        },
-        white: '#FFFFFF',
-        black: '#000000',
+        secondary: '#6B7280', // Secondary Gray from 06-design.md
+        accent: '#E5B80B',    // Accent Gold from 06-design.md
+        background: '#F9FAFB', // Background White from 06-design.md
+        surface: '#FFFFFF',   // Surface Light from 06-design.md
+        text: '#1F2937',      // Text Dark from 06-design.md
+        textMuted: '#6B7280', // Text Muted from 06-design.md
+        textSubtle: '#9CA3AF', // Text Subtle from 06-design.md
+        border: '#E5E7EB',    // Border Light from 06-design.md
+        error: '#EF4444',     // Error from 06-design.md
+        success: '#10B981',   // Success from 06-design.md
+        warning: '#F59E0B',   // Warning from 06-design.md
+        info: '#3B82F6',      // Info from 06-design.md
       },
 
       // --- Typography ---
       fontFamily: {
-        heading: ['"Lora"', ...defaultTheme.fontFamily.serif],
-        body: ['"Inter"', ...defaultTheme.fontFamily.sans],
-        mono: ['"Space Mono"', ...defaultTheme.fontFamily.mono],
+        heading: ['"Lora"', ...defaultTheme.fontFamily.serif], // From 06-design.md
+        body: ['"Inter"', ...defaultTheme.fontFamily.sans],   // From 06-design.md
+        mono: ['"Space Mono"', ...defaultTheme.fontFamily.mono], // From 06-design.md
       },
-      fontSize: {
+      fontSize: { // From 06-design.md
         'xs': ['0.75rem', { lineHeight: '1.5' }],
         'sm': ['0.875rem', { lineHeight: '1.5' }],
         'base': ['1rem', { lineHeight: '1.6' }],
@@ -65,7 +44,7 @@ export default {
         '5xl': ['3rem', { lineHeight: '1.1' }],
         '6xl': ['3.75rem', { lineHeight: '1.1' }],
       },
-      fontWeight: {
+      fontWeight: { // From 06-design.md
         normal: '400',
         medium: '500',
         semibold: '600',
@@ -73,7 +52,7 @@ export default {
       },
 
       // --- Spacing (based on 4px grid) ---
-      spacing: {
+      spacing: { // From 06-design.md and tokens.json
         'px': '1px',
         '0.5': '0.125rem', // 2px
         '1': '0.25rem', // 4px
@@ -91,50 +70,38 @@ export default {
       },
 
       // --- Border Radius ---
-      borderRadius: {
+      borderRadius: { // From 06-design.md
         'none': '0',
         'sm': '0.125rem', // 2px
-        'md': '0.375rem', // 6px (Standard button/input radius)
-        'lg': '0.5rem', // 8px (Card radius)
+        'md': '0.375rem', // 6px
+        'lg': '0.5rem', // 8px
         'xl': '0.75rem', // 12px
         '2xl': '1rem', // 16px
         'full': '9999px',
       },
 
       // --- Shadows ---
-      boxShadow: {
+      boxShadow: { // From 06-design.md
         'sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
         'md': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
         'lg': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
         'xl': '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+        'focus-primary': '0 0 0 2px rgba(0, 71, 171, 0.2)', // Custom for focus, matching 06-design.md specification
       },
 
       // --- Transitions ---
-      transitionDuration: {
+      transitionDuration: { // From 06-design.md
         'fast': '150ms',
         'normal': '300ms',
         'slow': '500ms',
       },
-      transitionTimingFunction: {
-        'in-out': 'cubic-bezier(0.4, 0, 0.2, 1)',
+      transitionTimingFunction: { // From 06-design.md
+        'default': 'cubic-bezier(0.4, 0, 0.2, 1)',
         'in': 'cubic-bezier(0.4, 0, 1, 1)',
         'out': 'cubic-bezier(0, 0, 0.2, 1)',
         'bounce': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       },
-
-      // --- Breakpoints ---
-      screens: {
-        'sm': '640px',
-        'md': '768px',
-        'lg': '1024px',
-        'xl': '1280px',
-        '2xl': '1536px',
-      },
     },
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/typography'),
-    require('@tailwindcss/aspect-ratio'),
-  ],
+  plugins: [], // Forms plugin will be added later for default styles. For now, rely on manual classes.
 };
