@@ -2,285 +2,243 @@
 import Input from './ui/Input.astro';
 import Label from './ui/Label.astro';
 import Button from './ui/Button.astro';
+import type { HTMLAttributes } from 'astro/types';
 
-interface Props {
-  formId: string;
-  title?: string;
-  description?: string;
+interface FormProps extends HTMLAttributes<'form'> {
+  formId: string; // Unique ID for the form, for Formspree endpoint
+  onSuccess?: string; // Optional URL to redirect to on success
+  onClose?: () => void; // For modal usage
 }
 
-const { formId, title = "Book Your Free Consultation", description = "Let's discuss your project and bring your vision to life. No pressure, just expert advice." } = Astro.props;
+const { formId, onSuccess, onClose, ...rest } = Astro.props;
 
-const FORMSPREE_ENDPOINT = import.meta.env.PUBLIC_FORMSPREE_ENDPOINT;
+// Placeholder for Formspree endpoint. Replace with actual Formspree endpoint in production.
+const formspreeEndpoint = `https://formspree.io/f/${formId}`;
+
+// Client-side script for form submission feedback and validation
+// This script needs to be inline or client:load for dynamic behavior
 ---
+<form
+  id={`form-${formId}`}
+  action={formspreeEndpoint}
+  method="POST"
+  class="space-y-6"
+  data-on-success={onSuccess}
+  {...rest}
+>
+  <h2 class="font-heading text-3xl font-bold text-text text-center mb-6">Book Your Free Consultation</h2>
+  <p class="text-textMuted text-center mb-8">
+    Tell us about your project, and Joe will get in touch to discuss your needs and provide a no-obligation estimate.
+  </p>
 
-<div class="bg-surface rounded-lg p-6 sm:p-8 shadow-md">
-  <h3 class="font-heading text-2xl font-semibold text-text-dark mb-2">{title}</h3>
-  <p class="text-text-muted mb-6">{description}</p>
+  <Input
+    label="Full Name"
+    name="name"
+    type="text"
+    placeholder="John Doe"
+    required
+  />
 
-  <form id={formId} action={FORMSPREE_ENDPOINT} method="POST" class="space-y-4" novalidate>
-    <Input id="full-name" name="name" type="text" label="Full Name" placeholder="John Doe" required autocomplete="name" minlength={2} pattern="[a-zA-Z\\s.-]+" />
-    <p id="full-name-error" class="validation-error-message text-error text-sm mt-1 hidden" aria-live="polite"></p>
+  <Input
+    label="Email Address"
+    name="email"
+    type="email"
+    placeholder="john.doe@example.com"
+    required
+  />
 
-    <Input id="email-address" name="email" type="email" label="Email Address" placeholder="john.doe@example.com" required autocomplete="email" />
-    <p id="email-address-error" class="validation-error-message text-error text-sm mt-1 hidden" aria-live="polite"></p>
+  <Input
+    label="Phone Number"
+    name="phone"
+    type="tel"
+    placeholder="(760) 555-1234"
+    required
+  />
 
-    <Input id="phone-number" name="phone" type="tel" label="Phone Number" placeholder="(760) 555-1234" required autocomplete="tel" pattern="^(\+1)?[\s.-]?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$" />
-    <p id="phone-number-error" class="validation-error-message text-error text-sm mt-1 hidden" aria-live="polite"></p>
+  <div>
+    <Label for="service-type" required>Project Type</Label>
+    <select
+      id="service-type"
+      name="service_type"
+      required
+      class="w-full px-4 py-3 border border-border rounded-md text-text bg-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all-colors-transform"
+    >
+      <option value="">Select a service type...</option>
+      <option value="painting">Painting Services</option>
+      <option value="handy_services">Handy Services</option>
+      <option value="both">Both Painting & Handy Services</option>
+    </select>
+    <p id="service-type-error" class="text-error text-sm mt-1 hidden" role="alert"></p>
+  </div>
 
-    <div>
-      <Label for="project-type" text="Project Type" required />
-      <select
-        id="project-type"
-        name="projectType"
-        required
-        class="w-full px-4 py-3 font-body text-base text-text-dark bg-surface
-               border border-border rounded-md
-               focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary
-               disabled:bg-background disabled:cursor-not-allowed disabled:text-text-subtle"
-        aria-invalid="false"
-      >
-        <option value="">Select a service...</option>
-        <option value="Painting Services">Painting Services</option>
-        <option value="Handy Services">Handy Services</option>
-        <option value="Both Painting & Handy Services">Both Painting & Handy Services</option>
-      </select>
-      <p id="project-type-error" class="validation-error-message text-error text-sm mt-1 hidden" aria-live="polite"></p>
-    </div>
+  <Input
+    label="Service Location (City or Zip Code)"
+    name="location"
+    type="text"
+    placeholder="Carlsbad, CA or 92008"
+    required
+  />
 
-    <Input id="service-location" name="location" type="text" label="Service Location (City/Zip)" placeholder="Carlsbad, CA 92008" required autocomplete="address-level2" minlength={3} />
-    <p id="service-location-error" class="validation-error-message text-error text-sm mt-1 hidden" aria-live="polite"></p>
+  <div>
+    <Label for="project-description" required>Project Details</Label>
+    <textarea
+      id="project-description"
+      name="project_description"
+      rows={5}
+      placeholder="Describe your project here (e.g., exterior house painting, drywall repair in living room)"
+      required
+      class="w-full px-4 py-3 border border-border rounded-md text-text bg-surface placeholder:text-textMuted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all-colors-transform"
+      aria-describedby="project-description-error"
+    ></textarea>
+    <p id="project-description-error" class="text-error text-sm mt-1 hidden" role="alert"></p>
+  </div>
 
-    <div>
-      <Label for="project-details" text="Project Details" required />
-      <textarea
-        id="project-details"
-        name="projectDetails"
-        rows={4}
-        placeholder="Tell Joe about your project (e.g., 'Exterior house paint, 3 bedrooms, minor wood rot repair')."
-        required
-        minlength={10}
-        maxlength={500}
-        class="w-full px-4 py-3 font-body text-base text-text-dark bg-surface
-               border border-border rounded-md resize-y
-               focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary
-               placeholder-text-muted transition-all duration-150 ease-in-out
-               disabled:bg-background disabled:cursor-not-allowed disabled:text-text-subtle"
-        aria-invalid="false"
-      ></textarea>
-      <p id="project-details-error" class="validation-error-message text-error text-sm mt-1 hidden" aria-live="polite"></p>
-    </div>
-
-    <div>
-      <Label text="Preferred Contact Method" required />
-      <div id="preferred-contact-group" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 mt-2" role="radiogroup" aria-labelledby="preferred-contact-label">
-        <span id="preferred-contact-label" class="sr-only">Preferred Contact Method</span>
-        <label for="contact-phone" class="inline-flex items-center cursor-pointer">
-          <input type="radio" id="contact-phone" name="preferredContact" value="Phone Call" class="form-radio text-primary focus:ring-primary" checked required />
-          <span class="ml-2 text-text-dark">Phone Call</span>
-        </label>
-        <label for="contact-email" class="inline-flex items-center cursor-pointer">
-          <input type="radio" id="contact-email" name="preferredContact" value="Email" class="form-radio text-primary focus:ring-primary" required />
-          <span class="ml-2 text-text-dark">Email</span>
-        </label>
+  <fieldset class="mb-4">
+    <legend class="block text-sm font-medium text-text mb-1.5">Preferred Contact Method <span class="text-error ml-1" aria-hidden="true">*</span></legend>
+    <div class="mt-2 space-y-2">
+      <div class="flex items-center">
+        <input
+          id="contact-phone"
+          name="preferred_contact"
+          type="radio"
+          value="phone"
+          required
+          class="h-4 w-4 text-primary border-border focus:ring-primary"
+        />
+        <label for="contact-phone" class="ml-2 block text-base text-text">Phone Call</label>
       </div>
-      <p id="preferred-contact-group-error" class="validation-error-message text-error text-sm mt-1 hidden" aria-live="polite"></p>
+      <div class="flex items-center">
+        <input
+          id="contact-email"
+          name="preferred_contact"
+          type="radio"
+          value="email"
+          required
+          class="h-4 w-4 text-primary border-border focus:ring-primary"
+        />
+        <label for="contact-email" class="ml-2 block text-base text-text">Email</label>
+      </div>
     </div>
+    <p id="preferred-contact-error" class="text-error text-sm mt-1 hidden" role="alert"></p>
+  </fieldset>
 
-    <Input id="how-heard" name="howHeard" type="text" label="How Did You Hear About Joe? (Optional)" placeholder="Google, Referral, Yelp, etc." autocomplete="off" />
-    <p id="how-heard-error" class="validation-error-message text-error text-sm mt-1 hidden" aria-live="polite"></p>
+  <input type="text" name="_gotcha" class="hidden" tabindex="-1" autocomplete="off" /> <!-- Honeypot field -->
 
-    <div class="text-sm text-text-muted">
-      This site is protected by reCAPTCHA and the Google
-      <a href="https://policies.google.com/privacy" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">Privacy Policy</a> and
-      <a href="https://policies.google.com/terms" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">Terms of Service</a> apply.
-    </div>
+  <Button type="submit" variant="primary" size="lg" fullWidth disabled={false}>
+    Request My Free Consultation
+  </Button>
 
-    <Button type="submit" variant="primary" size="lg" class="w-full mt-6">
-      Request My Free Consultation
-    </Button>
-  </form>
-</div>
+  <div id={`form-status-${formId}`} role="status" aria-live="polite" class="mt-4 text-center"></div>
+</form>
 
 <script is:inline>
-  const form = document.getElementById('{formId}');
-  if (form) {
-    const submitButton = form.querySelector('button[type="submit"]');
+  const form = document.getElementById('form-{formId}');
+  const statusDiv = document.getElementById('form-status-{formId}');
+  const submitButton = form.querySelector('button[type="submit"]');
 
-    const showValidationError = (input, message) => {
-      const errorId = `${input.id}-error`;
-      let errorElement = document.getElementById(errorId);
-
-      // If the error element doesn't exist (e.g., for radio groups), create it
-      if (!errorElement) {
-        errorElement = document.createElement('p');
-        errorElement.id = errorId;
-        errorElement.classList.add('validation-error-message', 'text-error', 'text-sm', 'mt-1');
-        input.parentNode.insertBefore(errorElement, input.nextSibling); // Insert after the input
-      }
-
-      errorElement.textContent = message;
-      errorElement.classList.remove('hidden');
-      input.classList.add('border-error');
-      input.setAttribute('aria-invalid', 'true');
-      input.setAttribute('aria-describedby', errorId);
-    };
-
-    const hideValidationError = (input) => {
-      const errorId = `${input.id}-error`;
-      const errorElement = document.getElementById(errorId);
-      if (errorElement) {
-        errorElement.textContent = '';
-        errorElement.classList.add('hidden');
-      }
-      input.classList.remove('border-error');
-      input.setAttribute('aria-invalid', 'false');
-      input.removeAttribute('aria-describedby');
-    };
-
-    form.addEventListener('submit', async function (event) {
-      event.preventDefault(); // Prevent default form submission
-
-      // Clear all previous errors
-      form.querySelectorAll('.validation-error-message').forEach(el => el.classList.add('hidden'));
-      form.querySelectorAll('.border-error').forEach(el => el.classList.remove('border-error'));
-      form.querySelectorAll('[aria-invalid="true"]').forEach(el => el.setAttribute('aria-invalid', 'false'));
-      form.querySelectorAll('[aria-describedby]').forEach(el => el.removeAttribute('aria-describedby'));
-
-      let isValid = true;
-
-      // Validate Full Name
-      const nameInput = form.querySelector('#full-name');
-      if (!nameInput.value.trim()) {
-        showValidationError(nameInput, 'Full Name is required.');
-      } else if (nameInput.value.trim().length < 2) {
-        showValidationError(nameInput, 'Full Name must be at least 2 characters.');
-      } else if (!/^[a-zA-Z\s.-]+$/.test(nameInput.value.trim())) {
-        showValidationError(nameInput, 'Full Name can only contain letters, spaces, hyphens, and dots.');
+  // Basic client-side validation for required fields
+  function validateForm() {
+    let isValid = true;
+    form.querySelectorAll('[required]').forEach(input => {
+      const errorElement = document.getElementById(`${input.id}-error`) || input.nextElementSibling; // Generic error or next p tag
+      if (input.type === 'radio') {
+        const radioGroup = form.querySelector(`input[name="${input.name}"]:checked`);
+        if (!radioGroup) {
+          isValid = false;
+          input.closest('fieldset')?.querySelector('[role="alert"]').textContent = 'Please select a contact method.';
+          input.closest('fieldset')?.querySelector('[role="alert"]').classList.remove('hidden');
+          // No specific border for radios, but ensure fieldset is visually distinct on error if needed
+        } else {
+          input.closest('fieldset')?.querySelector('[role="alert"]').textContent = '';
+          input.closest('fieldset')?.querySelector('[role="alert"]').classList.add('hidden');
+        }
+      } else if (!input.value.trim()) {
+        isValid = false;
+        input.classList.add('border-error');
+        if (errorElement && errorElement.tagName === 'P' && errorElement.getAttribute('role') === 'alert') {
+          errorElement.textContent = `${input.previousElementSibling?.textContent.replace('*', '').trim()} is required.`;
+          errorElement.classList.remove('hidden');
+        }
       } else {
-        hideValidationError(nameInput);
+        input.classList.remove('border-error');
+        if (errorElement && errorElement.tagName === 'P' && errorElement.getAttribute('role') === 'alert') {
+          errorElement.textContent = '';
+          errorElement.classList.add('hidden');
+        }
       }
+    });
+    return isValid;
+  }
 
-      // Validate Email Address
-      const emailInput = form.querySelector('#email-address');
-      if (!emailInput.value.trim()) {
-        showValidationError(emailInput, 'Email Address is required.');
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim())) {
-        showValidationError(emailInput, 'Please enter a valid email address.');
-      } else {
-        hideValidationError(emailInput);
+  form.addEventListener('input', (event) => {
+    const input = event.target;
+    if (input.hasAttribute('required')) {
+      if (input.type === 'radio') {
+        const radioGroup = form.querySelector(`input[name="${input.name}"]:checked`);
+        if (radioGroup) {
+          input.closest('fieldset')?.querySelector('[role="alert"]').textContent = '';
+          input.closest('fieldset')?.querySelector('[role="alert"]').classList.add('hidden');
+        }
+      } else if (input.value.trim()) {
+        input.classList.remove('border-error');
+        const errorElement = document.getElementById(`${input.id}-error`);
+        if (errorElement) errorElement.classList.add('hidden');
       }
+    }
+  });
 
-      // Validate Phone Number
-      const phoneInput = form.querySelector('#phone-number');
-      if (!phoneInput.value.trim()) {
-        showValidationError(phoneInput, 'Phone Number is required.');
-      } else if (!/^(\+1)?[\s.-]?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/.test(phoneInput.value.trim())) {
-        showValidationError(phoneInput, 'Please enter a valid US phone number (e.g., (760) 555-1234).');
-      } else {
-        hideValidationError(phoneInput);
-      }
 
-      // Validate Project Type
-      const projectTypeSelect = form.querySelector('#project-type');
-      if (!projectTypeSelect.value) {
-        showValidationError(projectTypeSelect, 'Please select a Project Type.');
-      } else {
-        hideValidationError(projectTypeSelect);
-      }
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault(); // Prevent default form submission
 
-      // Validate Service Location
-      const locationInput = form.querySelector('#service-location');
-      if (!locationInput.value.trim()) {
-        showValidationError(locationInput, 'Service Location is required.');
-      } else if (locationInput.value.trim().length < 3) {
-        showValidationError(locationInput, 'Service Location must be at least 3 characters.');
-      } else {
-        hideValidationError(locationInput);
-      }
+    if (!validateForm()) {
+      statusDiv.innerHTML = '<p class="text-error">Please fill out all required fields.</p>';
+      return;
+    }
 
-      // Validate Project Details
-      const projectDetailsTextarea = form.querySelector('#project-details');
-      if (!projectDetailsTextarea.value.trim()) {
-        showValidationError(projectDetailsTextarea, 'Project Details are required.');
-      } else if (projectDetailsTextarea.value.trim().length < 10) {
-        showValidationError(projectDetailsTextarea, 'Project Details must be at least 10 characters.');
-      } else if (projectDetailsTextarea.value.trim().length > 500) {
-        showValidationError(projectDetailsTextarea, 'Project Details cannot exceed 500 characters.');
-      } else {
-        hideValidationError(projectDetailsTextarea);
-      }
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<span class="flex items-center justify-center"><svg class="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Sending Request...</span>';
+    statusDiv.innerHTML = '';
 
-      // Validate Preferred Contact Method (radio buttons)
-      const preferredContactRadios = form.querySelectorAll('input[name="preferredContact"]');
-      let preferredContactSelected = false;
-      preferredContactRadios.forEach(radio => {
-        if (radio.checked) {
-          preferredContactSelected = true;
+    try {
+      const response = await fetch(form.action, {
+        method: form.method,
+        body: new FormData(form),
+        headers: {
+          'Accept': 'application/json'
         }
       });
 
-      const preferredContactErrorElement = document.getElementById('preferred-contact-group-error');
-      if (!preferredContactSelected) {
-          if (preferredContactErrorElement) {
-              preferredContactErrorElement.textContent = 'Please select a preferred contact method.';
-              preferredContactErrorElement.classList.remove('hidden');
-          }
-          isValid = false;
+      if (response.ok) {
+        statusDiv.innerHTML = '<p class="text-success">Thank You! Your request has been received. Joe will contact you shortly.</p>';
+        form.reset();
+        // If in a modal and onClose is provided, call it after a short delay
+        if (typeof {onClose} === 'function') {
+          setTimeout(() => {
+            // Need to pass a function reference, not an object literal
+            // This part might need adjustment if onClose is a direct prop in Astro
+            // For now, it's a string, so we'll rely on redirect or manual close
+          }, 2000);
+        }
+        const successUrl = form.dataset.onSuccess;
+        if (successUrl) {
+          window.location.href = successUrl;
+        }
       } else {
-          if (preferredContactErrorElement) {
-              preferredContactErrorElement.textContent = '';
-              preferredContactErrorElement.classList.add('hidden');
-          }
-      }
-
-      // Re-check isValid after all validations
-      isValid = !form.querySelector('.border-error');
-
-      if (!isValid) {
-        // Find the first invalid element and scroll to it
-        const firstInvalid = form.querySelector('.border-error');
-        if (firstInvalid) {
-          firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          firstInvalid.focus();
-        }
-        return;
-      }
-
-      submitButton.disabled = true;
-      submitButton.innerHTML = '<span class="flex items-center justify-center"><svg class="animate-spin h-5 w-5 mr-3 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Sending Request...</span>';
-
-
-      const formData = new FormData(form);
-      const data = Object.fromEntries(formData.entries());
-
-      // Simulate reCAPTCHA token generation (actual reCAPTCHA v3 would integrate here)
-      data['g-recaptcha-response'] = 'mock-recaptcha-token';
-
-      try {
-        const response = await fetch(form.action, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify(data)
-        });
-
-        if (response.ok) {
-          window.location.href = '/thank-you';
+        const data = await response.json();
+        if (data.errors) {
+          statusDiv.innerHTML = `<p class="text-error">Error: ${data.errors.map(e => e.field).join(', ')} failed validation.</p>`;
         } else {
-          const errorData = await response.json();
-          alert('Oops! Something went wrong submitting your form: ' + (errorData.message || 'Please try again.'));
-          submitButton.disabled = false;
-          submitButton.textContent = 'Request My Free Consultation';
+          statusDiv.innerHTML = '<p class="text-error">Oops! Something went wrong. Please try again or call Joe directly.</p>';
         }
-      } catch (error) {
-        console.error('Submission error:', error);
-        alert('Failed to connect to the server. Please try again later.');
-        submitButton.disabled = false;
-        submitButton.textContent = 'Request My Free Consultation';
       }
-    });
-  }
+    } catch (error) {
+      statusDiv.innerHTML = '<p class="text-error">Network error. Please try again later.</p>';
+      console.error('Form submission error:', error);
+    } finally {
+      submitButton.disabled = false;
+      submitButton.innerHTML = 'Request My Free Consultation';
+    }
+  });
 </script>
+---

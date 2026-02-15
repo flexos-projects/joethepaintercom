@@ -1,176 +1,64 @@
 ---
-import { Image } from 'astro:assets';
-import Header from '@/components/Header.astro';
-import Footer from '@/components/Footer.astro';
-import type { SiteMeta } from '@/utils/seo'; // Assuming seo.ts exists or will be created
+import { ViewTransitions } from 'astro:transitions';
 
 interface Props {
-  meta: SiteMeta;
+  title: string;
+  description: string;
+  keywords?: string;
+  ogImage?: string;
+  skipToContentId?: string;
 }
 
-const { meta } = Astro.props;
+const { title, description, keywords, ogImage, skipToContentId = 'main-content' } = Astro.props;
 
-const siteUrl = Astro.site?.toString() || 'https://www.joethepainter.com'; // Fallback for local dev
-const canonicalURL = new URL(Astro.url.pathname, siteUrl);
-
-// Default logo and social share image paths (placeholders)
-const defaultLogoPath = '/images/logo.svg';
-const defaultSocialShareImage = '/images/social-share-default.jpg';
-const socialShareImageFullUrl = meta.ogImage ? new URL(meta.ogImage, siteUrl).href : new URL(defaultSocialShareImage, siteUrl).href;
-
-const organizationSchema = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "Joe the Painter",
-  "url": siteUrl,
-  "logo": new URL(defaultLogoPath, siteUrl).href,
-  "contactPoint": {
-    "@type": "ContactPoint",
-    "telephone": "+1-760-580-8173",
-    "contactType": "customer service",
-    "email": "joe@joethepainter.com",
-    "areaServed": ["San Diego County", "Central San Diego County", "North San Diego County"]
-  },
-  "slogan": "The Craftsman's Guarantee: Meticulous painting and reliable repairs, personally delivered by a licensed expert with a quarter-century of proven trust.",
-  "sameAs": [
-    "https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=802167"
-    // Add Yelp, Google Business Profile, etc. links once established
-  ]
-};
-
-const webSiteSchema = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "url": siteUrl,
-  "name": "Joe the Painter",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": `${siteUrl}/search?q={search_term_string}`, // Placeholder for search
-    "query-input": "required name=search_term_string"
-  }
-};
-
-const webPageSchema = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": meta.title,
-  "description": meta.description,
-  "url": canonicalURL.href
-};
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!doctype html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href={canonicalURL.href} />
 
-    <!-- Page-specific Meta Tags -->
-    <title>{meta.title} | Joe the Painter: Your San Diego Craftsman Since 2001</title>
-    <meta name="description" content={meta.description} />
-    {meta.keywords && <meta name="keywords" content={meta.keywords} />}
+    <title>{title} | Joe the Painter: Your San Diego Craftsman Since 2001</title>
+    <meta name="description" content={description} />
+    {keywords && <meta name="keywords" content={keywords} />}
 
     <!-- Open Graph / Social Media Tags -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL.href} />
-    <meta property="og:title" content={meta.title} | Joe the Painter" />
-    <meta property="og:description" content={meta.description} />
-    <meta property="og:image" content={socialShareImageFullUrl} />
+    <meta property="og:title" content={title} | Joe the Painter />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage || new URL('/images/social-share-default.jpg', Astro.site).href} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
 
     <!-- Twitter Card Tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content={canonicalURL.href} />
-    <meta name="twitter:title" content={meta.title} | Joe the Painter" />
-    <meta name="twitter:description" content={meta.description} />
-    <meta name="twitter:image" content={socialShareImageFullUrl} />
-    <meta name="twitter:creator" content="@JoeThePainterSD" /> <!-- Placeholder, update if Twitter account is created -->
+    <meta name="twitter:title" content={title} | Joe the Painter />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage || new URL('/images/social-share-default.jpg', Astro.site).href} />
+    <meta name="twitter:creator" content="@JoeThePainterSD" />
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <!-- Font Preloads (ensure these match your actual font files) -->
+    <!-- Preload fonts for performance -->
+    <link rel="preload" href="/fonts/Lora-Regular.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="/fonts/Lora-Bold.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="/fonts/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="/fonts/Inter-Medium.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="/fonts/Inter-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="/fonts/Inter-Bold.woff2" as="font" type="font/woff2" crossorigin>
 
-    <!-- Global Styles -->
-    <style is:global>
-      /* Ensure font-display: swap is used for performance */
-      @font-face {
-        font-family: 'Lora';
-        src: url('/fonts/Lora-Bold.woff2') format('woff2');
-        font-weight: 700;
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'Inter';
-        src: url('/fonts/Inter-Regular.woff2') format('woff2');
-        font-weight: 400;
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'Inter';
-        src: url('/fonts/Inter-Medium.woff2') format('woff2');
-        font-weight: 500;
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'Inter';
-        src: url('/fonts/Inter-SemiBold.woff2') format('woff2');
-        font-weight: 600;
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'Inter';
-        src: url('/fonts/Inter-Bold.woff2') format('woff2');
-        font-weight: 700;
-        font-display: swap;
-      }
-
-      html {
-        font-family: var(--font-body);
-        color: var(--text-dark);
-        background-color: var(--background-white);
-      }
-      h1, h2, h3 {
-        font-family: var(--font-heading);
-        color: var(--text-dark);
-      }
-      h1 { @apply text-5xl font-bold leading-tight; }
-      h2 { @apply text-4xl font-bold leading-snug; }
-      h3 { @apply text-3xl font-semibold leading-normal; }
-      h4 { @apply text-2xl font-semibold leading-normal; }
-
-      @media (max-width: theme('screens.md')) {
-        h1 { @apply text-4xl; }
-        h2 { @apply text-3xl; }
-        h3 { @apply text-2xl; }
-        h4 { @apply text-xl; }
-      }
-
-      /* Base link styles */
-      a {
-        @apply text-primary hover:text-primary-dark transition-colors duration-150;
-      }
-    </style>
-
-    <!-- JSON-LD Structured Data -->
-    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
-    <script type="application/ld+json" set:html={JSON.stringify(webSiteSchema)} />
-    <script type="application/ld+json" set:html={JSON.stringify(webPageSchema)} />
-    <slot name="json-ld" />
+    <ViewTransitions />
   </head>
-  <body class="flex flex-col min-h-screen">
-    <Header />
-    <main class="flex-grow">
-      <slot />
-    </main>
-    <Footer />
+  <body>
+    <a href={`#${skipToContentId}`} class="skip-link">Skip to main content</a>
+    <slot />
   </body>
 </html>
+---

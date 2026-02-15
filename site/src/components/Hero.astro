@@ -1,87 +1,51 @@
 ---
 import { Image } from 'astro:assets';
-import joeProfile from '@assets/joe-profile.webp'; // Authentic photo of Joe
-import heroBackground from '@assets/hero-bg.webp'; // Optional subtle background pattern/texture
+import Button from './ui/Button.astro';
+import heroImage from '@images/hero-joe.webp'; // Assuming a high-quality image of Joe
 
 interface Props {
-  headline: string;
-  tagline: string;
-  ctaText: string;
-  ctaLink: string;
-  licenseNumber: string;
-  licenseLink: string;
+  ctaHref: string;
 }
 
-const {
-  headline,
-  tagline,
-  ctaText,
-  ctaLink,
-  licenseNumber,
-  licenseLink,
-} = Astro.props;
+const { ctaHref } = Astro.props;
 ---
 
 <section class="relative bg-background overflow-hidden py-16 md:py-24 lg:py-32">
-  <!-- Subtle background graphic/texture if desired -->
-  <div class="absolute inset-0 z-0 opacity-5">
-    <Image
-      src={heroBackground}
-      alt="Subtle background pattern"
-      widths={[320, 640, 1280, 1920]}
-      sizes="(max-width: 768px) 100vw, 100vw"
-      loading="eager"
-      fetchpriority="low"
-      quality={50}
-      class="w-full h-full object-cover"
-      aria-hidden="true"
-    />
-  </div>
-
-  <div class="container relative z-10 mx-auto px-4 text-center md:text-left">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-center">
-      <!-- Content Column -->
-      <div class="md:col-span-1 lg:col-span-2 order-2 md:order-1 text-center md:text-left">
-        <h1 class="font-heading text-5xl md:text-6xl lg:text-7xl font-bold text-text-dark leading-tight mb-6 animate-fade-in">
-          {headline}
-        </h1>
-        <p class="text-xl md:text-2xl text-text-muted mb-8 animate-fade-in animate-delay-100">
-          {tagline}
-        </p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start animate-fade-in animate-delay-200">
-          <a
-            href={ctaLink}
-            class="px-8 py-4 bg-primary text-white rounded-lg font-semibold text-lg hover:bg-primary-dark transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-light"
-            aria-label={ctaText}
-          >
-            {ctaText}
-          </a>
-          <a
-            href={licenseLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center justify-center px-8 py-4 bg-transparent border-2 border-primary text-primary rounded-lg font-semibold text-lg hover:bg-primary hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-light"
-            aria-label={`Verify California Contractors License ${licenseNumber}`}
-          >
-            CA Lic. # {licenseNumber}
-            <span class="sr-only">(Verify License)</span>
-          </a>
-        </div>
+  <div class="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+    <div class="text-center lg:text-left z-10">
+      <h1 class="font-heading text-5xl md:text-6xl lg:text-7xl font-bold text-text mb-6 leading-tight">
+        Your Home, My Craft. <br class="hidden md:inline"/>Done Right Since 2001.
+      </h1>
+      <p class="text-lg md:text-xl text-textMuted mb-8 max-w-xl lg:max-w-none mx-auto lg:mx-0">
+        Meticulous painting and reliable handy services, personally delivered by a licensed craftsman dedicated to your peace of mind in San Diego County.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-8">
+        <Button href={ctaHref} variant="primary" size="lg">
+          Book Your Free Consultation
+        </Button>
+        <a
+          href="https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=802167"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-primary text-base font-medium hover:underline transition-all-colors-transform"
+          aria-label="Verify Joe the Painter's California Contractor License number 802167 (opens in new tab)"
+        >
+          CA Lic. #802167
+        </a>
       </div>
+    </div>
 
-      <!-- Image Column - Authentic photo of Joe -->
-      <div class="md:col-span-1 lg:col-span-1 order-1 md:order-2 flex justify-center md:justify-end animate-fade-in animate-delay-300">
-        <Image
-          src={joeProfile}
-          alt="Joe the Painter, a trusted craftsman"
-          widths={[300, 450, 600]}
-          sizes="(max-width: 768px) 80vw, (max-width: 1024px) 40vw, 30vw"
-          loading="eager"
-          fetchpriority="high"
-          quality={85}
-          class="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 object-cover rounded-full shadow-xl border-4 border-surface"
-        />
-      </div>
+    <div class="relative flex justify-center lg:justify-end z-0">
+      <Image
+        src={heroImage}
+        alt="Joe the Painter standing confidently with paint rollers, smiling"
+        width={700}
+        height={600}
+        class="rounded-lg shadow-xl w-full max-w-md lg:max-w-none h-auto object-cover"
+        loading="eager"
+        fetchpriority="high"
+      />
     </div>
   </div>
 </section>
+---

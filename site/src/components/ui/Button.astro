@@ -4,7 +4,10 @@ import type { HTMLAttributes } from 'astro/types';
 interface Props extends HTMLAttributes<'button'> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
-  href?: string;
+  href?: string; // If acting as a link
+  target?: '_blank' | '_self' | '_parent' | '_top'; // For link variants
+  rel?: string; // For link variants
+  fullWidth?: boolean;
   disabled?: boolean;
 }
 
@@ -12,46 +15,54 @@ const {
   variant = 'primary',
   size = 'md',
   href,
+  target,
+  rel,
+  fullWidth = false,
   disabled = false,
   class: className,
   ...rest
 } = Astro.props;
 
-const baseClasses =
-  'inline-flex items-center justify-center font-body font-semibold text-center text-decoration-none cursor-pointer border border-transparent transition-all duration-150 ease-in-out rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary';
+const baseStyles = 'inline-flex items-center justify-center font-semibold text-center text-decoration-none cursor-pointer border transition-all-colors-transform rounded-md';
 
-const variantClasses = {
-  primary:
-    'bg-primary text-surface border-primary hover:bg-[#003B8D] hover:border-[#003B8D] active:bg-[#002A6B] active:border-[#002A6B] hover:shadow-sm active:translate-y-px',
-  secondary:
-    'bg-secondary text-surface border-secondary hover:bg-[#5A616E] hover:border-[#5A616E] active:bg-[#4D535E] active:border-[#4D535E] hover:shadow-sm active:translate-y-px',
-  outline:
-    'bg-transparent text-primary border-primary hover:bg-primary hover:text-surface hover:shadow-sm active:bg-[#002A6B] active:border-[#002A6B] active:text-surface active:translate-y-px',
-  ghost:
-    'bg-transparent text-primary border-transparent hover:bg-primary/[0.05] active:bg-primary/[0.1] active:translate-y-px',
+const variantStyles = {
+  primary: 'bg-primary text-surface border-primary hover:bg-primary-dark hover:border-primary-dark active:bg-primary-dark active:scale-[0.98]',
+  secondary: 'bg-secondary text-surface border-secondary hover:bg-secondary-dark hover:border-secondary-dark active:bg-secondary-dark active:scale-[0.98]',
+  outline: 'bg-transparent text-primary border-primary hover:bg-primary hover:text-surface active:bg-primary-dark active:text-surface active:scale-[0.98]',
+  ghost: 'bg-transparent text-primary border-transparent hover:bg-primary/5 active:bg-primary/10 active:scale-[0.98]',
 };
 
-const sizeClasses = {
+const sizeStyles = {
   sm: 'px-3 py-2 text-sm',
   md: 'px-4 py-3 text-base',
   lg: 'px-6 py-4 text-lg',
 };
 
-const disabledClasses = disabled
-  ? 'bg-textSubtle border-textSubtle text-surface cursor-not-allowed pointer-events-none'
-  : '';
+const disabledStyles = 'opacity-60 cursor-not-allowed pointer-events-none';
+const widthStyle = fullWidth ? 'w-full' : 'w-auto';
 
-const combinedClasses = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${disabledClasses} ${className || ''}`;
+const combinedClasses = [
+  baseStyles,
+  variantStyles[variant],
+  sizeStyles[size],
+  widthStyle,
+  disabled && disabledStyles,
+  className,
+].filter(Boolean).join(' ');
+
+// Render as an <a> tag if href is provided, otherwise as a <button>
+const Component = href ? 'a' : 'button';
 ---
 
-{
-  href ? (
-    <a href={href} class={combinedClasses} {...rest}>
-      <slot />
-    </a>
-  ) : (
-    <button type="button" class={combinedClasses} disabled={disabled} {...rest}>
-      <slot />
-    </button>
-  )
-}
+<Component
+  {...rest}
+  class={combinedClasses}
+  {href}
+  {target}
+  {rel}
+  {disabled}
+  aria-disabled={disabled}
+>
+  <slot />
+</Component>
+---

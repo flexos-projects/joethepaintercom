@@ -1,89 +1,88 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
-import Header from '@components/Header.astro';
-import Footer from '@components/Footer.astro';
 import ProjectCard from '@components/ProjectCard.astro';
+import Button from '@components/ui/Button.astro';
 
+// Placeholder data for projects - will be replaced by content collection in TASK-026
 const projects = [
   {
-    id: 'encinitas-coastal-home-exterior',
-    title: 'Encinitas Coastal Home Exterior',
+    title: 'Coastal Encinitas Home Exterior',
     location: 'Encinitas, CA',
-    description: 'Complete exterior repaint and minor stucco repair, transforming a coastal home with a durable, fresh finish.',
-    imageUrl: '/images/projects/encinitas-coastal-home-exterior-after.webp',
-    projectLink: '/projects/encinitas-coastal-home-exterior',
+    shortDescription: 'A complete exterior repaint and minor stucco repairs for a stunning coastal home.',
+    imageUrl: '/images/projects/encinitas-exterior.webp',
+    imageAlt: 'Freshly painted light blue coastal home exterior in Encinitas',
+    href: '/projects/coastal-encinitas-home-exterior',
   },
   {
-    id: 'rancho-santa-fe-living-room',
-    title: 'Rancho Santa Fe Living Room',
-    location: 'Rancho Santa Fe, CA',
-    description: 'Transformed a dated living room with a fresh, contemporary color palette and flawless finish.',
-    imageUrl: '/images/projects/rancho-santa-fe-living-room-after.webp',
-    projectLink: '/projects/rancho-santa-fe-living-room',
-  },
-  {
-    id: 'vista-commercial-office-renovation',
-    title: 'Vista Commercial Office Renovation',
-    location: 'Vista, CA',
-    description: 'Updated a small business office with new paint, drywall repair, and fixture installation for a professional look.',
-    imageUrl: '/images/projects/vista-commercial-office-after.webp',
-    projectLink: '/projects/vista-commercial-office-renovation',
-  },
-  {
-    id: 'carlsbad-kitchen-cabinet-refinishing',
-    title: 'Carlsbad Kitchen Cabinet Refinishing',
+    title: 'Modern Carlsbad Condo Refresh',
     location: 'Carlsbad, CA',
-    description: 'Expert cabinet refinishing, giving an old kitchen a brand new, modern look with a durable, smooth finish.',
-    imageUrl: '/images/projects/carlsbad-kitchen-cabinets-after.webp',
-    projectLink: '/projects/carlsbad-kitchen-cabinet-refinishing',
+    shortDescription: 'Interior painting and cabinet refinishing for a modern condominium, enhancing natural light.',
+    imageUrl: '/images/projects/carlsbad-condo-interior.webp',
+    imageAlt: 'Bright, modern living room after interior painting in Carlsbad condo',
+    href: '/projects/modern-carlsbad-condo-refresh',
+  },
+  {
+    title: 'Vista Commercial Office Update',
+    location: 'Vista, CA',
+    shortDescription: 'Interior painting and drywall repair for a small business office, creating a professional atmosphere.',
+    imageUrl: '/images/projects/vista-office.webp',
+    imageAlt: 'Clean, professional office interior after painting and repairs in Vista',
+    href: '/projects/vista-commercial-office-update',
+  },
+  {
+    title: 'Rancho Santa Fe Estate Renovation',
+    location: 'Rancho Santa Fe, CA',
+    shortDescription: 'Extensive interior and exterior painting for a luxury estate, requiring meticulous detail.',
+    imageUrl: '/images/projects/rancho-santa-fe-estate.webp',
+    imageAlt: 'Grand entrance of a luxury estate with fresh exterior paint in Rancho Santa Fe',
+    href: '/projects/rancho-santa-fe-estate-renovation',
+  },
+  {
+    title: 'San Marcos Kitchen Cabinet Transformation',
+    location: 'San Marcos, CA',
+    shortDescription: 'Complete kitchen cabinet refinishing, transforming a dated kitchen into a contemporary space.',
+    imageUrl: '/images/projects/san-marcos-cabinets.webp',
+    imageAlt: 'Modern kitchen with newly refinished white cabinets in San Marcos',
+    href: '/projects/san-marcos-kitchen-cabinets',
+  },
+  {
+    title: 'Oceanside Deck Restoration',
+    location: 'Oceanside, CA',
+    shortDescription: 'Pressure washing, staining, and sealing for a weathered deck, restoring its beauty and durability.',
+    imageUrl: '/images/projects/oceanside-deck.webp',
+    imageAlt: 'Restored wooden deck with fresh stain overlooking the ocean in Oceanside',
+    href: '/projects/oceanside-deck-restoration',
   },
 ];
-
-const pageTitle = "Our Work | Joe the Painter: Portfolio of Excellence";
-const pageDescription = "Explore Joe the Painter's portfolio of meticulously completed painting and handyman projects across San Diego County. See the quality difference!";
 ---
 
-<BaseLayout title={pageTitle} description={pageDescription}>
-  <Header />
-  <main class="bg-background py-16 md:py-24">
-    <div class="container mx-auto px-4">
-      <h1 class="font-heading text-5xl md:text-6xl font-bold text-text text-center mb-8 animate-fade-in">
-        Our Work
-      </h1>
-      <p class="text-xl text-text-muted text-center max-w-3xl mx-auto mb-16 animate-fade-in animate-delay-100">
-        Discover the meticulous craftsmanship and transformative results Joe the Painter delivers. From stunning exterior repaints to detailed interior work and essential handyman repairs, our portfolio showcases our commitment to excellence.
-      </p>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {projects.map((project, index) => (
-          <ProjectCard
-            title={project.title}
-            location={project.location}
-            description={project.description}
-            imageUrl={project.imageUrl}
-            imageAlt={`Image of completed project: ${project.title}`}
-            projectLink={project.projectLink}
-            style={`animation-delay: ${index * 100}ms;`}
-          />
-        ))}
-      </div>
-
-      <section class="text-center mt-20">
-        <h2 class="font-heading text-4xl font-bold text-text text-center mb-6 animate-fade-in">
-          Ready to Transform Your Space?
-        </h2>
-        <p class="text-lg text-text-muted text-center mb-8 animate-fade-in animate-delay-100">
-          Let's discuss your vision and bring your project to life with the same dedication and quality.
+<BaseLayout
+  title="Our Work"
+  description="Explore Joe the Painter's portfolio of meticulous painting and reliable handyman projects across San Diego County. See before & after transformations."
+>
+  <main id="main-content">
+    <section class="bg-background py-16 md:py-24" aria-labelledby="portfolio-title">
+      <div class="container mx-auto px-4 text-center">
+        <h1 id="portfolio-title" class="font-heading text-5xl md:text-6xl font-bold text-text mb-6">
+          Our Work: A Legacy of Craftsmanship
+        </h1>
+        <p class="text-lg md:text-xl text-textMuted mb-12 leading-relaxed max-w-3xl mx-auto">
+          Browse through a selection of our recently completed painting and handyman projects. Each one is a testament to Joe's meticulous attention to detail and unwavering commitment to quality.
         </p>
-        <a
-          href="/consultation"
-          class="inline-flex px-8 py-4 bg-accent text-white rounded-lg font-semibold text-lg hover:bg-accent-dark transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent animate-fade-in animate-delay-200"
-          aria-label="Book a Free Consultation with Joe the Painter"
-        >
-          Book Your Free Consultation
-        </a>
-      </section>
-    </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {projects.map((project) => (
+            <ProjectCard {...project} />
+          ))}
+        </div>
+
+        <div class="mt-16">
+          <Button href="/contact" variant="primary" size="lg">
+            Ready to Start Your Project?
+          </Button>
+        </div>
+      </div>
+    </section>
   </main>
-  <Footer />
 </BaseLayout>
+---

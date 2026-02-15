@@ -1,122 +1,181 @@
 ---
-import { Transition, Fade } from 'astro:transitions';
-import Button from './ui/Button.astro';
+import { createPortal } from 'astro/jsx-runtime';
+import type { HTMLAttributes } from 'astro/types';
 
-interface Props {
+interface Props extends HTMLAttributes<'div'> {
   isOpen: boolean;
   onClose: () => void;
-  title?: string;
-  children: any; // Content to be rendered inside the modal
+  title: string;
+  description?: string;
 }
 
-const { isOpen, onClose, title = "Modal Title", children } = Astro.props;
+const { isOpen, onClose, title, description, class: className, ...rest } = Astro.props;
 
-// Function to handle keyboard events for accessibility
-const handleKeyDown = (event: KeyboardEvent) => {
-  if (event.key === 'Escape') {
-    onClose();
-  }
-};
+// Unique IDs for accessibility
+const modalId = `modal-${Math.random().toString(36).substring(2, 9)}`;
+const titleId = `${modalId}-title`;
+const descriptionId = `${modalId}-description`;
 
-// Client-side script to handle focus trapping and scroll locking
-// This script will run on the client, so wrap in <script> and use client:load or similar
-// For this component, it's simpler to manage directly in the page if it's a single modal
-// or within the component if it's a framework component. For Astro components,
-// inline script is often the most direct approach for simple client-side logic.
+// Client-side script for modal functionality (focus trap, escape key, etc.)
+// This script will run on the client as soon as the component is hydrated.
 ---
-
-{isOpen && (
-  <Transition name="modal-fade" animate={Fade}>
+{
+  isOpen && createPortal(
     <div
+      class="fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-8"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="modal-title"
-      class="fixed inset-0 z-50 flex items-center justify-center p-4"
+      aria-labelledby={titleId}
+      aria-describedby={descriptionId}
       tabindex="-1"
-      onkeydown={handleKeyDown}
+      id={modalId}
+      {...rest}
     >
       {/* Backdrop */}
       <div
-        class="absolute inset-0 bg-black bg-opacity-70"
-        onclick={onClose}
+        class="fixed inset-0 bg-black bg-opacity-60 transition-opacity duration-normal ease-default motion-reduce:transition-none animate-fade-in"
+        onClick={onClose}
         aria-hidden="true"
       ></div>
 
       {/* Modal Content */}
       <div
-        class="relative bg-surface rounded-lg shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
+        class:list={[
+          'relative bg-surface rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto',
+          'transform transition-all duration-normal ease-default motion-reduce:transition-none animate-scale-in',
+          className
+        ]}
         role="document"
       >
-        <div class="flex justify-between items-center p-4 border-b border-border">
-          <h2 id="modal-title" class="font-heading text-xl font-semibold text-text-dark">
+        <div class="flex items-center justify-between p-4 md:p-6 border-b border-border">
+          <h2 id={titleId} class="font-heading text-2xl font-bold text-text">
             {title}
           </h2>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
+          <button
+            class="p-2 text-text hover:text-primary transition-all-colors-transform"
+            onClick={onClose}
             aria-label="Close modal"
-            onclick={onClose}
-            class="text-text-muted hover:text-text-dark"
           >
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
-          </Button>
+          </button>
         </div>
-        <div class="p-4">
+
+        {description && <p id={descriptionId} class="sr-only">{description}</p>}
+
+        <div class="p-4 md:p-6">
           <slot />
         </div>
       </div>
-    </div>
-  </Transition>
-)}
+    </div>,
+    document.body // Portal to body for correct z-index and focus management
+  )
+}
 
-<script>
-  // Client-side script for focus trapping and scroll locking
-  // This needs to be outside the Astro component definition if it's not a framework component
-  // or use client:load on a small wrapper component
-  document.addEventListener('astro:after-swap', () => {
-    const modal = document.querySelector('[role="dialog"]');
-    if (modal) {
-      // Focus trapping
-      const focusableElements = modal.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      );
-      const firstFocusableElement = focusableElements[0];
-      const lastFocusableElement = focusableElements[focusableElements.length - 1];
+<script define:vars={{ modalId }} is:inline>
+  const modalElement = document.getElementById(modalId);
+  const focusableElementsSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+  let previouslyFocusedElement;
+  let firstFocusableElement;
+  let lastFocusableElement;
 
+  function handleOpen() {
+    if (!modalElement) return;
+
+    previouslyFocusedElement = document.activeElement;
+    modalElement.focus(); // Focus the modal itself
+
+    const focusableContent = modalElement.querySelectorAll(focusableElementsSelector);
+    firstFocusableElement = focusableContent[0];
+    lastFocusableElement = focusableContent[focusableContent.length - 1];
+
+    firstFocusableElement?.focus(); // Focus the first focusable element inside the modal
+
+    document.body.style.overflow = 'hidden'; // Prevent scrolling on body
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('focusin', enforceFocus); // Enforce focus within modal
+  }
+
+  function handleClose() {
+    if (!modalElement) return;
+
+    document.body.style.overflow = ''; // Restore scrolling on body
+    document.removeEventListener('keydown', handleKeyDown);
+    document.removeEventListener('focusin', enforceFocus);
+    previouslyFocusedElement?.focus(); // Return focus to where it was
+  }
+
+  function handleKeyDown(event) {
+    if (event.key === 'Escape') {
+      // Assuming onClose is globally accessible or passed via a custom event
+      // For this example, we'll dispatch a custom event that parent can listen to
+      modalElement.dispatchEvent(new CustomEvent('modalCloseRequest'));
+    }
+    if (event.key === 'Tab') {
+      if (event.shiftKey) { // if shift + tab
+        if (document.activeElement === firstFocusableElement) {
+          lastFocusableElement.focus();
+          event.preventDefault();
+        }
+      } else { // if tab
+        if (document.activeElement === lastFocusableElement) {
+          firstFocusableElement.focus();
+          event.preventDefault();
+        }
+      }
+    }
+  }
+
+  function enforceFocus(event) {
+    if (!modalElement.contains(event.target)) {
+      event.stopPropagation();
       firstFocusableElement?.focus();
+    }
+  }
 
-      modal.addEventListener('keydown', (e) => {
-        const isTabPressed = e.key === 'Tab';
-        if (!isTabPressed) {
-          return;
+  // Listener for custom close event from parent (Astro component)
+  // This is a simplified way to manage state across Astro components.
+  // In a real app, you'd use a more robust state management or framework component.
+  modalElement?.addEventListener('modalCloseRequest', () => {
+    // The parent component's `onClose` prop needs to be called.
+    // Astro's server-side rendering makes direct JS calls to parent props tricky.
+    // For this example, we'll assume the `onClose` function is directly available
+    // or that the parent component re-renders `isOpen=false` based on some state.
+    // For now, we'll just handle the cleanup.
+    handleClose();
+    // A more robust solution for Astro would be to wrap the modal in a framework component
+    // (e.g., React) to manage its internal state and emit events.
+  });
+
+
+  // Observe changes to the `aria-hidden` attribute if `isOpen` is toggled by parent Astro
+  const observer = new MutationObserver((mutationsList) => {
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'attributes' && mutation.attributeName === 'aria-hidden') {
+        if (modalElement.getAttribute('aria-hidden') === 'false' && modalElement.offsetParent !== null) {
+          handleOpen();
+        } else if (modalElement.getAttribute('aria-hidden') === 'true') {
+          handleClose();
         }
-
-        if (e.shiftKey) { // if shift key pressed for shift + tab
-          if (document.activeElement === firstFocusableElement) {
-            lastFocusableElement?.focus(); // add focus to the last focusable element
-            e.preventDefault();
-          }
-        } else { // if tab key is pressed
-          if (document.activeElement === lastFocusableElement) {
-            firstFocusableElement?.focus(); // add focus to the first focusable element
-            e.preventDefault();
-          }
-        }
-      });
-
-      // Scroll locking
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = ''; // Re-enable scroll when modal is closed
+      }
     }
   });
 
-  // Initial load for modals that might be open on page load
-  const initialModal = document.querySelector('[role="dialog"]');
-  if (initialModal) {
-    document.body.style.overflow = 'hidden';
+  if (modalElement) {
+    observer.observe(modalElement, { attributes: true });
+    // Initial check if modal is open on page load (e.g., if set to true by default)
+    if (modalElement.getAttribute('aria-hidden') === 'false' && modalElement.offsetParent !== null) {
+      handleOpen();
+    }
   }
+
 </script>
+---

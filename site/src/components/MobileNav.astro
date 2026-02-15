@@ -1,0 +1,171 @@
+---
+import Button from './ui/Button.astro';
+import Nav from './Nav.astro';
+import { Image } from 'astro:assets';
+import logoText from '@images/logo-text.svg';
+
+// Unique ID for the mobile menu content for aria-controls
+const mobileMenuId = 'mobile-menu-content';
+---
+
+<div class="lg:hidden flex items-center">
+  <button
+    id="mobile-menu-button"
+    class="p-2 text-text hover:text-primary transition-all-colors-transform"
+    aria-label="Toggle mobile menu"
+    aria-controls={mobileMenuId}
+    aria-expanded="false"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-7 w-7"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M4 6h16M4 12h16M4 18h16"
+      />
+    </svg>
+  </button>
+
+  <div
+    id={mobileMenuId}
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="mobile-menu-title"
+    class="fixed inset-0 bg-surface z-50 transform translate-x-full transition-transform duration-normal ease-default motion-reduce:transition-none"
+    tabindex="-1"
+    aria-hidden="true"
+  >
+    <div class="flex flex-col h-full">
+      <div class="flex items-center justify-between px-4 py-3 md:py-4 border-b border-border">
+        <a href="/" class="flex items-center" aria-label="Joe the Painter homepage">
+          <Image
+            src={logoText}
+            alt="Joe the Painter Logo"
+            width={150}
+            height={35}
+            class="h-7 w-auto"
+            loading="eager"
+            fetchpriority="high"
+          />
+        </a>
+        <button
+          id="mobile-menu-close-button"
+          class="p-2 text-text hover:text-primary transition-all-colors-transform"
+          aria-label="Close mobile menu"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-7 w-7"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <h2 id="mobile-menu-title" class="sr-only">Mobile Navigation</h2>
+
+      <nav class="flex-1 flex flex-col items-center justify-center space-y-8 py-8" aria-label="Mobile main navigation">
+        <Nav />
+        <div class="mt-8">
+          <Button href="/contact" variant="primary" size="lg" fullWidth>
+            Book a Free Consultation
+          </Button>
+        </div>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  const mobileMenuButton = document.getElementById('mobile-menu-button');
+  const mobileMenuCloseButton = document.getElementById('mobile-menu-close-button');
+  const mobileMenu = document.getElementById('{mobileMenuId}');
+  const focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+  let firstFocusableElement;
+  let lastFocusableElement;
+  let previouslyFocusedElement;
+
+  function trapFocus(event) {
+    if (mobileMenu.getAttribute('aria-hidden') === 'true') return;
+
+    const isTabPressed = event.key === 'Tab' || event.keyCode === 9;
+
+    if (!isTabPressed) {
+      return;
+    }
+
+    if (event.shiftKey) { // if shift + tab
+      if (document.activeElement === firstFocusableElement) {
+        lastFocusableElement.focus(); // move focus to the last focusable element
+        event.preventDefault();
+      }
+    } else { // if tab
+      if (document.activeElement === lastFocusableElement) {
+        firstFocusableElement.focus(); // move focus to the first focusable element
+        event.preventDefault();
+      }
+    }
+  }
+
+  function toggleMobileMenu() {
+    const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+    mobileMenuButton.setAttribute('aria-expanded', String(!isExpanded));
+    mobileMenu.setAttribute('aria-hidden', String(isExpanded));
+
+    if (!isExpanded) {
+      previouslyFocusedElement = document.activeElement; // Store previously focused element
+      mobileMenu.classList.remove('translate-x-full');
+      mobileMenu.classList.add('translate-x-0');
+      mobileMenu.focus(); // Focus the menu itself
+
+      const focusableContent = mobileMenu.querySelectorAll(focusableElements);
+      firstFocusableElement = focusableContent[0];
+      lastFocusableElement = focusableContent[focusableContent.length - 1];
+
+      firstFocusableElement?.focus(); // Focus the first element inside the modal
+      document.body.style.overflow = 'hidden'; // Prevent scrolling on body
+      document.addEventListener('keydown', trapFocus);
+    } else {
+      mobileMenu.classList.remove('translate-x-0');
+      mobileMenu.classList.add('translate-x-full');
+      document.body.style.overflow = ''; // Restore scrolling on body
+      document.removeEventListener('keydown', trapFocus);
+      previouslyFocusedElement?.focus(); // Return focus to where it was
+    }
+  }
+
+  mobileMenuButton?.addEventListener('click', toggleMobileMenu);
+  mobileMenuCloseButton?.addEventListener('click', toggleMobileMenu);
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && mobileMenu.getAttribute('aria-hidden') === 'false') {
+      toggleMobileMenu();
+    }
+  });
+
+  // Close menu on navigation click (optional, but good UX)
+  mobileMenu?.querySelectorAll('nav a').forEach(link => {
+    link.addEventListener('click', () => {
+      if (mobileMenu.getAttribute('aria-hidden') === 'false') {
+        toggleMobileMenu();
+      }
+    });
+  });
+</script>
+---

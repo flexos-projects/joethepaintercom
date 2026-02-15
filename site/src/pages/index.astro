@@ -4,102 +4,94 @@ import Header from '@components/Header.astro';
 import Footer from '@components/Footer.astro';
 import Hero from '@components/Hero.astro';
 import AboutJoeSection from '@components/AboutJoeSection.astro';
-// Other placeholder imports for sections that will be added later
-// import ServiceOverview from '@components/sections/ServiceOverview.astro';
-// import TestimonialCarousel from '@components/TestimonialCarousel.astro';
-
-const pageTitle = "Joe the Painter: Your Home, My Craft. Done Right Since 2001.";
-const pageDescription = "Meticulous painting and reliable handy services in San Diego County. 25+ years licensed experience, personal touch, unparalleled craftsmanship.";
-
-const heroHeadline = "Your Home, My Craft. Done Right Since 2001.";
-const heroTagline = "Meticulous Painting & Reliable Handy Services in San Diego County.";
-const heroCtaText = "Book Your Free Consultation";
-const heroCtaLink = "/consultation"; // Assuming a consultation page/modal
-const licenseNumber = "802167";
-const cslbLink = `https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=${licenseNumber}`;
-
-const aboutJoeTitle = "Meet Joe: Your Personal Craftsman";
-const aboutJoeDescription = "With over two decades of licensed experience, Joe brings unparalleled expertise and a personal commitment to every painting and handyman project. Discover the difference trust and quality make.";
-const aboutJoeCtaText = "Learn More About Joe";
-const aboutJoeCtaLink = "/about";
+import TestimonialCarousel from '@components/TestimonialCarousel.astro';
+// Placeholder for service grid, will be added in later tasks
+// import ServiceGrid from '@components/ServiceGrid.astro';
 ---
 
-<BaseLayout title={pageTitle} description={pageDescription}>
+<BaseLayout
+  title="Home"
+  description="Joe the Painter: Your trusted, licensed craftsman for meticulous painting and reliable handyman services in San Diego County since 2001."
+>
   <Header />
-  <main>
-    <Hero
-      headline={heroHeadline}
-      tagline={heroTagline}
-      ctaText={heroCtaText}
-      ctaLink={heroCtaLink}
-      licenseNumber={licenseNumber}
-      licenseLink={cslbLink}
-    />
-
-    <AboutJoeSection
-      title={aboutJoeTitle}
-      description={aboutJoeDescription}
-      ctaText={aboutJoeCtaText}
-      ctaLink={aboutJoeCtaLink}
-    />
+  <main id="main-content">
+    <Hero ctaHref="/contact" />
+    <AboutJoeSection ctaHref="/contact" />
 
     <!-- Placeholder for Services Overview -->
-    <section class="py-16 md:py-24 bg-surface text-center">
-      <div class="container mx-auto px-4">
-        <h2 class="font-heading text-4xl font-bold text-text-dark mb-6">Our Services</h2>
-        <p class="text-lg text-text-muted mb-12">
-          From a fresh coat of paint to essential home repairs, we deliver lasting quality.
+    <section class="bg-background py-16 md:py-24" aria-labelledby="services-overview-heading">
+      <div class="container mx-auto px-4 text-center">
+        <h2 id="services-overview-heading" class="font-heading text-4xl md:text-5xl font-bold text-text mb-6">
+          Our Comprehensive Services
+        </h2>
+        <p class="text-lg md:text-xl text-textMuted mb-12 leading-relaxed max-w-3xl mx-auto">
+          From a fresh coat of paint to essential home repairs, Joe the Painter offers integrated solutions delivered with unparalleled craftsmanship.
         </p>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-          <a href="/services/painting" class="bg-white p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 group animate-fade-in">
-            <h3 class="font-heading text-2xl font-bold text-primary mb-4">Painting Services</h3>
-            <p class="text-text-muted group-hover:text-text-dark transition-colors">Interior, Exterior, Cabinet Refinishing & more.</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <a href="/services/painting" class="block group bg-surface rounded-lg shadow-md p-8 transition-all-colors-transform hover:shadow-lg hover:-translate-y-1">
+            <h3 class="font-heading text-3xl font-semibold text-text mb-4 group-hover:text-primary transition-colors">
+              Painting Services
+            </h3>
+            <p class="text-textMuted text-lg leading-relaxed">
+              Interior, exterior, cabinet refinishing, and commercial painting with meticulous preparation and a flawless finish.
+            </p>
+            <span class="inline-flex items-center text-primary font-medium mt-6">
+              Learn More
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
+              </svg>
+            </span>
           </a>
-          <a href="/services/handy" class="bg-white p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 group animate-fade-in animate-delay-100">
-            <h3 class="font-heading text-2xl font-bold text-primary mb-4">Handy Services</h3>
-            <p class="text-text-muted group-hover:text-text-dark transition-colors">Drywall repair, minor carpentry, fixture installation & more.</p>
-          </a>
-        </div>
-        <div class="mt-12">
-          <a href="/consultation" class="inline-flex px-8 py-4 bg-accent text-white rounded-lg font-semibold text-lg hover:bg-accent-dark transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent animate-fade-in animate-delay-200">
-            Book Your Free Consultation
+          <a href="/services/handy" class="block group bg-surface rounded-lg shadow-md p-8 transition-all-colors-transform hover:shadow-lg hover:-translate-y-1">
+            <h3 class="font-heading text-3xl font-semibold text-text mb-4 group-hover:text-primary transition-colors">
+              Handy Services
+            </h3>
+            <p class="text-textMuted text-lg leading-relaxed">
+              Reliable repairs for drywall, minor carpentry, pressure washing, fixture installation, and general home maintenance.
+            </p>
+            <span class="inline-flex items-center text-primary font-medium mt-6">
+              Learn More
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
+              </svg>
+            </span>
           </a>
         </div>
       </div>
     </section>
 
-    <!-- Placeholder for Testimonials Carousel -->
-    <section class="py-16 md:py-24 bg-background text-center">
-      <div class="container mx-auto px-4">
-        <h2 class="font-heading text-4xl font-bold text-text-dark mb-6">What Our Clients Say</h2>
-        <p class="text-lg text-text-muted mb-12">
-          Hear directly from homeowners and businesses who trust Joe the Painter.
+    <TestimonialCarousel client:load />
+
+    <!-- Placeholder for Project Overview -->
+    <section class="bg-surface py-16 md:py-24" aria-labelledby="projects-overview-heading">
+      <div class="container mx-auto px-4 text-center">
+        <h2 id="projects-overview-heading" class="font-heading text-4xl md:text-5xl font-bold text-text mb-6">
+          See Our Work in Action
+        </h2>
+        <p class="text-lg md:text-xl text-textMuted mb-12 leading-relaxed max-w-3xl mx-auto">
+          Explore our portfolio to witness the transformative power of meticulous craftsmanship and attention to detail.
         </p>
-        <!-- TestimonialCarousel component will go here -->
-        <div class="bg-surface p-8 rounded-lg shadow-md animate-fade-in animate-delay-100">
-          <p class="text-xl italic text-text-dark mb-4">"Joe's work is simply outstanding. Meticulous, professional, and reliable – he transformed our home!"</p>
-          <p class="font-semibold text-primary">- Happy Homeowner, Carlsbad</p>
-        </div>
-        <div class="mt-12">
-          <a href="/testimonials" class="inline-flex px-8 py-4 bg-primary text-white rounded-lg font-semibold text-lg hover:bg-primary-dark transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-light animate-fade-in animate-delay-200">
-            Read All Testimonials
-          </a>
-        </div>
+        <Button href="/our-work" variant="primary" size="lg">
+          View All Projects
+        </Button>
       </div>
     </section>
 
-    <!-- Placeholder for Portfolio/CTA -->
-    <section class="py-16 md:py-24 bg-surface text-center">
-      <div class="container mx-auto px-4">
-        <h2 class="font-heading text-4xl font-bold text-text-dark mb-6">Our Work Speaks for Itself</h2>
-        <p class="text-lg text-text-muted mb-12">
-          Explore our portfolio of completed painting and handyman projects.
+    <!-- Call to Action -->
+    <section class="bg-primary text-surface py-16 md:py-20 text-center" aria-labelledby="homepage-cta-heading">
+      <div class="container mx-auto px-4 max-w-3xl">
+        <h2 id="homepage-cta-heading" class="font-heading text-4xl md:text-5xl font-bold mb-6">
+          Ready for Your Home's Transformation?
+        </h2>
+        <p class="text-lg md:text-xl mb-8">
+          Contact Joe today for a free, no-obligation consultation. Let's make your vision a reality.
         </p>
-        <a href="/our-work" class="inline-flex px-8 py-4 bg-accent text-white rounded-lg font-semibold text-lg hover:bg-accent-dark transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent animate-fade-in animate-delay-100">
-          View Our Portfolio
-        </a>
+        <Button href="/contact" variant="outline" size="lg">
+          Get Your Free Estimate
+        </Button>
       </div>
     </section>
   </main>
   <Footer />
 </BaseLayout>
+---

@@ -1,51 +1,32 @@
 ---
-import Button from './ui/Button.astro';
+import { Astro } from 'astro/runtime/client'; // Import Astro for current path
 
-interface NavLink {
-  text: string;
-  href: string;
-}
+const navLinks = [
+  { name: 'Home', href: '/' },
+  { name: 'Painting Services', href: '/services/painting' },
+  { name: 'Handy Services', href: '/services/handy' },
+  { name: 'Our Work', href: '/our-work' },
+  { name: 'About Joe', href: '/about' },
+  { name: 'Contact', href: '/contact' },
+];
 
-interface Props {
-  links: NavLink[];
-  isMobile?: boolean;
-}
-
-const { links, isMobile = false } = Astro.props;
-
-const linkClasses = `font-body font-medium text-base text-text
-                     hover:text-primary transition-colors duration-fast ease-default
-                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm`;
-
-const mobileLinkClasses = `font-heading text-3xl text-text mb-6 no-underline
-                           hover:text-primary transition-colors duration-fast ease-default
-                           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm`;
+const currentPath = Astro.url.pathname;
 ---
 
-<nav aria-label={isMobile ? "Mobile navigation" : "Main navigation"}>
-  <ul class:list={[
-    'flex',
-    isMobile ? 'flex-col items-center' : 'space-x-8 lg:space-x-10'
-  ]} role="list">
-    {links.map((link) => (
-      <li class:list={[isMobile ? 'mb-6' : '']}>
-        <a
-          href={link.href}
-          class:list={[
-            isMobile ? mobileLinkClasses : linkClasses,
-            Astro.url.pathname === link.href ? 'text-primary border-b-2 border-primary' : '',
-            !isMobile ? 'py-2 px-3' : '' // Add padding for desktop links
-          ]}
-          aria-current={Astro.url.pathname === link.href ? 'page' : undefined}
-        >
-          {link.text}
-        </a>
-      </li>
-    ))}
-    <li class:list={[isMobile ? 'mt-8' : '']}>
-      <Button href="/book-consultation" size={isMobile ? 'lg' : 'md'}>
-        Book a Free Consultation
-      </Button>
+<ul role="list" class="flex flex-col lg:flex-row gap-6 lg:gap-8">
+  {navLinks.map((link) => (
+    <li>
+      <a
+        href={link.href}
+        class:list={[
+          'text-text text-lg lg:text-base font-medium lg:font-normal hover:text-primary transition-all-colors-transform',
+          { 'text-primary font-semibold lg:font-medium': currentPath === link.href }
+        ]}
+        aria-current={currentPath === link.href ? 'page' : false}
+      >
+        {link.name}
+      </a>
     </li>
-  </ul>
-</nav>
+  ))}
+</ul>
+---

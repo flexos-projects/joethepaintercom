@@ -1,54 +1,48 @@
 ---
 import { Image } from 'astro:assets';
+import Button from './ui/Button.astro';
 
 interface Props {
   title: string;
   location: string;
-  description: string;
+  shortDescription: string;
   imageUrl: string;
   imageAlt: string;
-  projectLink: string;
+  href: string; // Link to the full project page
 }
 
-const {
-  title,
-  location,
-  description,
-  imageUrl,
-  imageAlt,
-  projectLink,
-} = Astro.props;
+const { title, location, shortDescription, imageUrl, imageAlt, href } = Astro.props;
 ---
 
-<article class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full hover:shadow-lg transition-shadow duration-300 group animate-fade-in">
-  <div class="relative w-full h-56 overflow-hidden">
+<a href={href} class="block group bg-surface rounded-lg shadow-md overflow-hidden transition-all-colors-transform hover:shadow-lg hover:-translate-y-1 h-full" aria-label={`View project: ${title} in ${location}`}>
+  <div class="relative w-full h-48 overflow-hidden">
     <Image
       src={imageUrl}
       alt={imageAlt}
-      widths={[320, 640, 960]}
-      sizes="(max-width: 768px) 100vw, 33vw"
+      width={600}
+      height={384}
+      class="w-full h-full object-cover transition-transform duration-normal ease-default group-hover:scale-105"
       loading="lazy"
-      quality={80}
-      class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 ease-in-out"
     />
   </div>
-  <div class="p-6 flex-1 flex flex-col">
-    <h3 class="font-heading text-xl font-bold text-text-dark mb-2">
-      <a href={projectLink} class="hover:text-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+  <div class="p-6 flex flex-col justify-between h-[calc(100%-12rem)]">
+    <div>
+      <h3 class="font-heading text-xl font-semibold text-text mb-2 group-hover:text-primary transition-colors">
         {title}
-      </a>
-    </h3>
-    <p class="text-sm text-text-muted mb-4">{location}</p>
-    <p class="text-base text-text-muted mb-4 flex-1">
-      {description}
-    </p>
-    <a
-      href={projectLink}
-      class="inline-flex items-center text-primary font-semibold hover:text-primary-dark transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-      aria-label={`View details for ${title} project`}
-    >
-      View Project Details
-      <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-    </a>
+      </h3>
+      <p class="text-sm text-textMuted mb-3">{location}</p>
+      <p class="text-base text-textMuted leading-relaxed">
+        {shortDescription}
+      </p>
+    </div>
+    <div class="mt-4">
+      <Button variant="ghost" size="sm" class="!justify-start !p-0" aria-hidden="true" tabindex="-1">
+        View Project
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
+        </svg>
+      </Button>
+    </div>
   </div>
-</article>
+</a>
+---

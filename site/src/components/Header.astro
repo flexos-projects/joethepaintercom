@@ -1,89 +1,38 @@
 ---
+import { Image } from 'astro:assets';
+import logoText from '@images/logo-text.svg'; // Assuming a text-based logo for accessibility
 import Button from './ui/Button.astro';
-import { CSLB_LICENSE_NUMBER, CSLB_LICENSE_URL } from '../config';
+import Nav from './Nav.astro';
+import MobileNav from './MobileNav.astro';
 
-const navLinks = [
-  { name: 'Home', href: '/' },
-  { name: 'Painting Services', href: '/services/painting' },
-  { name: 'Handy Services', href: '/services/handy' },
-  { name: 'Our Work', href: '/our-work' },
-  { name: 'About Joe', href: '/about' },
-  { name: 'Contact', href: '/contact' },
-];
+// Ensure the logo is a semantic SVG for accessibility and scalability
+// Or use an actual image and ensure alt text is present
 ---
 
-<header class="sticky top-0 z-50 bg-surface shadow-sm">
-  <div class="container mx-auto px-4 py-3 flex items-center justify-between">
-    <!-- Logo -->
-    <a href="/" class="flex items-center gap-2 text-text-dark hover:text-primary transition-colors duration-150 ease-in-out" aria-label="Joe the Painter homepage">
-      <img src="/favicon.svg" alt="Joe the Painter Logo" class="h-8 w-8" />
-      <span class="font-heading text-2xl font-bold">Joe the Painter</span>
+<header class="sticky top-0 z-50 bg-surface shadow-sm transition-all-colors-transform" role="banner">
+  <div class="container mx-auto px-4 py-3 md:py-4 flex items-center justify-between">
+    <a href="/" class="flex items-center group" aria-label="Joe the Painter homepage">
+      <Image
+        src={logoText}
+        alt="Joe the Painter Logo"
+        width={180}
+        height={40}
+        class="h-8 md:h-10 w-auto transition-transform group-hover:scale-105 motion-reduce:transition-none"
+        loading="eager"
+        fetchpriority="high"
+      />
     </a>
 
     <!-- Desktop Navigation -->
-    <nav class="hidden lg:flex items-center gap-6" aria-label="Main navigation">
-      <ul role="list" class="flex gap-6">
-        {navLinks.map((link) => (
-          <li>
-            <a
-              href={link.href}
-              class={`font-body text-base font-medium text-text-dark hover:text-primary transition-colors duration-150 ease-in-out relative group ${Astro.url.pathname === link.href ? 'text-primary' : ''}`}
-              aria-current={Astro.url.pathname === link.href ? 'page' : false}
-            >
-              {link.name}
-              <span class={`absolute bottom-0 left-0 w-full h-0.5 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-200 ease-out ${Astro.url.pathname === link.href ? 'scale-x-100' : ''}`} aria-hidden="true"></span>
-            </a>
-          </li>
-        ))}
-      </ul>
-      <Button href="/contact" variant="primary" size="md" class="ml-4">
+    <nav class="hidden lg:flex items-center space-x-6" aria-label="Main navigation">
+      <Nav />
+      <Button href="/contact" variant="primary" size="md">
         Book a Free Consultation
       </Button>
     </nav>
 
-    <!-- Mobile Hamburger Menu -->
-    <div class="lg:hidden flex items-center">
-      <Button id="mobile-menu-button" variant="ghost" size="md" aria-label="Open mobile menu" aria-expanded="false">
-        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-      </Button>
-    </div>
-  </div>
-
-  <!-- Mobile Menu Overlay -->
-  <div
-    id="mobile-menu"
-    class="fixed inset-0 bg-surface z-50 transform translate-x-full transition-transform duration-300 ease-in-out lg:hidden flex flex-col items-center justify-center p-8"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="mobile-menu-title"
-  >
-    <div class="absolute top-4 right-4">
-      <Button id="mobile-menu-close-button" variant="ghost" size="md" aria-label="Close mobile menu">
-        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-      </Button>
-    </div>
-    <h2 id="mobile-menu-title" class="sr-only">Main Navigation</h2>
-    <nav class="flex flex-col items-center gap-8">
-      <ul role="list" class="flex flex-col items-center gap-6">
-        {navLinks.map((link) => (
-          <li>
-            <a
-              href={link.href}
-              class="font-heading text-3xl font-semibold text-text-dark hover:text-primary transition-colors duration-150 ease-in-out"
-              aria-current={Astro.url.pathname === link.href ? 'page' : false}
-            >
-              {link.name}
-            </a>
-          </li>
-        ))}
-      </ul>
-      <Button href="/contact" variant="primary" size="lg" class="mt-8 w-full max-w-xs">
-        Book a Free Consultation
-      </Button>
-    </nav>
+    <!-- Mobile Navigation Trigger -->
+    <MobileNav />
   </div>
 </header>
+---

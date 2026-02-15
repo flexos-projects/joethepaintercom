@@ -1,125 +1,21 @@
 ---
-/**
- * TestimonialCard Component
- * Displays a single client testimonial including the quote, client's name,
- * location, an optional project type, and an optional star rating.
- */
-
-// Type imports
-import type { HTMLAttributes } from 'astro/types';
-
-// Props interface with JSDoc comments
-interface Props extends HTMLAttributes<'div'> {
-  /** The client's testimonial quote, can contain RichText (HTML). */
+interface Props {
   quote: string;
-  /** The name or initial of the client. */
   clientName: string;
-  /** The location of the client (e.g., "Homeowner, Carlsbad"). */
   clientLocation: string;
-  /** Optional type of project the testimonial relates to. */
   projectType?: string;
-  /** Optional star rating given by the client (1-5). */
-  starRating?: 1 | 2 | 3 | 4 | 5;
 }
 
-// Destructure props
-const {
-  quote,
-  clientName,
-  clientLocation,
-  projectType,
-  starRating,
-  class: className,
-  ...attrs
-} = Astro.props;
+const { quote, clientName, clientLocation, projectType } = Astro.props;
 ---
 
-<div
-  class:list={[
-    'testimonial-card',
-    className,
-  ]}
-  {...attrs}
->
-  <p class="testimonial-quote" set:html={quote}></p>
-  <div class="testimonial-author">
-    {starRating && (
-      <div class="star-rating mb-2" role="img" aria-label={`${starRating} out of 5 stars`}>
-        {[...Array(5)].map((_, i) => (
-          <svg
-            class:list={[
-              'star-icon',
-              i < starRating ? 'text-accent' : 'text-textSubtle'
-            ]}
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.539 1.118l-2.8-2.034a1 1 0 00-1.176 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.381-1.81.588-1.81h3.462a1 1 0 00.95-.69l1.07-3.292z" />
-          </svg>
-        ))}
-      </div>
-    )}
-    <p class="testimonial-name">{clientName}</p>
-    <p class="testimonial-location">{clientLocation}</p>
-    {projectType && <p class="testimonial-project-type">{projectType}</p>}
+<div class="bg-surface rounded-lg shadow-md p-6 md:p-8 flex flex-col h-full">
+  <blockquote class="text-lg md:text-xl text-text italic leading-relaxed mb-6 flex-grow">
+    "{quote}"
+  </blockquote>
+  <div class="pt-4 border-t border-border">
+    <p class="font-semibold text-text text-lg">{clientName}</p>
+    <p class="text-textMuted text-sm">{clientLocation} {projectType && `(${projectType})`}</p>
   </div>
 </div>
-
-<style>
-  .testimonial-card {
-    @apply bg-surface shadow-md rounded-lg p-6 flex flex-col justify-between h-full;
-    border: var(--spacing-px) solid var(--colors-border);
-    transition: all var(--animation-duration-normal) var(--animation-easing-default);
-  }
-
-  /* Hide empty paragraphs from RichText output to prevent extra spacing */
-  .testimonial-card:has(.testimonial-quote :global(p):last-child:empty) .testimonial-quote :global(p):last-child {
-    display: none;
-  }
-
-  .testimonial-quote {
-    @apply text-base text-text leading-base mb-4 italic;
-    font-family: var(--typography-fontFamily-body);
-  }
-
-  /* Ensure RichText content (e.g., paragraphs) within the quote is styled consistently */
-  .testimonial-quote :global(p) {
-    @apply mb-0; /* Remove default margin from last paragraph in quote to control spacing */
-  }
-
-  .testimonial-author {
-    @apply flex flex-col items-start mt-auto; /* Pushes author info to the bottom */
-  }
-
-  .star-rating {
-    @apply flex gap-0.5; /* Small gap between stars */
-  }
-
-  .star-icon {
-    @apply w-4 h-4; /* Size of the star icon */
-  }
-
-  .testimonial-name {
-    @apply text-sm text-text font-medium;
-    font-family: var(--typography-fontFamily-body);
-  }
-
-  .testimonial-location {
-    @apply text-sm text-textMuted;
-    font-family: var(--typography-fontFamily-body);
-  }
-
-  .testimonial-project-type {
-    @apply text-xs text-textSubtle mt-1;
-    font-family: var(--typography-fontFamily-body);
-  }
-
-  /* Reduced motion preference */
-  @media (prefers-reduced-motion: reduce) {
-    .testimonial-card {
-      transition: none;
-    }
-  }
-</style>
+---

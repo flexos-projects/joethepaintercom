@@ -1,108 +1,124 @@
 ---
-import { Image } from 'astro:assets';
 import BaseLayout from '@layouts/BaseLayout.astro';
-import joeProfile from '@assets/joe-profile.webp';
-import aboutHero from '@assets/about-hero.webp'; // Placeholder for an image specific to the about page hero
-
-const pageTitle = "About Joe | Your Trusted San Diego Craftsman Since 2001";
-const pageDescription = "Learn about Joe the Painter's 25+ years of licensed experience, core values, and commitment to quality craftsmanship in San Diego County.";
-const licenseNumber = "802167";
-const cslbLink = `https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=${licenseNumber}`;
+import { Image } from 'astro:assets';
+import Button from '@components/ui/Button.astro';
+import joeActionShot from '@images/joe-painting-action.webp';
+import joeHandymanShot from '@images/joe-handyman-action.webp';
 ---
 
-<BaseLayout title={pageTitle} description={pageDescription}>
-  <article class="bg-background py-16 md:py-24">
-    <div class="container mx-auto px-4 max-w-4xl">
-      <!-- Hero Section for About Page -->
-      <section class="text-center mb-16 md:mb-24">
-        <div class="relative w-full h-64 md:h-96 rounded-xl overflow-hidden shadow-lg mb-8">
-          <Image
-            src={aboutHero}
-            alt="Joe the Painter working on a residential project"
-            widths={[640, 1024, 1280]}
-            sizes="(max-width: 768px) 100vw, 80vw"
-            loading="eager"
-            fetchpriority="high"
-            quality={80}
-            class="w-full h-full object-cover"
-          />
-          <div class="absolute inset-0 bg-primary opacity-20"></div>
-        </div>
-        <h1 class="font-heading text-5xl md:text-6xl font-bold text-text-dark mb-4">
-          Meet Joe: Your Trusted Craftsman
+<BaseLayout
+  title="About Joe"
+  description="Learn about Joe the Painter's 25+ years of licensed experience, personal commitment, and values in San Diego County."
+>
+  <main id="main-content">
+    <section class="bg-background py-16 md:py-24" aria-labelledby="about-title">
+      <div class="container mx-auto px-4 max-w-4xl text-center">
+        <h1 id="about-title" class="font-heading text-5xl md:text-6xl font-bold text-text mb-6">
+          Meet Joe: Your Craftsman with a Legacy
         </h1>
-        <p class="text-xl text-text-muted">
-          Over 25 Years of Dedication to Quality Painting & Repairs in San Diego County
-        </p>
-      </section>
-
-      <!-- Joe's Story & Values -->
-      <section class="grid grid-cols-1 md:grid-cols-3 gap-12 items-start mb-16 md:mb-24">
-        <div class="md:col-span-1 flex justify-center md:justify-start">
-          <Image
-            src={joeProfile}
-            alt="Professional headshot of Joe the Painter"
-            widths={[300, 450, 600]}
-            sizes="(max-width: 768px) 80vw, 30vw"
-            loading="eager"
-            quality={85}
-            class="w-64 h-64 object-cover rounded-full shadow-xl border-4 border-surface"
-          />
-        </div>
-        <div class="md:col-span-2 text-text-dark text-lg space-y-6">
-          <p>
-            Since March 2001, Joe the Painter has been more than just a painting and handyman service in San Diego County – it's been a personal commitment to excellence. As a licensed C33 Painting and Decorating contractor (CA Lic. # {licenseNumber}), Joe has dedicated over two decades to perfecting his craft, building a reputation one satisfied client at a time.
-          </p>
-          <p>
-            Joe isn't a faceless corporation. When you work with Joe the Painter, you work directly with Joe. This sole proprietorship model ensures unparalleled personal oversight, clear communication, and a level of accountability that larger crews simply can't match. Your project receives the meticulous attention it deserves, from the initial consultation to the final walkthrough.
-          </p>
-          <p>
-            Our foundation is built on core values that define every brushstroke and every repair:
-          </p>
-          <ul class="list-disc list-inside space-y-2 pl-4">
-            <li><strong>Integrity:</strong> Honesty, transparency, and doing what's right, always.</li>
-            <li><strong>Craftsmanship:</strong> Superior quality, meticulous attention to detail, and results that exceed expectations.</li>
-            <li><strong>Customer Focus:</strong> Your needs and satisfaction are paramount, driving every decision and action.</li>
-            <li><strong>Reliability:</strong> Consistently delivering on promises, showing up on time, and completing projects efficiently.</li>
-          </ul>
-        </div>
-      </section>
-
-      <!-- License and Service Area -->
-      <section class="bg-surface p-8 md:p-10 rounded-lg shadow-md text-center mb-16 md:mb-24">
-        <h2 class="font-heading text-3xl font-bold text-text-dark mb-4">
-          Licensed & Proven: Your Peace of Mind
-        </h2>
-        <p class="text-lg text-text-muted mb-6">
-          Joe the Painter proudly serves homeowners and small businesses across Central and North San Diego County.
+        <p class="text-lg md:text-xl text-textMuted mb-8 leading-relaxed">
+          For over two decades, I've been transforming homes and businesses across San Diego County. My name is Joe, and Joe the Painter isn't just a company—it's my personal commitment to quality, integrity, and unparalleled craftsmanship.
         </p>
         <a
-          href={cslbLink}
+          href="https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=802167"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center justify-center px-8 py-4 bg-primary text-white rounded-lg font-semibold text-lg hover:bg-primary-dark transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-light"
-          aria-label={`Verify California Contractors License ${licenseNumber}`}
+          class="inline-flex items-center text-primary text-base font-medium hover:underline transition-all-colors-transform mb-12"
+          aria-label="Verify Joe the Painter's California Contractor License number 802167 (opens in new tab)"
         >
-          CA Lic. # {licenseNumber} <span class="sr-only">(Verify License)</span>
+          CA Lic. #802167 (Active Since March 2001)
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
         </a>
-      </section>
+      </div>
+    </section>
 
-      <!-- Call to Action -->
-      <section class="text-center">
-        <h2 class="font-heading text-4xl font-bold text-text-dark mb-6">
-          Ready to Experience the Difference?
+    <section class="bg-surface py-16 md:py-24" aria-labelledby="joe-story-heading">
+      <div class="container mx-auto px-4 max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div class="lg:order-2 flex justify-center">
+          <Image
+            src={joeActionShot}
+            alt="Joe the Painter meticulously applying paint to a wall with a brush"
+            width={600}
+            height={400}
+            class="rounded-lg shadow-lg w-full h-auto object-cover"
+            loading="lazy"
+          />
+        </div>
+        <div class="lg:order-1 text-center lg:text-left">
+          <h2 id="joe-story-heading" class="font-heading text-3xl md:text-4xl font-bold text-text mb-4">
+            A Quarter-Century of Craftsmanship
+          </h2>
+          <p class="text-lg text-textMuted mb-4 leading-relaxed">
+            I established Joe the Painter in March 2001, driven by a simple philosophy: deliver exceptional quality with unwavering personal service. Unlike larger, impersonal companies, when you hire Joe the Painter, you work directly with me. I believe this personal accountability is what sets me apart.
+          </p>
+          <p class="text-lg text-textMuted leading-relaxed">
+            My journey began with a passion for transforming spaces and a commitment to mastering every aspect of painting and home repair. Over the years, this dedication has earned me a loyal client base, with a high percentage of my business coming from repeat customers and referrals.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-background py-16 md:py-24" aria-labelledby="values-heading">
+      <div class="container mx-auto px-4 max-w-4xl text-center">
+        <h2 id="values-heading" class="font-heading text-3xl md:text-4xl font-bold text-text mb-8">
+          My Core Values: Building Trust, One Project at a Time
         </h2>
-        <p class="text-lg text-text-muted mb-8">
-          Let's discuss your project and discover the quality and personal touch that only a true craftsman can provide.
-        </p>
-        <a
-          href="/consultation"
-          class="inline-flex px-8 py-4 bg-accent text-white rounded-lg font-semibold text-lg hover:bg-accent-dark transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-          aria-label="Book a Free Consultation with Joe the Painter"
-        >
-          Book Your Free Consultation
-        </a>
-      </section>
-    </div>
-  </article>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="p-6 bg-surface rounded-lg shadow-md">
+            <h3 class="font-heading text-2xl font-semibold text-primary mb-3">Integrity</h3>
+            <p class="text-textMuted">
+              Honesty and transparency are the bedrock of my business. I provide clear communication and fair estimates, ensuring you always know what to expect.
+            </p>
+          </div>
+          <div class="p-6 bg-surface rounded-lg shadow-md">
+            <h3 class="font-heading text-2xl font-semibold text-primary mb-3">Craftsmanship</h3>
+            <p class="text-textMuted">
+              My commitment to superior quality means meticulous attention to detail in every brushstroke and every repair, striving for perfection.
+            </p>
+          </div>
+          <div class="p-6 bg-surface rounded-lg shadow-md">
+            <h3 class="font-heading text-2xl font-semibold text-primary mb-3">Customer Focus</h3>
+            <p class="text-textMuted">
+              Your needs and satisfaction are paramount. I listen, I advise, and I deliver results that truly exceed your expectations.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-surface py-16 md:py-24" aria-labelledby="synergy-heading">
+      <div class="container mx-auto px-4 max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div class="flex justify-center">
+          <Image
+            src={joeHandymanShot}
+            alt="Joe the Painter making a precise measurement for a handyman repair"
+            width={600}
+            height={400}
+            class="rounded-lg shadow-lg w-full h-auto object-cover"
+            loading="lazy"
+          />
+        </div>
+        <div class="text-center lg:text-left">
+          <h2 id="synergy-heading" class="font-heading text-3xl md:text-4xl font-bold text-text mb-4">
+            Painting & Handyman Synergy: A Complete Solution
+          </h2>
+          <p class="text-lg text-textMuted mb-6 leading-relaxed">
+            What truly differentiates Joe the Painter is the seamless integration of expert painting with essential handyman repairs. Many painting jobs require minor drywall fixes, wood rot replacement, or other preparations to ensure a flawless finish.
+          </p>
+          <p class="text-lg text-textMuted mb-8 leading-relaxed">
+            I offer the unique advantage of being a licensed painter who can also expertly handle these pre-paint repairs and general home maintenance. This "fix-it-first, then-paint-it-perfect" approach offers unparalleled convenience and ensures a superior, lasting result for your property.
+          </p>
+          <Button href="/services/handy" variant="secondary" size="lg" class="mr-4">
+            Explore Handy Services
+          </Button>
+          <Button href="/contact" variant="primary" size="lg">
+            Discuss Your Project
+          </Button>
+        </div>
+      </div>
+    </section>
+  </main>
 </BaseLayout>
+---
