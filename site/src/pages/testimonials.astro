@@ -1,0 +1,91 @@
+---
+/**
+ * Testimonials Page
+ * Displays a comprehensive list of client testimonials, overall rating,
+ * and links to external review platforms.
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import TestimonialCard from '@components/sections/TestimonialCard.astro';
+import CTABanner from '@components/sections/CTABanner.astro';
+import Section from '@components/sections/Section.astro';
+import { getCollection } from 'astro:content';
+
+const meta = {
+  title: 'Client Testimonials | Joe the Painter: Your San Diego Craftsman Since 2001',
+  description: 'Read what satisfied homeowners and businesses in San Diego County say about Joe the Painter\'s meticulous painting and reliable handyman services.',
+  // ogImage: '/images/og/testimonials.jpg', // Placeholder, will need to be created if not default
+};
+
+// Fetch published testimonials from the content collection
+const allTestimonials = await getCollection('testimonials', ({ data }) => data.published);
+
+// Sort testimonials by date, newest first (optional, but good practice for a full list)
+const testimonials = allTestimonials.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// Placeholder for average rating and count (these would ideally be aggregated dynamically from the collection or an external source)
+const averageRating = 4.9; // Example value, based on spec
+const totalReviews = testimonials.length; // Use actual count of published testimonials
+
+// External review platform links (placeholders, replace with actual URLs)
+// These links should ideally be configured centrally (e.g., in site config or env variables)
+const googleReviewsLink = 'https://www.google.com/search?q=Joe+the+Painter+San+Diego+reviews';
+const yelpReviewsLink = 'https://www.yelp.com/biz/joe-the-painter-san-diego';
+---
+
+<BaseLayout {...meta}>
+  <main>
+    <Section id="testimonials-intro" centered>
+      <h1 class="font-heading text-4xl md:text-5xl font-bold text-text mb-spacing-6">What Our Clients Say</h1>
+      <p class="font-body text-lg text-text-muted max-w-2xl mx-auto mb-spacing-8">
+        Discover why homeowners and businesses across San Diego County trust Joe the Painter for meticulous craftsmanship and unwavering reliability.
+      </p>
+
+      <!-- Average Star Rating & Review Links -->
+      <div class="flex flex-col items-center justify-center gap-spacing-4 mb-spacing-12">
+        <div class="flex items-center gap-spacing-2">
+          <span class="font-heading text-4xl font-bold text-accent" aria-label={`Average rating ${averageRating} out of 5 stars`}>{averageRating}</span>
+          <div class="flex text-accent text-2xl" aria-hidden="true">
+            ★★★★★ <!-- Visually represents the rating, actual star display might be a component or dynamic -->
+          </div>
+        </div>
+        <p class="font-body text-sm text-text-muted">Based on {totalReviews} reviews</p>
+        <div class="flex flex-wrap justify-center gap-spacing-4 mt-spacing-4">
+          <a
+            href={googleReviewsLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="px-spacing-5 py-spacing-3 bg-primary text-white font-semibold rounded-md shadow-md hover:bg-primary-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-light"
+            aria-label="Read Google Reviews for Joe the Painter"
+          >
+            Read Google Reviews
+          </a>
+          <a
+            href={yelpReviewsLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="px-spacing-5 py-spacing-3 bg-secondary text-white font-semibold rounded-md shadow-md hover:bg-secondary-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-secondary-light"
+            aria-label="Read Yelp Reviews for Joe the Painter"
+          >
+            Read Yelp Reviews
+          </a>
+        </div>
+      </div>
+    </Section>
+
+    <!-- Testimonials Grid -->
+    <Section id="client-stories" title="Client Stories" centered={false} background="background">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-spacing-8">
+        {testimonials.map((testimonial) => (
+          <TestimonialCard testimonial={testimonial.data} key={testimonial.id} />
+        ))}
+      </div>
+    </Section>
+  </main>
+
+  <CTABanner
+    headline="Ready for Your Home's Transformation?"
+    description="Get a free, no-obligation consultation with Joe, your trusted San Diego craftsman."
+    ctaText="Book Your Free Consultation"
+    ctaHref="/consultation"
+  />
+</BaseLayout>

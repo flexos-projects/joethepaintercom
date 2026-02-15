@@ -1,26 +1,38 @@
 ---
-import type { HTMLAttributes } from 'astro/types';
-
-interface Props extends HTMLAttributes<'section'> {
-  id: string;
-  background?: 'background' | 'surface' | 'primary-dark' | 'secondary';
+/**
+ * Generic Section Component
+ * Provides consistent padding, container width, and optional background/centering.
+ */
+interface Props {
+  id?: string;
+  title?: string;
   centered?: boolean;
+  background?: 'background' | 'dark' | 'none'; // Using design tokens for background
 }
 
-const { id, background = 'surface', centered = false, ...attrs } = Astro.props;
+const { id, title, centered = false, background = 'none' } = Astro.props;
 
-const backgroundClasses = {
-  'background': 'bg-neutral-50', // Maps to tokens.json: colors.background, tailwind.config.mjs: neutral.50
-  'surface': 'bg-white',        // Maps to tokens.json: colors.surface, tailwind.config.mjs: white
-  'primary-dark': 'bg-primary-dark', // Maps to tailwind.config.mjs: primary.dark
-  'secondary': 'bg-neutral-500',   // Maps to tokens.json: colors.secondary, tailwind.config.mjs: neutral.500
-}[background];
+let sectionClasses = 'py-spacing-12 md:py-spacing-16 lg:py-spacing-20'; // Use spacing tokens
 
-const containerClasses = `container mx-auto px-4 max-w-7xl ${centered ? 'text-center' : ''}`;
+if (background === 'background') {
+  sectionClasses += ' bg-background'; // Use background color token
+} else if (background === 'dark') {
+  sectionClasses += ' bg-text text-white'; // Dark background with light text
+}
 ---
 
-<section id={id} class={`${backgroundClasses} py-16 md:py-24`} {...attrs}>
-  <div class={containerClasses}>
+<section id={id} class:list={[sectionClasses]}>
+  <div class="container mx-auto px-spacing-4">
+    {title && (
+      <h2
+        class:list={[
+          'font-heading text-4xl md:text-5xl font-bold mb-spacing-8',
+          centered ? 'text-center mx-auto max-w-3xl' : ''
+        ]}
+      >
+        {title}
+      </h2>
+    )}
     <slot />
   </div>
 </section>
