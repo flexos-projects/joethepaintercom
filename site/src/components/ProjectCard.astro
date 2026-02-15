@@ -1,102 +1,54 @@
 ---
-/**
- * ProjectCard Component
- * Displays an individual portfolio project with an image, title, location, and brief description.
- * It's designed to be a clickable card linking to the full project details.
- */
-
-// Type imports
-import type { HTMLAttributes } from 'astro/types';
 import { Image } from 'astro:assets';
 
-// Props interface with JSDoc comments
-interface Props extends HTMLAttributes<'a'> {
-  /** The URL for the project's 'After' image. */
-  imageSrc: ImageMetadata | string;
-  /** The alt text for the project's 'After' image, crucial for accessibility. */
-  imageAlt: string;
-  /** The primary title of the project. */
+interface Props {
   title: string;
-  /** The location where the project was completed (e.g., "Encinitas, CA"). */
+  slug: string;
   location: string;
-  /** A brief, concise description or summary of the project. */
-  description: string;
-  /** The URL to the full project detail page. */
-  href: string;
-  /** Additional CSS classes to apply to the card container. */
-  class?: string;
+  shortDescription: string;
+  featuredImage: {
+    src: string;
+    alt: string;
+  };
 }
 
-// Destructure props with defaults
-const {
-  imageSrc,
-  imageAlt,
-  title,
-  location,
-  description,
-  href,
-  class: className,
-  ...attrs
-} = Astro.props;
-
-// Determine image dimensions for Astro Image component.
-// Using a common aspect ratio (16:9) for consistency, actual display size
-// will be controlled by Tailwind classes (w-full h-48 object-cover).
-const defaultImageWidth = 640;
-const defaultImageHeight = 360; // For a 16:9 aspect ratio
+const { title, slug, location, shortDescription, featuredImage } = Astro.props;
 ---
 
-<a
-  href={href}
-  class:list={[
-    "project-card group block bg-surface rounded-lg shadow-md overflow-hidden",
-    "transition-all duration-normal ease-in-out",
-    "hover:shadow-lg hover:-translate-y-1",
-    "motion-reduce:transition-none",
-    className
-  ]}
-  aria-label={`View project details for ${title} in ${location}`}
-  {...attrs}
->
-  <figure class="relative w-full h-48">
-    <Image
-      src={imageSrc}
-      alt={imageAlt}
-      width={defaultImageWidth}
-      height={defaultImageHeight}
-      loading="lazy"
-      decoding="async"
-      class="w-full h-full object-cover transition-transform duration-normal ease-in-out group-hover:scale-105"
-      widths={[320, 640, 960]}
-      sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-    />
-    <figcaption class="sr-only">Project: {title}, Location: {location}</figcaption>
-  </figure>
+<article class="group relative bg-surface rounded-lg shadow-md overflow-hidden flex flex-col h-full
+                transition-all duration-normal ease-in-out
+                hover:shadow-lg hover:-translate-y-1
+                focus-within:shadow-lg focus-within:-translate-y-1">
+  <a href={`/projects/${slug}`} class="block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-t-lg" aria-label={`View project: ${title}`}>
+    <figure class="relative w-full h-48 overflow-hidden">
+      <Image
+        src={featuredImage.src}
+        alt={featuredImage.alt}
+        width={600}
+        height={300}
+        class="w-full h-full object-cover transition-transform duration-normal ease-in-out group-hover:scale-105"
+        loading="lazy"
+        widths={[300, 600, 900]}
+        densities={[1, 2]}
+      />
+    </figure>
+  </a>
 
-  <div class="p-6">
-    <h3 class="font-heading text-xl font-semibold text-text mb-2 leading-tight">
-      {title}
+  <div class="p-6 flex flex-col flex-grow">
+    <h3 class="font-heading text-xl md:text-2xl font-semibold text-text mb-2">
+      <a href={`/projects/${slug}`} class="block hover:text-primary focus:outline-none focus-visible:text-primary">
+        {title}
+      </a>
     </h3>
-    <p class="text-sm text-textMuted mb-4 leading-normal">
-      {location}
+    <p class="text-sm text-text-muted mb-2">{location}</p>
+    <p class="text-base text-text flex-grow mb-4">
+      {shortDescription}
     </p>
-    <p class="text-textMuted text-base leading-relaxed">
-      {description}
-    </p>
+    <a href={`/projects/${slug}`} class="inline-flex items-center text-primary font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm self-start" aria-label={`Learn more about ${title}`}>
+      View Project
+      <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+      </svg>
+    </a>
   </div>
-</a>
-
-<style>
-  .project-card {
-    /* Base styles already handled by Tailwind classes in the component */
-    /* Ensure no extra styles here that conflict or duplicate Tailwind */
-  }
-
-  /*
-   * The group-hover:scale-105 on the image provides a subtle zoom effect.
-   * The hover:-translate-y-1 and hover:shadow-lg on the card itself
-   * provide a lift and shadow effect.
-   *
-   * All transitions are handled by Tailwind's utility classes and design tokens.
-   */
-</style>
+</article>
