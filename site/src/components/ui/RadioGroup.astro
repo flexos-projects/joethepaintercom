@@ -1,0 +1,84 @@
+---
+/**
+ * RadioGroup
+ * A reusable component for a group of radio buttons.
+ */
+
+import type { HTMLAttributes } from 'astro/types';
+import Label from './Label.astro';
+
+interface Option {
+  value: string;
+  label: string;
+}
+
+interface Props extends HTMLAttributes<'div'> {
+  /** The label for the entire radio group. */
+  label: string;
+  /** The name attribute for all radio buttons in the group. */
+  name: string;
+  /** An array of option objects. */
+  options: Option[];
+  /** Whether at least one option must be selected. */
+  required?: boolean;
+  /** The value of the currently selected radio button. */
+  selectedValue?: string;
+  /** Optional error message to display below the group. */
+  errorMessage?: string;
+}
+
+const {
+  label,
+  name,
+  options,
+  required = false,
+  selectedValue,
+  errorMessage,
+  class: className,
+  ...attrs
+} = Astro.props;
+
+const groupId = `${name}-group`;
+---
+
+<div class="mb-4" role="radiogroup" aria-labelledby={groupId} {...attrs}>
+  <Label id={groupId} class="!mb-2">
+    {label}
+    {required && <span class="text-error ml-1">*</span>}
+  </Label>
+  <div
+    class:list={[
+      'flex',
+      'flex-col',
+      'space-y-2',
+      errorMessage && 'border-l-2 border-error pl-2', // Visual cue for error on group
+      className,
+    ]}
+  >
+    {options.map((option) => (
+      <div class="flex items-center">
+        <input
+          type="radio"
+          id={`${name}-${option.value}`}
+          name={name}
+          value={option.value}
+          required={required}
+          checked={selectedValue === option.value}
+          class="h-4 w-4 text-primary border-border focus:ring-primary focus:ring-2"
+          aria-invalid={!!errorMessage}
+        />
+        <label
+          for={`${name}-${option.value}`}
+          class="ml-2 text-text text-base cursor-pointer"
+        >
+          {option.label}
+        </label>
+      </div>
+    ))}
+  </div>
+  {errorMessage && (
+    <p id={`${name}-error`} class="text-error text-sm mt-1" role="alert">
+      {errorMessage}
+    </p>
+  )}
+</div>

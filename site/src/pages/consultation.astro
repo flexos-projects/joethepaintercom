@@ -1,0 +1,27 @@
+---
+/**
+ * Consultation Page
+ * A dedicated page for users to request a free consultation.
+ */
+
+import BaseLayout from '@layouts/BaseLayout.astro';
+import ConsultationForm from '@components/ConsultationForm.astro';
+
+const pageTitle = 'Book Your Free Consultation';
+const pageDescription = 'Connect with Joe the Painter for a personalized project discussion and estimate. Meticulous painting and reliable repairs, personally delivered.';
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <section class="container mx-auto px-4 py-12 md:py-16 lg:py-20 max-w-4xl">
+    <div class="text-center mb-8 md:mb-12">
+      <h1 class="font-heading text-4xl md:text-5xl font-bold text-text mb-4">
+        {pageTitle}
+      </h1>
+      <p class="font-body text-lg text-textMuted max-w-2xl mx-auto">
+        {pageDescription}
+      </p>
+    </div>
+
+    <ConsultationForm />
+  </section>
+</BaseLayout>

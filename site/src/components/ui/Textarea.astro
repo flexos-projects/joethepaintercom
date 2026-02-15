@@ -1,34 +1,34 @@
 ---
 /**
- * Input
- * A reusable component for various text-based form inputs.
+ * Textarea
+ * A reusable component for multi-line text input fields.
  */
 
 import type { HTMLAttributes } from 'astro/types';
 import Label from './Label.astro';
 
-interface Props extends HTMLAttributes<'input'> {
-  /** The type of the input (e.g., 'text', 'email', 'tel', 'password'). */
-  type?: 'text' | 'email' | 'tel' | 'password' | 'number' | 'url';
-  /** The label text for the input. */
+interface Props extends HTMLAttributes<'textarea'> {
+  /** The label text for the textarea. */
   label: string;
-  /** The ID of the input, used for associating with the label. */
+  /** The ID of the textarea, used for associating with the label. */
   id: string;
   /** Optional placeholder text. */
   placeholder?: string;
-  /** Whether the input is required. */
+  /** Number of rows for the textarea. */
+  rows?: number;
+  /** Whether the textarea is required. */
   required?: boolean;
-  /** Current value of the input. */
+  /** Current value of the textarea. */
   value?: string;
-  /** Optional error message to display below the input. */
+  /** Optional error message to display below the textarea. */
   errorMessage?: string;
 }
 
 const {
-  type = 'text',
   label,
   id,
   placeholder,
+  rows = 4,
   required = false,
   value,
   errorMessage,
@@ -42,13 +42,12 @@ const {
     {label}
     {required && <span class="text-error ml-1">*</span>}
   </Label>
-  <input
-    type={type}
+  <textarea
     id={id}
     name={id}
     placeholder={placeholder}
+    rows={rows}
     required={required}
-    value={value}
     aria-invalid={!!errorMessage}
     aria-describedby={errorMessage ? `${id}-error` : undefined}
     class:list={[
@@ -73,7 +72,7 @@ const {
       className,
     ]}
     {...attrs}
-  />
+  >{value}</textarea>
   {errorMessage && (
     <p id={`${id}-error`} class="text-error text-sm mt-1" role="alert">
       {errorMessage}

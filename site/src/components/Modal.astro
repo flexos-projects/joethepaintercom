@@ -1,0 +1,244 @@
+---
+/**
+ * Modal
+ * A reusable, accessible modal component with focus trapping and keyboard navigation.
+ */
+
+import type { HTMLAttributes } from 'astro/types';
+import Button from './ui/Button.astro';
+import Icon from './ui/Icon.astro';
+
+interface Props extends HTMLAttributes<'dialog'> {
+  /** A unique ID for the modal, used for accessibility attributes. */
+  id: string;
+  /** Whether the modal is currently open. */
+  isOpen: boolean;
+  /** Function to call when the modal should close. */
+  onClose: () => void;
+  /** Title for the modal, used for accessibility and display. */
+  title: string;
+  /** Optional description for the modal. */
+  description?: string;
+  /** Max width for the modal content. Tailwind utility class, e.g., 'max-w-md'. */
+  maxWidth?: string;
+  /** Controls if the backdrop closes the modal. */
+  closeOnBackdropClick?: boolean;
+}
+
+const {
+  id,
+  isOpen,
+  onClose,
+  title,
+  description,
+  maxWidth = 'max-w-2xl',
+  closeOnBackdropClick = true,
+  class: className,
+  ...attrs
+} = Astro.props;
+
+const dialogId = `${id}-dialog`;
+const titleId = `${id}-title`;
+const descriptionId = description ? `${id}-description` : undefined;
+---
+
+<div
+  id={id}
+  class:list={[
+    'fixed',
+    'inset-0',
+    'z-[1000]', // High z-index to ensure it's on top
+    'flex',
+    'items-center',
+    'justify-center',
+    'p-4',
+    'transition-opacity',
+    'duration-300',
+    'ease-out',
+    'motion-reduce:transition-none',
+    isOpen ? 'opacity-100 visible' : 'opacity-0 invisible',
+    className,
+  ]}
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby={titleId}
+  aria-describedby={descriptionId}
+  tabindex="-1"
+  {...attrs}
+>
+  <!-- Backdrop -->
+  <div
+    class:list={[
+      'absolute',
+      'inset-0',
+      'bg-black/50', // Use color token with opacity
+      'transition-opacity',
+      'duration-300',
+      'ease-out',
+      'motion-reduce:transition-none',
+      isOpen ? 'opacity-100' : 'opacity-0',
+    ]}
+    onclick={closeOnBackdropClick ? `document.getElementById('${id}')._instance.close();` : ''}
+    aria-hidden="true"
+  ></div>
+
+  <!-- Modal Content -->
+  <div
+    id={dialogId}
+    class:list={[
+      'relative',
+      'bg-surface',
+      'rounded-lg',
+      'shadow-xl',
+      'p-6',
+      'md:p-8',
+      'w-full',
+      maxWidth,
+      'transform',
+      'transition-all',
+      'duration-300',
+      'ease-out',
+      'motion-reduce:transition-none',
+      isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0',
+    ]}
+    role="document"
+  >
+    <!-- Close Button -->
+    <Button
+      variant="ghost"
+      size="sm"
+      class="absolute top-3 right-3 text-textMuted hover:text-text"
+      aria-label="Close modal"
+      onclick={`document.getElementById('${id}')._instance.close();`}
+    >
+      <Icon name="close" class="w-6 h-6" />
+    </Button>
+
+    <!-- Title and Description -->
+    <h2 id={titleId} class="font-heading text-2xl md:text-3xl font-bold text-text mb-2 pr-10">
+      {title}
+    </h2>
+    {description && (
+      <p id={descriptionId} class="font-body text-base text-textMuted mb-6 pr-10">
+        {description}
+      </p>
+    )}
+
+    <!-- Main Content Slot -->
+    <slot />
+  </div>
+</div>
+
+<script define:vars={{ id, isOpen, onClose }} is:inline>
+  // This script handles modal behavior for accessibility and interaction.
+  // It provides focus trapping, keyboard control, and body scroll locking.
+
+  const modalElement = document.getElementById(id);
+  if (!modalElement) return;
+
+  const dialogElement = modalElement.querySelector('[role="document"]');
+  const focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+  let firstFocusableElement;
+  let lastFocusableElement;
+  let previouslyFocusedElement;
+
+  function trapFocus(event) {
+    if (event.key === 'Tab') {
+      if (event.shiftKey) { // Shift + Tab
+        if (document.activeElement === firstFocusableElement) {
+          lastFocusableElement.focus();
+          event.preventDefault();
+        }
+      } else { // Tab
+        if (document.activeElement === lastFocusableElement) {
+          firstFocusableElement.focus();
+          event.preventDefault();
+        }
+      }
+    }
+  }
+
+  function handleKeyDown(event) {
+    if (event.key === 'Escape') {
+      event.stopPropagation(); // Prevent other escape listeners
+      modalElement._instance.close();
+    }
+    trapFocus(event);
+  }
+
+  function getFocusableElements() {
+    const focusables = Array.from(dialogElement.querySelectorAll(focusableElements));
+    firstFocusableElement = focusables[0];
+    lastFocusableElement = focusables[focusables.length - 1];
+  }
+
+  function openModal() {
+    if (modalElement.classList.contains('opacity-0')) { // Check if it's actually closed
+      previouslyFocusedElement = document.activeElement; // Store element that triggered modal
+      modalElement.classList.remove('opacity-0', 'invisible');
+      modalElement.classList.add('opacity-100', 'visible');
+      document.body.style.overflow = 'hidden'; // Disable scroll on body
+
+      // Add 'inert' to main content to prevent interaction/focus (if supported)
+      // Fallback to aria-hidden and tabindex for older browsers
+      const mainContent = document.querySelector('main'); // Assuming main content is in <main>
+      if (mainContent) {
+        if ('inert' in mainContent) {
+          mainContent.inert = true;
+        } else {
+          mainContent.setAttribute('aria-hidden', 'true');
+          mainContent.querySelectorAll(focusableElements).forEach(el => el.setAttribute('tabindex', '-1'));
+        }
+      }
+
+      // Find focusable elements and set initial focus
+      setTimeout(() => { // Allow modal to become visible before focusing
+        getFocusableElements();
+        if (firstFocusableElement) {
+          firstFocusableElement.focus();
+        } else {
+          // If no focusable elements, focus the modal itself
+          dialogElement.focus();
+        }
+        modalElement.addEventListener('keydown', handleKeyDown);
+      }, 300); // Match transition duration
+    }
+  }
+
+  function closeModal() {
+    if (modalElement.classList.contains('opacity-100')) { // Check if it's actually open
+      modalElement.classList.remove('opacity-100', 'visible');
+      modalElement.classList.add('opacity-0', 'invisible');
+      document.body.style.overflow = ''; // Re-enable scroll on body
+
+      // Remove 'inert' or aria-hidden from main content
+      const mainContent = document.querySelector('main');
+      if (mainContent) {
+        if ('inert' in mainContent) {
+          mainContent.inert = false;
+        } else {
+          mainContent.removeAttribute('aria-hidden');
+          mainContent.querySelectorAll(focusableElements).forEach(el => el.removeAttribute('tabindex'));
+        }
+      }
+
+      modalElement.removeEventListener('keydown', handleKeyDown);
+      if (previouslyFocusedElement && previouslyFocusedElement.focus) {
+        previouslyFocusedElement.focus(); // Return focus to original element
+      }
+    }
+  }
+
+  // Expose methods via a custom property on the element for external control
+  modalElement._instance = {
+    open: openModal,
+    close: onClose || closeModal, // Use prop.onClose if provided, else local closeModal
+  };
+
+  // Initial state setup
+  if (isOpen) {
+    modalElement._instance.open();
+  } else {
+    modalElement._instance.close();
+  }
+</script>

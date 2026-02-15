@@ -1,86 +1,142 @@
 ---
-// src/components/ui/Button.astro
+/**
+ * Button
+ * A reusable component for various interactive buttons.
+ */
+
 import type { HTMLAttributes } from 'astro/types';
 
-interface Props extends HTMLAttributes<'a' | 'button'> {
+interface Props extends HTMLAttributes<'button'> {
+  /** Visual variant of the button. */
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  /** Size of the button. */
   size?: 'sm' | 'md' | 'lg';
-  href?: string;
-  type?: 'button' | 'submit' | 'reset';
+  /** Whether the button is disabled. */
   disabled?: boolean;
-  ariaLabel?: string;
-  class?: string; // Allow external classes to be merged
+  /** Type of the button (e.g., 'submit', 'button'). */
+  type?: 'button' | 'submit' | 'reset';
+  /** Optional icon name to display before the text. */
+  iconLeft?: string;
+  /** Optional icon name to display after the text. */
+  iconRight?: string;
+  /** If true, button will take full width of its parent. */
+  fullWidth?: boolean;
 }
 
 const {
   variant = 'primary',
   size = 'md',
-  href,
-  type = 'button',
   disabled = false,
-  ariaLabel,
-  class: className, // Rename class to avoid conflict with keyword
-  ...attrs // Capture any other HTML attributes
+  type = 'button',
+  iconLeft,
+  iconRight,
+  fullWidth = false,
+  class: className,
+  ...attrs
 } = Astro.props;
 
-const baseClasses = 'inline-flex items-center justify-center font-body font-semibold text-center no-underline cursor-pointer border rounded-md transition-all duration-150 ease-in-out ' +
-                    'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2';
+const baseStyles = [
+  'inline-flex',
+  'items-center',
+  'justify-center',
+  'font-body',
+  'font-semibold',
+  'text-center',
+  'no-underline',
+  'cursor-pointer',
+  'border',
+  'border-transparent',
+  'rounded-md',
+  'transition-all',
+  'duration-150',
+  'ease-in-out',
+  'active:scale-[0.98]', // Small press effect
+  'motion-reduce:transition-none', // Respect reduced motion
+  fullWidth ? 'w-full' : '',
+];
 
-const sizeClasses = {
+const sizeStyles = {
   sm: 'py-2 px-3 text-sm',
   md: 'py-3 px-4 text-base',
   lg: 'py-4 px-6 text-lg',
-}[size];
+};
 
-const variantClasses = {
-  primary: `
-    bg-primary text-white border-primary
-    hover:bg-primary-dark hover:border-primary-dark hover:shadow-sm
-    active:bg-primary-dark active:border-primary-dark active:translate-y-px
-    disabled:bg-neutral-400 disabled:border-neutral-400 disabled:text-white disabled:cursor-not-allowed
-  `,
-  secondary: `
-    bg-neutral-500 text-white border-neutral-500
-    hover:bg-neutral-600 hover:border-neutral-600 hover:shadow-sm
-    active:bg-neutral-600 active:border-neutral-600 active:translate-y-px
-    disabled:bg-neutral-400 disabled:border-neutral-400 disabled:text-white disabled:cursor-not-allowed
-  `,
-  outline: `
-    bg-transparent text-primary border-primary
-    hover:bg-primary hover:text-white hover:shadow-sm
-    active:bg-primary-dark active:border-primary-dark active:text-white active:translate-y-px
-    disabled:bg-transparent disabled:text-neutral-400 disabled:border-neutral-400 disabled:cursor-not-allowed
-  `,
-  ghost: `
-    bg-transparent text-primary border-transparent
-    hover:bg-primary/5
-    active:bg-primary/10 active:translate-y-px
-    disabled:bg-transparent disabled:text-neutral-400 disabled:cursor-not-allowed
-  `,
-}[variant];
+const variantStyles = {
+  primary: [
+    'bg-primary',
+    'text-white',
+    'border-primary',
+    'hover:bg-primary-dark',
+    'hover:border-primary-dark',
+    'focus:ring-2',
+    'focus:ring-primary/50',
+  ],
+  secondary: [
+    'bg-secondary',
+    'text-white',
+    'border-secondary',
+    'hover:bg-secondary-dark',
+    'hover:border-secondary-dark',
+    'focus:ring-2',
+    'focus:ring-secondary/50',
+  ],
+  outline: [
+    'bg-transparent',
+    'text-primary',
+    'border-primary',
+    'hover:bg-primary',
+    'hover:text-white',
+    'focus:ring-2',
+    'focus:ring-primary/50',
+  ],
+  ghost: [
+    'bg-transparent',
+    'text-primary',
+    'border-transparent',
+    'hover:bg-primary/5',
+    'focus:ring-2',
+    'focus:ring-primary/50',
+  ],
+};
 
-const combinedClasses = `${baseClasses} ${sizeClasses} ${variantClasses} ${className || ''}`;
+const disabledStyles = [
+  'bg-textSubtle',
+  'border-textSubtle',
+  'text-white',
+  'cursor-not-allowed',
+  'opacity-75',
+  'hover:bg-textSubtle', // Override hover
+  'hover:border-textSubtle',
+  'active:scale-100', // Remove press effect
+];
+
+const currentStyles = disabled ? disabledStyles : variantStyles[variant];
 ---
 
-{href ? (
-  <a
-    href={href}
-    class={combinedClasses}
-    aria-label={ariaLabel}
-    aria-disabled={disabled ? 'true' : undefined}
-    tabindex={disabled ? -1 : undefined}
-    {...attrs}
-  >
-    <slot />
-  </a>
-) : (
-  <button
-    type={type}
-    class={combinedClasses}
-    disabled={disabled}
-    aria-label={ariaLabel}
-    {...attrs}
-  >
-    <slot />
-  </button>
-)}
+<button
+  type={type}
+  disabled={disabled}
+  class:list={[...baseStyles, sizeStyles[size], ...currentStyles, className]}
+  {...attrs}
+>
+  {iconLeft && <Icon name={iconLeft as any} class="mr-2" />}
+  <slot />
+  {iconRight && <Icon name={iconRight as any} class="ml-2" />}
+</button>
+
+<style>
+  /* Define custom color variants for hover/active if not directly available via Tailwind config */
+  /* For example, if `primary-dark` is not in Tailwind config, define it here: */
+  .bg-primary:hover {
+    background-color: color-mix(in srgb, var(--colors-primary) 85%, black);
+  }
+  .bg-secondary:hover {
+    background-color: color-mix(in srgb, var(--colors-secondary) 85%, black);
+  }
+  .bg-primary:active {
+    background-color: color-mix(in srgb, var(--colors-primary) 70%, black);
+  }
+  .bg-secondary:active {
+    background-color: color-mix(in srgb, var(--colors-secondary) 70%, black);
+  }
+</style>

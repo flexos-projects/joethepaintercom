@@ -1,0 +1,116 @@
+---
+/**
+ * Select
+ * A reusable component for dropdown select inputs.
+ */
+
+import type { HTMLAttributes } from 'astro/types';
+import Label from './Label.astro';
+
+interface Option {
+  value: string;
+  label: string;
+}
+
+interface Props extends HTMLAttributes<'select'> {
+  /** The label text for the select input. */
+  label: string;
+  /** The ID of the select input, used for associating with the label. */
+  id: string;
+  /** An array of option objects. */
+  options: Option[];
+  /** Optional placeholder text for the first option. */
+  placeholder?: string;
+  /** Whether the select input is required. */
+  required?: boolean;
+  /** Current value of the select input. */
+  value?: string;
+  /** Optional error message to display below the select. */
+  errorMessage?: string;
+}
+
+const {
+  label,
+  id,
+  options,
+  placeholder,
+  required = false,
+  value,
+  errorMessage,
+  class: className,
+  ...attrs
+} = Astro.props;
+---
+
+<div class="mb-4">
+  <Label for={id}>
+    {label}
+    {required && <span class="text-error ml-1">*</span>}
+  </Label>
+  <div class="relative">
+    <select
+      id={id}
+      name={id}
+      required={required}
+      value={value}
+      aria-invalid={!!errorMessage}
+      aria-describedby={errorMessage ? `${id}-error` : undefined}
+      class:list={[
+        'block',
+        'appearance-none',
+        'w-full',
+        'px-3',
+        'py-2',
+        'border',
+        'border-border',
+        'rounded-md',
+        'font-body',
+        'text-base',
+        'text-text',
+        'bg-surface',
+        'pr-8', // space for arrow
+        'focus:outline-none',
+        'focus:ring-2',
+        'focus:ring-primary',
+        'focus:border-transparent',
+        'transition-all',
+        'duration-150',
+        'ease-in-out',
+        errorMessage && 'border-error',
+        className,
+      ]}
+      {...attrs}
+    >
+      {placeholder && (
+        <option value="" disabled selected={!value}>
+          {placeholder}
+        </option>
+      )}
+      {options.map((option) => (
+        <option value={option.value} selected={value === option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-textMuted">
+      <svg
+        class="h-4 w-4"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+          clip-rule="evenodd"
+        />
+      </svg>
+    </div>
+  </div>
+  {errorMessage && (
+    <p id={`${id}-error`} class="text-error text-sm mt-1" role="alert">
+      {errorMessage}
+    </p>
+  )}
+</div>

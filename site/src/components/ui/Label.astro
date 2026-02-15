@@ -1,24 +1,31 @@
 ---
-interface Props {
+/**
+ * Label
+ * A reusable component for form field labels.
+ */
+
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'label'> {
+  /** The HTML `for` attribute for associating with an input. */
   for: string;
-  text: string;
-  class?: string; // Allows additional Tailwind classes to be passed
 }
 
-const { for: htmlFor, text, class: className } = Astro.props;
+const { for: htmlFor, class: className, ...attrs } = Astro.props;
 ---
 
 <label
   for={htmlFor}
   class:list={[
-    "block",
-    "font-body",
-    "text-sm",
-    "font-medium",
-    "text-text",
-    "mb-1",
+    'block',
+    'font-body',
+    'text-sm',
+    'font-medium',
+    'text-text',
+    'mb-1',
     className,
   ]}
+  {...attrs}
 >
-  {text}
+  <slot />
 </label>
