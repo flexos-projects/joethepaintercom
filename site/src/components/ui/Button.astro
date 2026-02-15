@@ -5,6 +5,9 @@
  */
 
 import type { HTMLAttributes } from 'astro/types';
+// Assuming Icon component is available and correctly typed elsewhere.
+// If not, this import needs to be uncommented and the component created.
+// import Icon from './Icon.astro'; 
 
 interface Props extends HTMLAttributes<'button'> {
   /** Visual variant of the button. */
@@ -50,7 +53,6 @@ const baseStyles = [
   'transition-all',
   'duration-150',
   'ease-in-out',
-  'active:scale-[0.98]', // Small press effect
   'motion-reduce:transition-none', // Respect reduced motion
   fullWidth ? 'w-full' : '',
 ];
@@ -64,19 +66,29 @@ const sizeStyles = {
 const variantStyles = {
   primary: [
     'bg-primary',
-    'text-white',
+    'text-white', // Maps to surface-light in design system
     'border-primary',
-    'hover:bg-primary-dark',
-    'hover:border-primary-dark',
+    'hover:bg-primary-hover',
+    'hover:border-primary-hover',
+    'hover:shadow-sm',
+    'active:bg-primary-active',
+    'active:border-primary-active',
+    'active:translate-y-px',
+    'active:shadow-none',
     'focus:ring-2',
     'focus:ring-primary/50',
   ],
   secondary: [
     'bg-secondary',
-    'text-white',
+    'text-white', // Maps to surface-light in design system
     'border-secondary',
-    'hover:bg-secondary-dark',
-    'hover:border-secondary-dark',
+    'hover:bg-secondary-hover',
+    'hover:border-secondary-hover',
+    'hover:shadow-sm',
+    'active:bg-secondary-active',
+    'active:border-secondary-active',
+    'active:translate-y-px',
+    'active:shadow-none',
     'focus:ring-2',
     'focus:ring-secondary/50',
   ],
@@ -85,7 +97,13 @@ const variantStyles = {
     'text-primary',
     'border-primary',
     'hover:bg-primary',
-    'hover:text-white',
+    'hover:text-white', // Maps to surface-light in design system
+    'hover:shadow-sm',
+    'active:bg-primary-active',
+    'active:border-primary-active',
+    'active:text-white', // Maps to surface-light in design system
+    'active:translate-y-px',
+    'active:shadow-none',
     'focus:ring-2',
     'focus:ring-primary/50',
   ],
@@ -93,7 +111,9 @@ const variantStyles = {
     'bg-transparent',
     'text-primary',
     'border-transparent',
-    'hover:bg-primary/5',
+    'hover:bg-primary/[0.05]', // rgba(0, 71, 171, 0.05)
+    'active:bg-primary/[0.1]', // rgba(0, 71, 171, 0.1)
+    'active:translate-y-px',
     'focus:ring-2',
     'focus:ring-primary/50',
   ],
@@ -102,12 +122,13 @@ const variantStyles = {
 const disabledStyles = [
   'bg-textSubtle',
   'border-textSubtle',
-  'text-white',
+  'text-white', // Maps to surface-light in design system
   'cursor-not-allowed',
   'opacity-75',
   'hover:bg-textSubtle', // Override hover
   'hover:border-textSubtle',
-  'active:scale-100', // Remove press effect
+  'active:translate-y-0', // Remove press effect
+  'active:shadow-none', // Ensure no shadow on active disabled
 ];
 
 const currentStyles = disabled ? disabledStyles : variantStyles[variant];
@@ -119,24 +140,8 @@ const currentStyles = disabled ? disabledStyles : variantStyles[variant];
   class:list={[...baseStyles, sizeStyles[size], ...currentStyles, className]}
   {...attrs}
 >
+  {/* The Icon component is assumed to be defined and available for use */}
   {iconLeft && <Icon name={iconLeft as any} class="mr-2" />}
   <slot />
   {iconRight && <Icon name={iconRight as any} class="ml-2" />}
 </button>
-
-<style>
-  /* Define custom color variants for hover/active if not directly available via Tailwind config */
-  /* For example, if `primary-dark` is not in Tailwind config, define it here: */
-  .bg-primary:hover {
-    background-color: color-mix(in srgb, var(--colors-primary) 85%, black);
-  }
-  .bg-secondary:hover {
-    background-color: color-mix(in srgb, var(--colors-secondary) 85%, black);
-  }
-  .bg-primary:active {
-    background-color: color-mix(in srgb, var(--colors-primary) 70%, black);
-  }
-  .bg-secondary:active {
-    background-color: color-mix(in srgb, var(--colors-secondary) 70%, black);
-  }
-</style>

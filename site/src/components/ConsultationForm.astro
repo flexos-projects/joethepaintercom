@@ -9,7 +9,6 @@ import Select from './ui/Select.astro';
 import Textarea from './ui/Textarea.astro';
 import RadioGroup from './ui/RadioGroup.astro';
 import Button from './ui/Button.astro';
-import Icon from './ui/Icon.astro';
 
 interface Props {
   /** Optional title for the form */
@@ -18,7 +17,7 @@ interface Props {
   description?: string;
   /** Optional redirect URL after successful submission */
   successRedirectUrl?: string;
-  /** Optional endpoint for form submission (e.g., Formspree) */
+  /** Endpoint for form submission (e.g., Formspree). Must be provided via environment variable. */
   formAction?: string;
 }
 
@@ -26,8 +25,13 @@ const {
   title = 'Book Your Free Consultation',
   description = 'Let\'s discuss your project. Joe personally reviews every request and will be in touch within 1 business day.',
   successRedirectUrl = '/thank-you',
-  formAction = import.meta.env.PUBLIC_FORMSPREE_ENDPOINT_URL || 'https://formspree.io/f/yourformid',
+  formAction = import.meta.env.PUBLIC_FORMSPREE_ENDPOINT_URL,
 } = Astro.props;
+
+// Validate formAction is provided, as it's critical and no generic placeholder is allowed.
+if (!formAction) {
+  throw new Error('ConsultationForm: formAction is required. Ensure PUBLIC_FORMSPREE_ENDPOINT_URL environment variable is set in .env file.');
+}
 
 const serviceTypeOptions = [
   { value: 'painting', label: 'Painting Services' },
@@ -39,64 +43,6 @@ const preferredContactOptions = [
   { value: 'phone', label: 'Phone Call' },
   { value: 'email', label: 'Email' },
 ];
-
-// Client-side validation state (using basic JS for demonstration)
-// In a real app, you might use a framework or dedicated validation library
-let formErrors: Record<string, string> = {};
-
-// Function to handle form submission (client-side)
-const handleSubmit = async (event: Event) => {
-  event.preventDefault();
-  const form = event.target as HTMLFormElement;
-  const formData = new FormData(form);
-
-  // Basic client-side validation
-  formErrors = {};
-  if (!formData.get('fullName')) formErrors.fullName = 'Full Name is required.';
-  if (!formData.get('email') || !/\S+@\S+\.\S+/.test(formData.get('email') as string)) formErrors.email = 'A valid Email Address is required.';
-  if (!formData.get('phoneNumber') || !/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(formData.get('phoneNumber') as string)) formErrors.phoneNumber = 'A valid Phone Number is required.';
-  if (!formData.get('projectType')) formErrors.projectType = 'Please select a Project Type.';
-  if (!formData.get('serviceLocation')) formErrors.serviceLocation = 'Service Location is required.';
-  if (!formData.get('projectDetails')) formErrors.projectDetails = 'Please provide Project Details.';
-  if (!formData.get('preferredContact')) formErrors.preferredContact = 'Please select a Preferred Contact method.';
-
-  if (Object.keys(formErrors).length > 0) {
-    // Re-render component with errors (Astro won't re-render like this, need client:load or similar)
-    // For this example, we'll assume a client-side framework handles this or rely on browser validation.
-    console.error('Validation errors:', formErrors);
-    alert('Please correct the errors in the form.'); // Fallback alert
-    return;
-  }
-
-  const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement;
-  const originalButtonText = submitButton.innerHTML;
-  submitButton.disabled = true;
-  submitButton.innerHTML = `<span class="inline-flex items-center"><svg class="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Sending Request...</span>`;
-
-  try {
-    const response = await fetch(formAction, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-      },
-      body: formData,
-    });
-
-    if (response.ok) {
-      window.location.href = successRedirectUrl;
-    } else {
-      const errorData = await response.json();
-      console.error('Form submission failed:', errorData);
-      alert('Oops! Something went wrong. Please try again or call Joe directly at (760) 580-8173.');
-    }
-  } catch (error) {
-    console.error('Network error:', error);
-    alert('A network error occurred. Please check your connection or call Joe directly at (760) 580-8173.');
-  } finally {
-    submitButton.disabled = false;
-    submitButton.innerHTML = originalButtonText;
-  }
-};
 ---
 
 <div class="bg-surface rounded-lg p-6 md:p-8 shadow-md">
@@ -107,69 +53,91 @@ const handleSubmit = async (event: Event) => {
     {description}
   </p>
 
-  <form method="POST" action={formAction} class="space-y-4" onsubmit="return false;" data-consultation-form>
+  <form
+    method="POST"
+    action={formAction}
+    class="space-y-4"
+    onsubmit="return false;"
+    data-consultation-form
+    data-success-redirect-url={successRedirectUrl}
+  >
     <Input
       label="Full Name"
       id="fullName"
       type="text"
       placeholder="John Doe"
+      name="fullName"
       required
-      errorMessage={formErrors.fullName}
     />
+    <p id="fullName-error" class="text-error text-sm mt-1"></p>
+
     <Input
       label="Email Address"
       id="email"
       type="email"
       placeholder="john.doe@example.com"
+      name="email"
       required
-      errorMessage={formErrors.email}
     />
+    <p id="email-error" class="text-error text-sm mt-1"></p>
+
     <Input
       label="Phone Number"
       id="phoneNumber"
       type="tel"
       placeholder="(760) 555-1234"
+      name="phoneNumber"
       required
-      errorMessage={formErrors.phoneNumber}
     />
+    <p id="phoneNumber-error" class="text-error text-sm mt-1"></p>
+
     <Select
       label="Project Type"
       id="projectType"
       options={serviceTypeOptions}
       placeholder="Select a service type"
+      name="projectType"
       required
-      errorMessage={formErrors.projectType}
     />
+    <p id="projectType-error" class="text-error text-sm mt-1"></p>
+
     <Input
       label="Service Location (City or Zip Code)"
       id="serviceLocation"
       type="text"
       placeholder="Carlsbad, CA or 92008"
+      name="serviceLocation"
       required
-      errorMessage={formErrors.serviceLocation}
     />
+    <p id="serviceLocation-error" class="text-error text-sm mt-1"></p>
+
     <Textarea
       label="Project Details"
       id="projectDetails"
       placeholder="e.g., Exterior house paint, 3 bedrooms, drywall repair needed."
       rows={4}
+      name="projectDetails"
       required
-      errorMessage={formErrors.projectDetails}
     />
+    <p id="projectDetails-error" class="text-error text-sm mt-1"></p>
+
     <RadioGroup
       label="Preferred Contact Method"
       name="preferredContact"
       options={preferredContactOptions}
       required
-      errorMessage={formErrors.preferredContact}
     />
+    <p id="preferredContact-error" class="text-error text-sm mt-1"></p>
+
     <Input
       label="How Did You Hear About Joe? (Optional)"
       id="howDidYouHear"
       type="text"
       placeholder="e.g., Google, Friend's referral, Yelp"
+      name="howDidYouHear"
       required={false}
     />
+    <p id="howDidYouHear-error" class="text-error text-sm mt-1"></p>
 
     <div class="pt-2">
       <Button type="submit" fullWidth size="lg">
@@ -181,7 +149,7 @@ const handleSubmit = async (event: Event) => {
 
 <script is:inline>
   // This script provides client-side form submission logic for Astro's SSG.
-  // In a more complex SPA setup, a framework like React/Vue would handle state & validation.
+  // It handles basic validation and displays error messages dynamically.
   const formElement = document.querySelector('[data-consultation-form]');
   if (formElement) {
     formElement.addEventListener('submit', async (event) => {
@@ -189,36 +157,50 @@ const handleSubmit = async (event: Event) => {
       const form = event.target;
       const formData = new FormData(form);
 
-      // Simple client-side validation for demonstration
+      // Clear previous errors
+      form.querySelectorAll('.border-error').forEach(el => el.classList.remove('border-error'));
+      form.querySelectorAll('[id$="-error"]').forEach(el => el.textContent = '');
+      form.querySelectorAll('.radio-group.border-error').forEach(el => el.classList.remove('border-error'));
+
+      // Simple client-side validation
       let hasError = false;
-      const fields = ['fullName', 'email', 'phoneNumber', 'projectType', 'serviceLocation', 'projectDetails', 'preferredContact'];
-      fields.forEach(fieldId => {
-        const input = form.querySelector(`#${fieldId}`);
-        const errorMessageElement = form.querySelector(`#${fieldId}-error`);
-        if (input) {
-          if (input.required && !formData.get(fieldId)) {
-            input.classList.add('border-error');
-            if (errorMessageElement) errorMessageElement.textContent = `${input.labels[0].textContent.replace('*', '').trim()} is required.`;
+      const fields = [
+        { id: 'fullName', label: 'Full Name', validation: (val) => val && val.length >= 2, error: 'Full Name is required and must be at least 2 characters.' },
+        { id: 'email', label: 'Email Address', validation: (val) => val && /\S+@\S+\.\S+/.test(val), error: 'A valid Email Address is required.' },
+        { id: 'phoneNumber', label: 'Phone Number', validation: (val) => val && /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(val), error: 'A valid Phone Number is required.' },
+        { id: 'projectType', label: 'Project Type', validation: (val) => !!val, error: 'Please select a Project Type.' },
+        { id: 'serviceLocation', label: 'Service Location', validation: (val) => val && val.length >= 3, error: 'Service Location is required and must be at least 3 characters.' },
+        { id: 'projectDetails', label: 'Project Details', validation: (val) => val && val.length >= 10, error: 'Please provide Project Details (min 10 characters).' },
+        { id: 'preferredContact', label: 'Preferred Contact Method', validation: (val) => !!val, error: 'Please select a Preferred Contact method.' },
+      ];
+
+      fields.forEach(field => {
+        const value = formData.get(field.id) as string;
+        const inputElement = form.querySelector(`[name="${field.id}"]`) || form.querySelector(`[id="${field.id}"]`);
+        const errorMessageElement = form.querySelector(`#${field.id}-error`);
+
+        // Special handling for RadioGroup to check if any option is selected
+        if (field.id === 'preferredContact') {
+          const radioGroupInputs = form.querySelectorAll(`input[name="${field.id}"]`);
+          const isRadioSelected = Array.from(radioGroupInputs).some((radio: HTMLInputElement) => radio.checked);
+          if (!isRadioSelected) {
+            const radioGroupContainer = form.querySelector(`[name="${field.id}"]`)?.closest('div'); // Assuming RadioGroup has a div wrapper
+            if (radioGroupContainer) radioGroupContainer.classList.add('border-error');
+            if (errorMessageElement) errorMessageElement.textContent = field.error;
             hasError = true;
-          } else if (fieldId === 'email' && !/\S+@\S+\.\S+/.test(formData.get(fieldId))) {
-            input.classList.add('border-error');
-            if (errorMessageElement) errorMessageElement.textContent = 'A valid Email Address is required.';
-            hasError = true;
-          } else if (fieldId === 'phoneNumber' && !/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(formData.get(fieldId))) {
-            input.classList.add('border-error');
-            if (errorMessageElement) errorMessageElement.textContent = 'A valid Phone Number is required.';
-            hasError = true;
-          } else {
-            input.classList.remove('border-error');
-            if (errorMessageElement) errorMessageElement.textContent = '';
           }
+        } else if (inputElement && !field.validation(value)) {
+          inputElement.classList.add('border-error');
+          if (errorMessageElement) errorMessageElement.textContent = field.error;
+          hasError = true;
         }
       });
 
       if (hasError) {
-        // If there's an error, prevent submission and scroll to first error
-        const firstErrorField = form.querySelector('.border-error');
-        if (firstErrorField) firstErrorField.focus();
+        const firstErrorElement = form.querySelector('.border-error');
+        if (firstErrorElement) {
+          (firstErrorElement as HTMLElement).focus(); // Focus on the first element with an error
+        }
         return;
       }
 
@@ -238,7 +220,7 @@ const handleSubmit = async (event: Event) => {
         });
 
         if (response.ok) {
-          const successRedirectUrl = form.closest('[data-success-redirect-url]')?.dataset.successRedirectUrl || '/thank-you';
+          const successRedirectUrl = formElement.dataset.successRedirectUrl || '/thank-you';
           window.location.href = successRedirectUrl;
         } else {
           const errorData = await response.json();

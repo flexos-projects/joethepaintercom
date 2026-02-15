@@ -8,7 +8,7 @@ import type { HTMLAttributes } from 'astro/types';
 import Label from './Label.astro';
 
 interface Props extends HTMLAttributes<'input'> {
-  /** The type of the input (e.g., 'text', 'email', 'tel', 'password'). */
+  /** The type of the input (e.g., 'text', 'email', 'tel', 'password', 'number', 'url'). */
   type?: 'text' | 'email' | 'tel' | 'password' | 'number' | 'url';
   /** The label text for the input. */
   label: string;

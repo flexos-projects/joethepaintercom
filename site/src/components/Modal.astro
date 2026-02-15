@@ -71,7 +71,7 @@ const descriptionId = description ? `${id}-description` : undefined;
     class:list={[
       'absolute',
       'inset-0',
-      'bg-black/50', // Use color token with opacity
+      'bg-black/50', // Uses color token black with opacity
       'transition-opacity',
       'duration-300',
       'ease-out',
@@ -167,13 +167,16 @@ const descriptionId = description ? `${id}-description` : undefined;
   }
 
   function getFocusableElements() {
-    const focusables = Array.from(dialogElement.querySelectorAll(focusableElements));
+    const focusables = Array.from(dialogElement.querySelectorAll(focusableElements)).filter(
+      (el) => !el.hasAttribute('disabled') && !el.getAttribute('aria-hidden') === 'true'
+    );
     firstFocusableElement = focusables[0];
     lastFocusableElement = focusables[focusables.length - 1];
   }
 
   function openModal() {
-    if (modalElement.classList.contains('opacity-0')) { // Check if it's actually closed
+    // Only proceed if modal is not already open (based on its visibility class)
+    if (modalElement.classList.contains('invisible')) {
       previouslyFocusedElement = document.activeElement; // Store element that triggered modal
       modalElement.classList.remove('opacity-0', 'invisible');
       modalElement.classList.add('opacity-100', 'visible');
@@ -181,7 +184,8 @@ const descriptionId = description ? `${id}-description` : undefined;
 
       // Add 'inert' to main content to prevent interaction/focus (if supported)
       // Fallback to aria-hidden and tabindex for older browsers
-      const mainContent = document.querySelector('main'); // Assuming main content is in <main>
+      // Assuming main content is typically within a <main> tag for this site
+      const mainContent = document.querySelector('main');
       if (mainContent) {
         if ('inert' in mainContent) {
           mainContent.inert = true;
@@ -197,7 +201,7 @@ const descriptionId = description ? `${id}-description` : undefined;
         if (firstFocusableElement) {
           firstFocusableElement.focus();
         } else {
-          // If no focusable elements, focus the modal itself
+          // If no focusable elements, focus the modal content itself (dialogElement)
           dialogElement.focus();
         }
         modalElement.addEventListener('keydown', handleKeyDown);
@@ -206,7 +210,8 @@ const descriptionId = description ? `${id}-description` : undefined;
   }
 
   function closeModal() {
-    if (modalElement.classList.contains('opacity-100')) { // Check if it's actually open
+    // Only proceed if modal is actually open
+    if (modalElement.classList.contains('visible')) {
       modalElement.classList.remove('opacity-100', 'visible');
       modalElement.classList.add('opacity-0', 'invisible');
       document.body.style.overflow = ''; // Re-enable scroll on body
@@ -235,7 +240,7 @@ const descriptionId = description ? `${id}-description` : undefined;
     close: onClose || closeModal, // Use prop.onClose if provided, else local closeModal
   };
 
-  // Initial state setup
+  // Initial state setup based on isOpen prop
   if (isOpen) {
     modalElement._instance.open();
   } else {
