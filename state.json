@@ -1,11 +1,19 @@
 {
   "projectId": "joethepaintercom-kibm3",
   "status": "running",
-  "phase": "scrape",
+  "phase": "harvest",
   "progress": {},
   "caches": {},
   "outputs": {
-    "repoUrl": "https://github.com/flexos-projects/joethepaintercom"
+    "repoUrl": "https://github.com/flexos-projects/joethepaintercom",
+    "harvestFiles": [
+      "joethepaintercom-kibm3/harvest/firecrawl.json",
+      "joethepaintercom-kibm3/harvest/visual-harvest.md",
+      "joethepaintercom-kibm3/harvest/content-harvest.md",
+      "joethepaintercom-kibm3/harvest/data.json",
+      "joethepaintercom-kibm3/harvest/assets.json",
+      "joethepaintercom-kibm3/harvest/research.md"
+    ]
   },
   "errors": [],
   "startedAt": "2026-02-15T03:07:59.960Z"
