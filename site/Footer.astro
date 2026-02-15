@@ -1,0 +1,107 @@
+---
+import Button from '@/components/ui/Button.astro'; // Assuming Button component path
+
+// Define navigation links
+const navLinks = [
+  { name: 'Home', href: '/' },
+  { name: 'Painting Services', href: '/services/painting' },
+  { name: 'Handy Services', href: '/services/handy' },
+  { name: 'Our Work', href: '/our-work' },
+  { name: 'About Joe', href: '/about' },
+  { name: 'Contact', href: '/contact' },
+];
+
+const currentYear = new Date().getFullYear();
+const cslbLicenseNumber = '802167';
+const cslbLicenseLink = `https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=${cslbLicenseNumber}`;
+const phoneNumber = '+1 (760) 580-8173';
+const emailAddress = 'joe@joethepainter.com';
+---
+
+<footer class="bg-neutral-900 text-neutral-400 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <!-- Brand / Logo Section -->
+    <div class="col-span-full lg:col-span-1 text-center lg:text-left">
+      <a href="/" class="text-white text-3xl font-heading font-bold block mb-4" aria-label="Joe the Painter homepage">
+        JOE THE PAINTER
+      </a>
+      <p class="text-neutral-400 text-sm leading-relaxed mb-4">
+        Your trusted craftsman for meticulous painting and reliable handy services in San Diego County.
+        Done Right Since 2001.
+      </p>
+      <Button
+        href="/consultation"
+        variant="primary"
+        size="md"
+        class="w-full lg:w-auto mt-4"
+      >
+        Book a Free Consultation
+      </Button>
+    </div>
+
+    <!-- Navigation Links Section -->
+    <nav class="col-span-1 text-center md:text-left" aria-label="Footer navigation">
+      <h3 class="text-white text-lg font-semibold mb-4">Quick Links</h3>
+      <ul role="list" class="space-y-3">
+        {navLinks.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class="text-neutral-400 text-sm font-body hover:text-white transition-colors"
+            >
+              {link.name}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <!-- Contact Information Section -->
+    <div class="col-span-1 text-center md:text-left">
+      <h3 class="text-white text-lg font-semibold mb-4">Contact Joe</h3>
+      <ul role="list" class="space-y-3">
+        <li>
+          <a
+            href={`tel:${phoneNumber.replace(/\s|\(|\)-/g, '')}`}
+            class="text-neutral-400 text-sm font-body hover:text-white transition-colors"
+          >
+            {phoneNumber}
+          </a>
+        </li>
+        <li>
+          <a
+            href={`mailto:${emailAddress}`}
+            class="text-neutral-400 text-sm font-body hover:text-white transition-colors"
+          >
+            {emailAddress}
+          </a>
+        </li>
+        <li class="mt-4">
+          <a
+            href={cslbLicenseLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-neutral-400 text-sm font-body hover:text-white transition-colors flex items-center justify-center md:justify-start"
+            aria-label="Verify Joe the Painter's California Contractors License 802167"
+          >
+            CA Lic. # {cslbLicenseNumber}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 ml-2">
+              <path fill-rule="evenodd" d="M4.25 5.25a.75.75 0 01.75-.75h7.25a.75.75 0 01.75.75v7.25a.75.75 0 01-1.5 0V6.56L5.78 14.03a.75.75 0 01-1.06-1.06l6.47-6.47H5a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
+            </svg>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Legal / Copyright Section -->
+    <div class="col-span-full lg:col-span-1 text-center md:text-left mt-8 lg:mt-0">
+      <h3 class="text-white text-lg font-semibold mb-4">Service Area</h3>
+      <p class="text-neutral-400 text-sm font-body">
+        Proudly serving Central & North San Diego County, CA.
+      </p>
+      <p class="text-neutral-400 text-xs mt-8">
+        &copy; {currentYear} Joe the Painter. All rights reserved.
+      </p>
+    </div>
+  </div>
+</footer>
