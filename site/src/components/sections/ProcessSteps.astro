@@ -1,0 +1,49 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+interface ProcessStep {
+  title: string;
+  description: string;
+  image?: { src: ImageMetadata | string; alt: string; };
+}
+
+interface Props {
+  steps: ProcessStep[];
+  heading: string;
+}
+
+const { steps, heading } = Astro.props;
+---
+
+<section class="container mx-auto px-4 py-16 md:py-24 max-w-7xl">
+  <h2 class="font-heading text-4xl md:text-5xl font-bold text-text-dark text-center mb-12 md:mb-16">
+    {heading}
+  </h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
+    {steps.map((step, index) => (
+      <div class="flex flex-col items-center text-center group">
+        <div class="relative w-24 h-24 flex items-center justify-center rounded-full bg-primary-blue-light text-white font-body text-3xl font-bold mb-6 transition-all duration-300 ease-in-out group-hover:bg-accent-dark group-hover:scale-105">
+          {index + 1}
+          {step.image && typeof step.image.src === 'object' && (
+            <Image
+              src={step.image.src}
+              alt={step.image.alt}
+              width={96}
+              height={96}
+              class="absolute inset-0 rounded-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"
+              loading="lazy"
+              widths={[48, 96]}
+              sizes="(max-width: 768px) 48px, 96px"
+            />
+          )}
+        </div>
+        <h3 class="font-heading text-2xl font-semibold text-text-dark mb-3">
+          {step.title}
+        </h3>
+        <p class="text-text-muted text-base">{step.description}</p>
+      </div>
+    ))}
+  </div>
+</section>

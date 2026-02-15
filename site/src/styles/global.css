@@ -2,113 +2,124 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Import design tokens as CSS variables */
-@import './tokens.css';
-
-/* Custom global styles or overrides */
-
-/* Headings */
-h1, h2, h3 {
-  font-family: var(--font-heading);
-  color: var(--color-text);
-  font-weight: var(--font-weight-bold); /* Default bold for headings */
+/* Custom Fonts */
+@font-face {
+  font-family: 'Lora';
+  src: url('/fonts/lora-v26-latin-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
 }
 
-h4, h5, h6 {
-  font-family: var(--font-body); /* H4 uses Inter as per design spec */
-  color: var(--color-text);
-  font-weight: var(--font-weight-semibold);
+@font-face {
+  font-family: 'Lora';
+  src: url('/fonts/lora-v26-latin-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter-v12-latin-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter-v12-latin-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter-v12-latin-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Base styles for HTML elements */
+body {
+  @apply font-body text-base text-text-dark bg-background;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply font-heading text-text-dark;
 }
 
 h1 {
-  font-size: var(--text-5xl);
-  line-height: var(--leading-5xl);
+  @apply text-5xl font-bold leading-tight;
 }
 @screen md {
   h1 {
-    font-size: var(--text-6xl);
-    line-height: var(--leading-6xl);
+    @apply text-6xl;
+  }
+}
+@screen lg {
+  h1 {
+    @apply text-7xl;
   }
 }
 
 h2 {
-  font-size: var(--text-4xl);
-  line-height: var(--leading-4xl);
+  @apply text-4xl font-bold leading-tight;
 }
 @screen md {
   h2 {
-    font-size: var(--text-5xl);
-    line-height: var(--leading-5xl);
+    @apply text-5xl;
   }
 }
 
 h3 {
-  font-size: var(--text-3xl);
-  line-height: var(--leading-3xl);
+  @apply text-3xl font-semibold leading-tight;
 }
 @screen md {
   h3 {
-    font-size: var(--text-4xl);
-    line-height: var(--leading-4xl);
+    @apply text-4xl;
   }
 }
 
 h4 {
-  font-size: var(--text-2xl);
-  line-height: var(--leading-2xl);
+  @apply text-2xl font-semibold leading-normal;
 }
 @screen md {
   h4 {
-    font-size: var(--text-3xl);
-    line-height: var(--leading-3xl);
+    @apply text-3xl;
   }
 }
 
 p {
-  font-size: var(--text-base);
-  line-height: var(--leading-base);
-  color: var(--color-text);
+  @apply leading-relaxed mb-4;
 }
 
-/* Base link styles */
 a {
-  @apply text-inherit no-underline transition-colors duration-[var(--transition-fast)] ease-[var(--easing-default)];
+  @apply text-primary-blue hover:text-primary-blue-dark transition-colors duration-200 ease-in-out;
 }
 
-a:hover {
-  @apply text-[var(--color-primary)];
+/* General utility classes */
+.container {
+  @apply mx-auto px-4;
 }
 
-/* Skip link for accessibility */
-.skip-link {
-  @apply absolute -top-[9999px] left-1/2 -translate-x-1/2 bg-[var(--color-primary)] text-white p-3 rounded-md z-[100] transition-all duration-[var(--transition-fast)] ease-[var(--easing-default)];
+/* Ensure focus states are always visible */
+*:focus-visible {
+  @apply outline-none ring-2 ring-offset-2 ring-primary-blue;
 }
 
-.skip-link:focus {
-  @apply top-4;
-}
-
-/* Custom focus-visible */
-:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-  border-radius: var(--radius-md); /* Apply to all focusable elements */
-}
-
-/* Remove focus outline for mouse users */
-:focus:not(:focus-visible) {
-  outline: none;
-}
-
-/* Responsive image defaults */
-img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
-
-/* Scroll lock for mobile menu */
-.overflow-hidden-scroll {
+/* Accessibility for screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
   overflow: hidden;
-  touch-action: none;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }

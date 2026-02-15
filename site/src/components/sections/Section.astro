@@ -2,58 +2,25 @@
 import type { HTMLAttributes } from 'astro/types';
 
 interface Props extends HTMLAttributes<'section'> {
-  title?: string;
-  subtitle?: string;
+  id: string;
+  background?: 'background' | 'surface' | 'primary-blue-dark' | 'secondary-gray';
   centered?: boolean;
-  background?: 'background' | 'surface' | 'primary-dark';
 }
 
-const { title, subtitle, centered = false, background = 'surface', class: className, ...attrs } = Astro.props;
+const { id, background = 'surface', centered = false, ...attrs } = Astro.props;
 
-// Mapping conceptual design tokens from 06-design.md / tokens.json to actual Tailwind classes defined in 07-technical.md's tailwind.config.mjs
-const bgClass = {
-  'background': 'bg-neutral-50', // Mapped from Background White: #F9FAFB -> neutral-50
-  'surface': 'bg-white',         // Mapped from Surface Light: #FFFFFF -> white
-  'primary-dark': 'bg-primary-dark text-white', // Uses primary.dark from tailwind.config.mjs, ensures text is white on dark background
+const backgroundClasses = {
+  'background': 'bg-background',
+  'surface': 'bg-surface',
+  'primary-blue-dark': 'bg-primary-blue-dark',
+  'secondary-gray': 'bg-secondary-gray',
 }[background];
 
-// Adjust text colors based on the chosen background for optimal contrast, using defined Tailwind classes
-const textClass = background === 'primary-dark' ? 'text-white' : 'text-neutral-800'; // Mapped from Text Dark: #1F2937 -> neutral-800
-const subtitleClass = background === 'primary-dark' ? 'text-white opacity-90' : 'text-neutral-500'; // Mapped from Text Muted: #6B7280 -> neutral-500
-
+const containerClasses = `container mx-auto px-4 max-w-7xl ${centered ? 'text-center' : ''}`;
 ---
 
-<section
-  class:list={[
-    'py-16 px-4 sm:px-6 lg:px-8',
-    bgClass,
-    className
-  ]}
-  {...attrs}
->
-  <div class="max-w-6xl mx-auto">
-    {title && (
-      <h2
-        class:list={[
-          'font-heading text-4xl font-bold mb-4',
-          centered ? 'text-center mx-auto' : '',
-          textClass
-        ]}
-      >
-        {title}
-      </h2>
-    )}
-    {subtitle && (
-      <p
-        class:list={[
-          'font-body text-lg mb-8 max-w-3xl',
-          centered ? 'mx-auto text-center' : '',
-          subtitleClass
-        ]}
-      >
-        {subtitle}
-      </p>
-    )}
+<section id={id} class={`${backgroundClasses} py-16 md:py-24`} {...attrs}>
+  <div class={containerClasses}>
     <slot />
   </div>
 </section>

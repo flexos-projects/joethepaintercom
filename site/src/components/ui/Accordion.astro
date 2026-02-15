@@ -1,0 +1,69 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+interface FAQItem {
+  question: string;
+  answer: string; // RichText would be better here, but for now simple string
+}
+
+interface Props extends HTMLAttributes<'div'> {
+  items: FAQItem[];
+  id?: string;
+}
+
+const { items, id = 'accordion-default', ...attrs } = Astro.props;
+---
+
+<div {...attrs} class="w-full space-y-4" id={id}>
+  {items.map((item, index) => (
+    <details class="group bg-surface rounded-lg shadow-md overflow-hidden" role="group">
+      <summary
+        class="flex justify-between items-center p-5 cursor-pointer list-none font-body text-lg font-medium text-text-dark hover:bg-neutral-50 transition-colors duration-200 ease-in-out"
+        aria-expanded="false"
+        aria-controls={`${id}-content-${index}`}
+        tabindex="0"
+      >
+        <span>{item.question}</span>
+        <svg
+          class="w-6 h-6 transform transition-transform duration-200 ease-in-out group-open:rotate-180 text-primary-blue"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+      </summary>
+      <div id={`${id}-content-${index}`} role="region" class="px-5 pb-5 text-text-muted text-base">
+        <p>{item.answer}</p>
+      </div>
+    </details>
+  ))}
+</div>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const detailsElements = document.querySelectorAll('details');
+
+    detailsElements.forEach(details => {
+      details.addEventListener('toggle', () => {
+        const summary = details.querySelector('summary');
+        if (summary) {
+          summary.setAttribute('aria-expanded', details.open.toString());
+        }
+      });
+
+      // Handle keyboard navigation for summary elements
+      const summary = details.querySelector('summary');
+      if (summary) {
+        summary.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault(); // Prevent default scroll behavior for spacebar
+            details.open = !details.open;
+            summary.setAttribute('aria-expanded', details.open.toString());
+          }
+        });
+      }
+    });
+  });
+</script>

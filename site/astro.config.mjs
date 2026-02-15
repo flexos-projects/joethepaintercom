@@ -15,8 +15,9 @@ export default defineConfig({
     }),
     image({
       service: {
-        entrypoint: 'astro/assets/services/squoosh', // Use Squoosh for local image optimization
+        entrypoint: 'astro/assets/services/sharp', // Use Sharp for local image optimization, as Squoosh is deprecated
       },
+      // You can also configure cloud-based services like Cloudinary here if needed
     }),
     sitemap({
       // Configure sitemap generation
@@ -27,20 +28,21 @@ export default defineConfig({
     compress(), // General compression for static assets
   ],
   markdown: {
-    syntaxHighlight: 'shiki',
+    // Configure markdown for content collections if using .md files
+    syntaxHighlight: 'shiki', // Or 'prism'
     shikiConfig: {
-      theme: 'dracula',
+      theme: 'dracula', // Example theme
     },
   },
   experimental: {
-    contentCollections: true,
+    contentCollections: true, // Enable Astro Content Collections
   },
   build: {
-    assetsPrefix: '/_astro',
+    assetsPrefix: '/_astro', // Prefix for assets in the build output
   },
   vite: {
     ssr: {
-      noExternal: [],
+      noExternal: ['path-to-regexp'], // Example for specific external dependencies in SSR
     },
   },
 });

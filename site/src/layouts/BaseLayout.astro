@@ -1,106 +1,65 @@
 ---
-/**
- * Base Layout
- * Used by all pages for consistent structure
- */
+import type { HTMLAttributes } from 'astro/types';
+
+// Global styles
+import '@styles/global.css';
 
 // Components
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import SEO from '../components/SEO.astro';
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
 
-// Styles
-import '../styles/global.css';
-
-// Types
-interface Props {
+interface Props extends HTMLAttributes<'html'> {
   title: string;
   description: string;
+  keywords?: string;
   ogImage?: string;
-  noIndex?: boolean;
-  bodyClass?: string;
 }
 
-const {
-  title,
-  description,
-  ogImage = '/images/og-default.png',
-  noIndex = false,
-  bodyClass,
-} = Astro.props;
-
-// Build canonical URL
+const { title, description, keywords, ogImage } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href={canonicalURL} />
 
-  <!-- SEO Component -->
-  <SEO
-    title={title}
-    description={description}
-    ogImage={ogImage}
-    canonicalURL={canonicalURL.href}
-    noIndex={noIndex}
-  />
+    <title>{title} | Joe the Painter: Your San Diego Craftsman Since 2001</title>
+    <meta name="description" content={description} />
+    {keywords && <meta name="keywords" content={keywords} />}
 
-  <!-- Preconnect to external origins -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Open Graph / Social Media Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(ogImage || '/images/social-share-default.jpg', Astro.site).href} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
 
-  <!-- Fonts - preload critical font (Inter) -->
-  <link
-    rel="preload"
-    href="/fonts/Inter-roman.var.woff2"
-    as="font"
-    type="font/woff2"
-    crossorigin
-  >
-  <!-- Optional: Preload Lora if used prominently above the fold -->
-  <link
-    rel="preload"
-    href="/fonts/Lora-roman.var.woff2"
-    as="font"
-    type="font/woff2"
-    crossorigin
-  >
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalURL} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(ogImage || '/images/social-share-default.jpg', Astro.site).href} />
+    <meta name="twitter:creator" content="@JoeThePainterSD" />
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-  <!-- Theme color -->
-  <meta name="theme-color" content="#0047AB">
-
-  <!-- Slot for page-specific head content -->
-  <slot name="head" />
-</head>
-<body class:list={['min-h-screen flex flex-col', bodyClass]}>
-  <!-- Skip to main content (accessibility) -->
-  <a
-    href="#main-content"
-    class="skip-link"
-  >
-    Skip to main content
-  </a>
-
-  <!-- Header -->
-  <Header />
-
-  <!-- Main content -->
-  <main id="main-content" class="flex-1">
-    <slot />
-  </main>
-
-  <!-- Footer -->
-  <Footer />
-
-  <!-- Scripts slot -->
-  <slot name="scripts" />
-</body>
+    <!-- Preload fonts if self-hosting -->
+    <!-- <link rel="preload" href="/fonts/inter-v12-latin-regular.woff2" as="font" type="font/woff2" crossorigin> -->
+    <!-- <link rel="preload" href="/fonts/lora-v26-latin-700.woff2" as="font" type="font/woff2" crossorigin> -->
+  </head>
+  <body class="flex flex-col min-h-screen font-body text-base text-text-dark bg-background antialiased">
+    <Header />
+    <main id="main-content" class="flex-grow">
+      <slot />
+    </main>
+    <Footer />
+  </body>
 </html>

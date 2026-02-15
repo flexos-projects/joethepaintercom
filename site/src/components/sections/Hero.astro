@@ -1,0 +1,82 @@
+---
+import { Image } from 'astro:assets';
+import Button from '@components/ui/Button.astro'; // Assuming Button.astro is now CallToAction
+
+interface Props {
+  headline: string;
+  subheadline: string;
+  ctaText: string;
+  ctaHref: string;
+  image: {
+    src: ImageMetadata | string;
+    alt: string;
+    caption?: string;
+  };
+  licenseNumber?: string;
+}
+
+const { headline, subheadline, ctaText, ctaHref, image, licenseNumber } = Astro.props;
+
+const cslbUrl = licenseNumber
+  ? `https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=${licenseNumber}`
+  : '#';
+---
+
+<section class="relative bg-background overflow-hidden py-16 md:py-24 lg:py-32">
+  <div class="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-7xl">
+    <!-- Text Content -->
+    <div class="text-center lg:text-left z-10">
+      <h1 class="font-heading text-5xl md:text-6xl lg:text-7xl font-bold text-text-dark mb-6 leading-tight">
+        {headline}
+      </h1>
+      <p class="text-lg md:text-xl text-text-muted mb-8 max-w-xl lg:mx-0 mx-auto">
+        {subheadline}
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center lg:justify-start gap-4 mb-8">
+        <Button variant="primary" size="lg" href={ctaHref}>
+          {ctaText}
+        </Button>
+        {licenseNumber && (
+          <a
+            href={cslbUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-primary-blue hover:text-primary-blue-dark transition-colors duration-200 ease-in-out"
+            aria-label={`Verify Joe the Painter's California License Number ${licenseNumber} on CSLB website`}
+          >
+            CA Lic. # {licenseNumber} <span class="sr-only">(Opens in new tab)</span>
+            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+          </a>
+        )}
+      </div>
+    </div>
+
+    <!-- Image -->
+    <div class="relative w-full h-[400px] md:h-[500px] lg:h-[600px] rounded-2xl shadow-xl overflow-hidden z-0">
+      {typeof image.src === 'object' ? (
+        <Image
+          src={image.src}
+          alt={image.alt}
+          widths={[320, 640, 960, 1280]}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
+          loading="eager"
+          fetchpriority="high"
+          class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-105"
+        />
+      ) : (
+        <img
+          src={image.src}
+          alt={image.alt}
+          class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-105"
+          loading="eager"
+          fetchpriority="high"
+        />
+      )}
+      {image.caption && (
+        <figcaption class="absolute bottom-4 left-4 right-4 bg-black bg-opacity-60 text-white text-sm px-3 py-2 rounded-md">
+          {image.caption}
+        </figcaption>
+      )}
+    </div>
+  </div>
+</section>

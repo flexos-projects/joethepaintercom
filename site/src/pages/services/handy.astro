@@ -4,63 +4,113 @@
  * URL: /services/handy
  */
 
-import { getCollection } from 'astro:content';
+import { getEntry } from 'astro:content';
 import BaseLayout from '@layouts/BaseLayout.astro';
 import Hero from '@components/sections/Hero.astro';
-import ServiceDetailSection from '@components/sections/ServiceDetailSection.astro';
-import CTABanner from '@components/sections/CTABanner.astro';
+import Section from '@components/sections/Section.astro';
+import Button from '@components/ui/Button.astro'; // Assuming Button.astro is now CallToAction
+import BenefitCard from '@components/ui/BenefitCard.astro';
+import ProcessSteps from '@components/sections/ProcessSteps.astro';
+import Accordion from '@components/ui/Accordion.astro';
 
-// Fetch the Handy Services content
-const handyService = await getCollection('services', ({ id }) => id === 'handy-services');
+const handyServicesEntry = await getEntry('service', 'handy-services');
 
-// Define page metadata
+if (!handyServicesEntry) {
+  // Handle case where content entry is not found
+  return Astro.redirect('/404');
+}
+
+const { data } = handyServicesEntry;
+
 const pageMeta = {
-  title: "Handy Services San Diego | Licensed Contractor Home Repair",
-  description: "Reliable handy services in San Diego County from Joe the Painter. From drywall repair to minor carpentry and maintenance, get professional help for your home or business. Free consultation!",
-  ogImage: "/images/services/handy-services-hero.webp",
-};
-
-// Hero content for the main Handy Services page
-const heroContent = {
-  headline: "Reliable Handy Services: Your Trusted Partner for Home & Business Maintenance",
-  subheadline: "Beyond exceptional painting, Joe the Painter offers a wide range of essential handyman services, ensuring your property stays in perfect condition. Get expert repairs and efficient solutions.",
-  ctaText: "Discuss Your Handy Project",
-  ctaHref: "/consultation",
-  image: {
-    src: "/images/services/handy-services-hero.webp",
-    alt: "Man fixing a broken fence, showing general handyman work",
-  },
-  licenseNumber: "CA Lic. #802167",
+  title: data.seo.title,
+  description: data.seo.description,
+  // Assuming a default OG image or a page-specific one can be set
+  ogImage: data.featuredImage?.src || '/images/social-share-default.jpg',
 };
 ---
 
 <BaseLayout {...pageMeta}>
   <Hero
-    headline={heroContent.headline}
-    subheadline={heroContent.subheadline}
-    ctaText={heroContent.ctaText}
-    ctaHref={heroContent.ctaHref}
-    image={heroContent.image}
-    licenseNumber={heroContent.licenseNumber}
+    headline={data.title}
+    subheadline={data.shortDescription}
+    ctaText={data.ctaText}
+    ctaHref="/consultation"
+    image={data.featuredImage}
+    licenseNumber="802167"
   />
 
-  <main>
-    {handyService.length > 0 ? (
-      <ServiceDetailSection service={handyService[0].data} index={0} />
-    ) : (
-      <section class="container mx-auto px-4 py-16 md:py-24 text-center">
-        <h2 class="font-heading text-4xl font-bold text-text-dark mb-4">Handy Services Coming Soon!</h2>
-        <p class="text-lg text-text-muted max-w-prose mx-auto">
-          We're currently preparing detailed information about our comprehensive handyman offerings. Please check back soon or contact Joe directly to discuss your project needs.
-        </p>
-      </section>
-    )}
+  <Section id="overview" background="background">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="font-heading text-4xl md:text-5xl font-bold text-text-dark mb-8">
+        Comprehensive Handy Solutions for Your Property
+      </h2>
+      <p class="text-text-muted text-lg leading-relaxed md:leading-relaxed">
+        {data.longDescription}
+      </p>
+    </div>
+  </Section>
 
-    <CTABanner
-      headline="Need a Hand with Your Home or Business?"
-      description="From minor repairs to essential maintenance, Joe the Painter provides reliable solutions with the same commitment to quality as his painting services. Let's get it done right."
-      ctaText="Schedule Your Free Handyman Consultation"
-      ctaHref="/consultation"
+  <Section id="benefits" background="surface">
+    <h2 class="font-heading text-4xl md:text-5xl font-bold text-text-dark text-center mb-12">
+      Why Choose Joe for Your Handy Services
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      {data.benefits.map(benefit => (
+        <BenefitCard
+          title={benefit}
+          description="Joe's commitment to quality and personal touch ensures every task is completed to the highest standard."
+          icon="wrench"
+        />
+      ))}
+    </div>
+  </Section>
+
+  <Section id="services-list" background="background">
+    <h2 class="font-heading text-4xl md:text-5xl font-bold text-text-dark text-center mb-12">
+      Our Range of Reliable Handy Services
+    </h2>
+    <div class="max-w-3xl mx-auto">
+      <ul class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-text-dark text-lg list-disc list-inside">
+        {data.serviceTypes.map(serviceType => (
+          <li>{serviceType}</li>
+        ))}
+      </ul>
+      <p class="mt-8 text-center text-text-muted text-base">
+        Don't see your specific need listed? Joe is versatile! <a href="/contact" class="text-primary-blue hover:underline">Contact us</a> to discuss your project.
+      </p>
+    </div>
+  </Section>
+
+  {data.processSteps && data.processSteps.length > 0 && (
+    <ProcessSteps
+      heading="Our Handy Services Process: Clear, Concise, Complete"
+      steps={data.processSteps}
     />
-  </main>
+  )}
+
+  {data.faqs && data.faqs.length > 0 && (
+    <Section id="faqs" background="background">
+      <h2 class="font-heading text-4xl md:text-5xl font-bold text-text-dark text-center mb-12">
+        Frequently Asked Questions About Handy Services
+      </h2>
+      <div class="max-w-4xl mx-auto">
+        <Accordion items={data.faqs.map(faq => ({ question: faq.question, answer: String(faq.answer) }))} />
+      </div>
+    </Section>
+  )}
+
+  <Section id="cta-bottom" background="primary-blue-dark">
+    <div class="text-center text-white max-w-3xl mx-auto">
+      <h2 class="font-heading text-4xl md:text-5xl font-bold mb-6">
+        Ready to Tackle Your To-Do List?
+      </h2>
+      <p class="text-lg md:text-xl mb-8 leading-relaxed">
+        From minor repairs to essential maintenance, Joe provides reliable, high-quality handyman services with a personal touch.
+      </p>
+      <Button variant="accent" size="lg" href="/consultation">
+        {data.ctaText}
+      </Button>
+    </div>
+  </Section>
 </BaseLayout>
