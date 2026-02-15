@@ -1,7 +1,7 @@
 {
   "projectId": "joethepaintercom-kibm3",
   "status": "running",
-  "phase": "setup",
+  "phase": "scrape",
   "progress": {},
   "caches": {},
   "outputs": {
