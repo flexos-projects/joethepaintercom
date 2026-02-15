@@ -27,26 +27,27 @@ const baseClasses = `
 `;
 
 // Variant-specific classes
+// Hex codes are used for specific button states as per 06-design.md where they differ from general primary/secondary tokens.
 const variantClasses = {
   primary: `
     bg-primary text-white border-primary
-    hover:bg-primary-dark hover:border-primary-dark hover:shadow-sm
-    active:scale-[0.98] active:bg-primary-dark active:border-primary-dark
+    hover:bg-[#003B8D] hover:border-[#003B8D] hover:shadow-sm
+    active:translate-y-[1px] active:bg-[#002A6B] active:border-[#002A6B]
   `,
   secondary: `
-    bg-neutral-500 text-white border-neutral-500
-    hover:bg-neutral-600 hover:border-neutral-600 hover:shadow-sm
-    active:scale-[0.98] active:bg-neutral-700 active:border-neutral-700
+    bg-secondary text-white border-secondary
+    hover:bg-[#5A616E] hover:border-[#5A616E] hover:shadow-sm
+    active:translate-y-[1px] active:bg-[#4D535E] active:border-[#4D535E]
   `,
   outline: `
     bg-transparent text-primary border-primary
     hover:bg-primary hover:text-white hover:shadow-sm
-    active:scale-[0.98] active:bg-primary-dark active:border-primary-dark
+    active:translate-y-[1px] active:bg-[#002A6B] active:border-[#002A6B]
   `,
   ghost: `
     bg-transparent text-primary border-transparent
     hover:bg-primary/[0.05]
-    active:scale-[0.98] active:bg-primary/[0.1]
+    active:translate-y-[1px] active:bg-primary/[0.1]
   `,
 };
 
@@ -57,9 +58,9 @@ const sizeClasses = {
   lg: 'px-6 py-4 text-lg',
 };
 
-// Disabled state classes
+// Disabled state classes, using semantic colors from 06-design.md
 const disabledClasses = disabled
-  ? 'opacity-60 cursor-not-allowed pointer-events-none'
+  ? 'bg-text-subtle border-text-subtle text-surface cursor-not-allowed pointer-events-none'
   : '';
 
 // Determine if it's a link or a button

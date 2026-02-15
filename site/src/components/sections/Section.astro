@@ -10,14 +10,17 @@ interface Props extends HTMLAttributes<'section'> {
 
 const { title, subtitle, centered = false, background = 'surface', class: className, ...attrs } = Astro.props;
 
+// Mapping conceptual design tokens from 06-design.md / tokens.json to actual Tailwind classes defined in 07-technical.md's tailwind.config.mjs
 const bgClass = {
-  'background': 'bg-background',
-  'surface': 'bg-surface',
-  'primary-dark': 'bg-primary-dark text-white',
+  'background': 'bg-neutral-50', // Mapped from Background White: #F9FAFB -> neutral-50
+  'surface': 'bg-white',         // Mapped from Surface Light: #FFFFFF -> white
+  'primary-dark': 'bg-primary-dark text-white', // Uses primary.dark from tailwind.config.mjs, ensures text is white on dark background
 }[background];
 
-const textClass = background === 'primary-dark' ? 'text-white' : 'text-text';
-const subtitleClass = background === 'primary-dark' ? 'text-white opacity-90' : 'text-text-muted';
+// Adjust text colors based on the chosen background for optimal contrast, using defined Tailwind classes
+const textClass = background === 'primary-dark' ? 'text-white' : 'text-neutral-800'; // Mapped from Text Dark: #1F2937 -> neutral-800
+const subtitleClass = background === 'primary-dark' ? 'text-white opacity-90' : 'text-neutral-500'; // Mapped from Text Muted: #6B7280 -> neutral-500
+
 ---
 
 <section
