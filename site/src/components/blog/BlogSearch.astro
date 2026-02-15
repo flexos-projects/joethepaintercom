@@ -18,7 +18,7 @@ interface Props extends HTMLAttributes<'input'> {
 // Destructure with defaults
 const {
   query = '',
-  placeholder = 'Search blog posts...',
+  placeholder = 'Search blog posts', // Removed '...' as per issue resolution
   class: className,
   ...attrs
 } = Astro.props;

@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '@layouts/BaseLayout.astro';
-import BlogPostCard from '@components/blog/BlogPostCard.astro'; // Assuming this component exists or will be created
+import BlogPostCard from '@components/blog/BlogPostCard.astro';
 import BlogSearch from '@components/blog/BlogSearch.astro';
 import BlogCategoryFilter from '@components/blog/BlogCategoryFilter.astro';
 import type { CollectionEntry } from 'astro:content';
@@ -13,14 +13,18 @@ const allPosts = (await getCollection('blog', ({ data }) => !data.draft))
 // Extract unique tags for categories
 const allTags = [...new Set(allPosts.flatMap(post => post.data.tags))];
 
-// Initial state for client-side rendering
+// Stringify all posts data for client-side filtering.
+// Only pass necessary data to avoid bloating the client-side script with full content.
 const initialPosts = JSON.stringify(allPosts.map(post => ({
   slug: post.slug,
-  data: post.data,
-  // Pass only necessary data for client-side filtering, not full content
-  // If content is needed for search, it should be pre-processed or fetched.
-  // For this task, we assume search on title, description, tags.
-  // If full text search is needed, the `Content` itself would need to be passed or re-rendered
+  data: {
+    title: post.data.title,
+    description: post.data.description,
+    pubDate: post.data.pubDate, // Date object needs to be handled on client side if used for sorting/display
+    tags: post.data.tags,
+    image: post.data.image,
+    author: post.data.author,
+  },
 })));
 
 const pageTitle = "Joe's Insights & Articles";
@@ -61,7 +65,8 @@ const pageDescription = "Stay informed with Joe the Painter's latest articles on
 </BaseLayout>
 
 <script is:inline>
-  const allPostsData = JSON.parse('{initialPosts}'); // All posts data from server
+  // Parse the stringified JSON data passed from the Astro frontmatter
+  const allPostsData = JSON.parse(`${initialPosts}`);
   const blogPostsContainer = document.getElementById('blog-posts-container');
   const blogSearchInput = document.getElementById('blog-search-input');
   const blogCategoryFilter = document.getElementById('blog-category-filter');
@@ -72,20 +77,6 @@ const pageDescription = "Stay informed with Joe the Painter's latest articles on
 
   // Function to render posts based on current filters
   function renderFilteredPosts() {
-    const postsToDisplay = allPostsData.filter(post => {
-      // Filter by search term
-      const matchesSearch = !currentSearchTerm ||
-                            post.data.title.toLowerCase().includes(currentSearchTerm) ||
-                            post.data.description.toLowerCase().includes(currentSearchTerm) ||
-                            post.data.tags.some(tag => tag.toLowerCase().includes(currentSearchTerm));
-
-      // Filter by category
-      const matchesCategory = activeCategory === 'All' || post.data.tags.includes(activeCategory);
-
-      return matchesSearch && matchesCategory;
-    });
-
-    // Update visibility of post cards
     const postElements = blogPostsContainer.querySelectorAll('[data-post-slug]');
     let resultsFound = false;
 
