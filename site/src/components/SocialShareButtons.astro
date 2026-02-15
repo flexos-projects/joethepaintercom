@@ -42,17 +42,17 @@ const shareLinks = [
 ];
 ---
 
-<div {...attrs} class="flex flex-wrap gap-x-spacing-4 gap-y-spacing-2 justify-center lg:justify-start">
-  <span class="font-body text-text-dark font-medium text-lg sr-only">Share this article:</span>
+<div {...attrs} class="flex flex-wrap gap-x-4 gap-y-2 justify-center lg:justify-start">
+  <span class="font-body text-neutral-800 font-medium text-lg sr-only">Share this article:</span>
   {shareLinks.map((link) => (
     <a
       href={link.href}
       target="_blank"
       rel="noopener noreferrer"
-      class="flex items-center gap-spacing-1.5 text-text-muted hover:text-primary transition-colors duration-normal group"
+      class="flex items-center gap-1.5 text-neutral-500 hover:text-primary transition-colors duration-300 group"
       aria-label={link.label}
     >
-      <Icon name={link.icon} class="w-spacing-6 h-spacing-6 group-hover:scale-105 transition-transform duration-fast" />
+      <Icon name={link.icon} class="w-6 h-6 group-hover:scale-105 transition-transform duration-150" />
       <span class="font-body text-sm font-medium sr-only">{link.name}</span>
     </a>
   ))}
