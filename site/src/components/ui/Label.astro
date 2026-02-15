@@ -1,4 +1,3 @@
-```astro
 ---
 import type { HTMLAttributes } from 'astro/types';
 
@@ -16,9 +15,7 @@ const {
 } = Astro.props;
 ---
 
-<label for={htmlFor} class:list={['form-label-base', className]} {...props}>
+<label for={htmlFor} class:list={['block', 'font-body', 'text-sm', 'font-medium', 'text-neutral-800', 'mb-1', className]} {...props}>
   <slot />
   {required && <span class="text-error ml-1" aria-hidden="true">*</span>}
 </label>
-```
----

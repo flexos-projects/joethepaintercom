@@ -1,4 +1,3 @@
-```astro
 ---
 import Button from './ui/Button.astro';
 import Input from './ui/Input.astro';
@@ -6,32 +5,33 @@ import Label from './ui/Label.astro';
 
 interface Props {
   formId?: string;
-  action?: string; // Formspree or custom endpoint
   class?: string;
 }
 
 const {
   formId = 'consultation-form',
-  action = 'https://formspree.io/f/yourformid', // Placeholder, replace with actual Formspree endpoint
   class: className,
 } = Astro.props;
 
-// This component will handle client-side validation and submission
-// Placeholder for potential reCAPTCHA integration (handled in TASK-025)
+// Use environment variable for the Formspree endpoint URL.
+// Ensure PUBLIC_FORMSPREE_ENDPOINT_URL is set in .env or Vercel config.
+const formAction = import.meta.env.PUBLIC_FORMSPREE_ENDPOINT_URL || 'https://formspree.io/f/joethepainter-consultation-fallback'; // Fallback for dev if not set
 ---
 
 <form
   id={formId}
-  action={action}
+  action={formAction}
   method="POST"
   class:list={['space-y-6', className]}
   aria-labelledby="consultation-form-title"
+  novalidate
 >
   <h2 id="consultation-form-title" class="sr-only">Book Your Free Consultation</h2>
 
   <Input
     label="Full Name"
     id="full-name"
+    name="full-name"
     type="text"
     placeholder="John Doe"
     required
@@ -41,6 +41,7 @@ const {
   <Input
     label="Email Address"
     id="email"
+    name="email"
     type="email"
     placeholder="john.doe@example.com"
     required
@@ -50,6 +51,7 @@ const {
   <Input
     label="Phone Number"
     id="phone"
+    name="phone"
     type="tel"
     placeholder="(760) 555-1234"
     required
@@ -63,7 +65,7 @@ const {
         id="service-type"
         name="service-type"
         required
-        class="form-input-base appearance-none pr-10"
+        class="block w-full border border-neutral-200 rounded-md py-3 pl-3 pr-10 text-base text-neutral-800 bg-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
         aria-describedby="service-type-description"
       >
         <option value="">Select a service type...</option>
@@ -71,7 +73,7 @@ const {
         <option value="Handy Services">Handy Services</option>
         <option value="Both Painting & Handy Services">Both Painting & Handy Services</option>
       </select>
-      <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-neutral-700">
+      <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-neutral-500">
         <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
           <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
         </svg>
@@ -88,7 +90,7 @@ const {
       rows={4}
       placeholder="Briefly describe your project, e.g., 'Exterior house paint, 3 bedrooms, drywall repair needed.'"
       required
-      class="form-input-base mt-1"
+      class="block w-full border border-neutral-200 rounded-md p-3 text-base text-neutral-800 bg-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition mt-1"
       aria-describedby="project-description-hint"
     ></textarea>
     <p id="project-description-hint" class="text-sm text-neutral-500 mt-1">
@@ -97,7 +99,7 @@ const {
   </div>
 
   <div>
-    <Label as="legend" class="mb-2">Preferred Contact Method</Label>
+    <Label as="legend" class="mb-2 text-sm font-medium text-neutral-800">Preferred Contact Method</Label>
     <div class="flex items-center space-x-4 mt-1" role="radiogroup" aria-labelledby="preferred-contact-label">
       <p id="preferred-contact-label" class="sr-only">How would you prefer Joe to reach out for your consultation?</p>
       <div class="flex items-center">
@@ -109,7 +111,7 @@ const {
           required
           class="focus:ring-primary h-4 w-4 text-primary border-neutral-300"
         />
-        <label for="contact-phone" class="ml-2 block text-sm text-neutral-900">Phone Call</label>
+        <label for="contact-phone" class="ml-2 block text-sm text-neutral-800">Phone Call</label>
       </div>
       <div class="flex items-center">
         <input
@@ -120,7 +122,7 @@ const {
           required
           class="focus:ring-primary h-4 w-4 text-primary border-neutral-300"
         />
-        <label for="contact-email" class="ml-2 block text-sm text-neutral-900">Email</label>
+        <label for="contact-email" class="ml-2 block text-sm text-neutral-800">Email</label>
       </div>
     </div>
   </div>
@@ -128,6 +130,7 @@ const {
   <Input
     label="How Did You Hear About Joe?"
     id="referral-source"
+    name="referral-source"
     type="text"
     placeholder="e.g., Google, Friend's referral, Yelp"
     autocomplete="off"
@@ -153,7 +156,8 @@ const {
       if (!form.checkValidity()) {
         statusMessage.textContent = 'Please fill out all required fields correctly.';
         statusMessage.classList.remove('sr-only');
-        statusMessage.classList.add('text-error');
+        statusMessage.classList.add('text-error', 'block');
+        statusMessage.focus(); // Move focus to the status message for screen readers
         return;
       }
 
@@ -177,7 +181,7 @@ const {
         if (response.ok) {
           statusMessage.textContent = 'Thank You! Your Free Consultation Request Has Been Received. Joe personally reviews every request and will be in touch within 1 business day to discuss your project and schedule your consultation. We appreciate your patience!';
           statusMessage.classList.remove('sr-only', 'text-error');
-          statusMessage.classList.add('text-success');
+          statusMessage.classList.add('text-success', 'block'); // Ensure it's visible
           form.reset();
         } else {
           const data = await response.json();
@@ -187,12 +191,12 @@ const {
             statusMessage.textContent = 'Oops! Something went wrong on our end. Please try again or call Joe directly at (760) 580-8173.';
           }
           statusMessage.classList.remove('sr-only', 'text-success');
-          statusMessage.classList.add('text-error');
+          statusMessage.classList.add('text-error', 'block'); // Ensure it's visible
         }
       } catch (error) {
         statusMessage.textContent = 'A network error occurred. Please try again or call Joe directly at (760) 580-8173.';
         statusMessage.classList.remove('sr-only', 'text-success');
-        statusMessage.classList.add('text-error');
+        statusMessage.classList.add('text-error', 'block'); // Ensure it's visible
       } finally {
         if (submitButton) {
           submitButton.disabled = false;
@@ -204,5 +208,3 @@ const {
     });
   }
 </script>
-```
----

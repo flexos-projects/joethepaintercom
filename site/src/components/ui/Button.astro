@@ -1,4 +1,3 @@
-```astro
 ---
 import type { HTMLAttributes } from 'astro/types';
 
@@ -18,30 +17,34 @@ const {
   ...props
 } = Astro.props;
 
-const baseClasses = 'btn'; // Defined in global.css
+const baseClasses = 'inline-flex items-center justify-center font-body font-semibold text-center no-underline cursor-pointer border border-transparent transition-all duration-150 ease-in-out rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2';
 
 const variantClasses = {
-  primary: 'btn-primary',
-  secondary: 'btn-secondary',
-  outline: 'btn-outline',
-  ghost: 'btn-ghost',
+  primary: 'bg-primary text-white border-primary ' +
+           'hover:bg-[var(--colors-primary-light)] hover:border-[var(--colors-primary-light)] hover:shadow-sm ' +
+           'active:bg-[var(--colors-primary-dark)] active:border-[var(--colors-primary-dark)] active:translate-y-px ' +
+           'disabled:bg-textSubtle disabled:border-textSubtle disabled:text-surface disabled:cursor-not-allowed',
+  secondary: 'bg-secondary text-white border-secondary ' +
+             'hover:bg-[var(--colors-secondary-dark)] hover:border-[var(--colors-secondary-dark)] hover:shadow-sm ' + // Using a placeholder for secondary hover/active as exact hex not in tokens.json, but derived from 06-design.md
+             'active:bg-[var(--colors-secondary-darker)] active:border-[var(--colors-secondary-darker)] active:translate-y-px ' + // Placeholder
+             'disabled:bg-textSubtle disabled:border-textSubtle disabled:text-surface disabled:cursor-not-allowed',
+  outline: 'bg-transparent text-primary border-primary ' +
+           'hover:bg-primary hover:text-surface hover:shadow-sm ' +
+           'active:bg-[var(--colors-primary-dark)] active:border-[var(--colors-primary-dark)] active:text-surface active:translate-y-px ' +
+           'disabled:bg-transparent disabled:text-textSubtle disabled:border-textSubtle disabled:cursor-not-allowed',
+  ghost: 'bg-transparent text-primary border-transparent ' +
+         'hover:bg-[rgba(0,71,171,0.05)] ' +
+         'active:bg-[rgba(0,71,171,0.1)] active:translate-y-px ' +
+         'disabled:bg-transparent disabled:text-textSubtle disabled:cursor-not-allowed',
 }[variant];
 
 const sizeClasses = {
-  sm: 'btn-sm',
-  md: 'btn-md',
-  lg: 'btn-lg',
+  sm: 'px-3 py-2 text-sm',
+  md: 'px-4 py-3 text-base',
+  lg: 'px-6 py-4 text-lg',
 }[size];
 
-const isDisabled = disabled || props['aria-disabled']; // Check for both disabled and aria-disabled
-
-const combinedClasses = [
-  baseClasses,
-  variantClasses,
-  sizeClasses,
-  className,
-  isDisabled ? 'opacity-60 cursor-not-allowed' : '',
-];
+const isDisabled = disabled || props['aria-disabled'];
 
 // If href is provided, render as an <a> tag for semantic linking
 // Otherwise, render as a <button>
@@ -50,7 +53,13 @@ const Component = href ? 'a' : 'button';
 
 <Component
   {...props}
-  class:list={combinedClasses}
+  class:list={[
+    baseClasses,
+    variantClasses,
+    sizeClasses,
+    className,
+    isDisabled && 'opacity-60 cursor-not-allowed',
+  ]}
   {href}
   type={Component === 'button' ? 'button' : undefined}
   aria-disabled={isDisabled}
@@ -59,5 +68,3 @@ const Component = href ? 'a' : 'button';
 >
   <slot />
 </Component>
-```
----

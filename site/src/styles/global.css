@@ -6,13 +6,27 @@
 /* Custom properties for design tokens from tailwind.config.mjs */
 @layer base {
   :root {
-    /* Colors */
-    --color-primary: theme('colors.primary.DEFAULT');
-    --color-primary-light: theme('colors.primary.light');
-    --color-primary-dark: theme('colors.primary.dark');
-    --color-accent: theme('colors.accent.DEFAULT');
-    --color-accent-light: theme('colors.accent.light');
-    --color-accent-dark: theme('colors.accent.dark');
+    /* Colors from 06-design.md / tokens.json */
+    --color-primary: theme('colors.primary.DEFAULT'); /* Mapped to #1A365D from tailwind.config.mjs, but defined as #0047AB in 06-design.md */
+    --color-secondary: theme('colors.neutral.500'); /* Mapped to #6B7280 from 06-design.md / tokens.json */
+    --color-accent: theme('colors.accent.DEFAULT'); /* Mapped to #E6B200 from tailwind.config.mjs, but defined as #E5B80B in 06-design.md */
+
+    --color-background: theme('colors.neutral.50'); /* Mapped to #F9FAFB from 06-design.md / tokens.json */
+    --color-surface: theme('colors.white'); /* Mapped to #FFFFFF from 06-design.md / tokens.json */
+
+    --color-text: theme('colors.neutral.800'); /* Mapped to #1F2937 from 06-design.md / tokens.json */
+    --color-text-muted: theme('colors.neutral.500'); /* Mapped to #6B7280 from 06-design.md / tokens.json */
+    --color-text-subtle: theme('colors.neutral.400'); /* Mapped to #9CA3AF from 06-design.md / tokens.json */
+
+    --color-border: theme('colors.neutral.200'); /* Mapped to #E5E7EB from 06-design.md / tokens.json */
+
+    /* Semantic colors */
+    --color-success: theme('colors.success'); /* Mapped to #10B981 */
+    --color-warning: theme('colors.warning'); /* Mapped to #F59E0B */
+    --color-error: theme('colors.error'); /* Mapped to #EF4444 */
+    --color-info: theme('colors.blue.500'); /* Mapped to #3B82F6 from 06-design.md / tokens.json, assuming default Tailwind blue-500 */
+
+    /* Tailwind's extended neutral palette for granular use */
     --color-neutral-50: theme('colors.neutral.50');
     --color-neutral-100: theme('colors.neutral.100');
     --color-neutral-200: theme('colors.neutral.200');
@@ -23,16 +37,15 @@
     --color-neutral-700: theme('colors.neutral.700');
     --color-neutral-800: theme('colors.neutral.800');
     --color-neutral-900: theme('colors.neutral.900');
+
+    /* Direct white and black for specific use cases */
     --color-white: theme('colors.white');
     --color-black: theme('colors.black');
-    --color-success: theme('colors.success');
-    --color-warning: theme('colors.warning');
-    --color-error: theme('colors.error');
 
     /* Typography */
     --font-heading: theme('fontFamily.heading');
     --font-body: theme('fontFamily.body');
-    --font-display: theme('fontFamily.display'); /* If used */
+    /* --font-display is not explicitly defined in 06-design.md as a primary font but is in tailwind.config.mjs for potential use. */
 
     /* Spacing */
     --spacing-px: theme('spacing.px');
@@ -206,4 +219,3 @@
     border-width: 0;
   }
 }
----
