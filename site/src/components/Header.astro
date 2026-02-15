@@ -1,12 +1,7 @@
 ---
-import { Image } from 'astro:assets';
 import Button from './ui/Button.astro';
+import { CSLB_LICENSE_NUMBER, CSLB_LICENSE_URL } from '../config';
 
-// Assuming a logo SVG exists in public/images/logo.svg
-const logoSrc = '/images/logo.svg';
-const logoAlt = 'Joe the Painter Logo';
-
-// Navigation Links
 const navLinks = [
   { name: 'Home', href: '/' },
   { name: 'Painting Services', href: '/services/painting' },
@@ -15,20 +10,14 @@ const navLinks = [
   { name: 'About Joe', href: '/about' },
   { name: 'Contact', href: '/contact' },
 ];
-
-// State for mobile menu
-let isMobileMenuOpen = false;
-
-// Client-side script for mobile menu toggle
-// Using client:load for the script to ensure it runs
-// and toggle the class on the mobile menu and button.
 ---
 
-<header class="sticky top-0 z-50 bg-surface shadow-md">
-  <div class="container mx-auto px-4 py-4 flex items-center justify-between">
-    <a href="/" class="flex items-center" aria-label="Joe the Painter Homepage">
-      <Image src={logoSrc} alt={logoAlt} width={40} height={40} class="h-10 w-auto" />
-      <span class="ml-3 font-heading text-2xl font-bold text-text-dark">JOE THE PAINTER</span>
+<header class="sticky top-0 z-50 bg-surface shadow-sm">
+  <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+    <!-- Logo -->
+    <a href="/" class="flex items-center gap-2 text-text-dark hover:text-primary transition-colors duration-150 ease-in-out" aria-label="Joe the Painter homepage">
+      <img src="/favicon.svg" alt="Joe the Painter Logo" class="h-8 w-8" />
+      <span class="font-heading text-2xl font-bold">Joe the Painter</span>
     </a>
 
     <!-- Desktop Navigation -->
@@ -38,126 +27,63 @@ let isMobileMenuOpen = false;
           <li>
             <a
               href={link.href}
-              class={`font-body text-base font-medium text-text-dark hover:text-primary transition-colors duration-150
-                ${Astro.url.pathname === link.href ? 'text-primary border-b-2 border-primary pb-1' : ''}`}
+              class={`font-body text-base font-medium text-text-dark hover:text-primary transition-colors duration-150 ease-in-out relative group ${Astro.url.pathname === link.href ? 'text-primary' : ''}`}
+              aria-current={Astro.url.pathname === link.href ? 'page' : false}
             >
               {link.name}
+              <span class={`absolute bottom-0 left-0 w-full h-0.5 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-200 ease-out ${Astro.url.pathname === link.href ? 'scale-x-100' : ''}`} aria-hidden="true"></span>
             </a>
           </li>
         ))}
       </ul>
-      <Button href="/consultation" variant="primary" size="md" class="ml-4">
+      <Button href="/contact" variant="primary" size="md" class="ml-4">
         Book a Free Consultation
       </Button>
     </nav>
 
-    <!-- Mobile Navigation Toggle -->
+    <!-- Mobile Hamburger Menu -->
     <div class="lg:hidden flex items-center">
-      <Button
-        id="mobile-menu-button"
-        variant="ghost"
-        size="md"
-        aria-label="Toggle mobile menu"
-        aria-expanded={isMobileMenuOpen}
-        class="text-text-dark hover:bg-background"
-      >
-        <svg
-          class="w-7 h-7"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
-          ></path>
+      <Button id="mobile-menu-button" variant="ghost" size="md" aria-label="Open mobile menu" aria-expanded="false">
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
       </Button>
     </div>
   </div>
 
   <!-- Mobile Menu Overlay -->
-  <nav
+  <div
     id="mobile-menu"
-    class={`fixed inset-0 bg-surface z-40 transform ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}
-           transition-transform duration-300 ease-in-out lg:hidden`}
-    aria-label="Mobile navigation"
-    aria-hidden={!isMobileMenuOpen}
+    class="fixed inset-0 bg-surface z-50 transform translate-x-full transition-transform duration-300 ease-in-out lg:hidden flex flex-col items-center justify-center p-8"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="mobile-menu-title"
   >
-    <div class="flex justify-end p-4">
-      <Button
-        variant="ghost"
-        size="md"
-        aria-label="Close mobile menu"
-        class="text-text-dark hover:bg-background"
-        onclick="document.getElementById('mobile-menu-button').click()"
-      >
-        <svg
-          class="w-7 h-7"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
+    <div class="absolute top-4 right-4">
+      <Button id="mobile-menu-close-button" variant="ghost" size="md" aria-label="Close mobile menu">
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
         </svg>
       </Button>
     </div>
-    <ul role="list" class="flex flex-col items-center justify-center h-full space-y-8">
-      {navLinks.map((link) => (
-        <li>
-          <a
-            href={link.href}
-            class={`font-heading text-3xl text-text-dark hover:text-primary transition-colors duration-150
-              ${Astro.url.pathname === link.href ? 'text-primary' : ''}`}
-            onclick="document.getElementById('mobile-menu-button').click()"
-          >
-            {link.name}
-          </a>
-        </li>
-      ))}
-      <li class="mt-8">
-        <Button href="/consultation" variant="primary" size="lg" onclick="document.getElementById('mobile-menu-button').click()">
-          Book a Free Consultation
-        </Button>
-      </li>
-    </ul>
-  </nav>
+    <h2 id="mobile-menu-title" class="sr-only">Main Navigation</h2>
+    <nav class="flex flex-col items-center gap-8">
+      <ul role="list" class="flex flex-col items-center gap-6">
+        {navLinks.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class="font-heading text-3xl font-semibold text-text-dark hover:text-primary transition-colors duration-150 ease-in-out"
+              aria-current={Astro.url.pathname === link.href ? 'page' : false}
+            >
+              {link.name}
+            </a>
+          </li>
+        ))}
+      </ul>
+      <Button href="/contact" variant="primary" size="lg" class="mt-8 w-full max-w-xs">
+        Book a Free Consultation
+      </Button>
+    </nav>
+  </div>
 </header>
-
-<script is:inline>
-  const mobileMenuButton = document.getElementById('mobile-menu-button');
-  const mobileMenu = document.getElementById('mobile-menu');
-  let isMenuOpen = false;
-
-  const toggleMobileMenu = () => {
-    isMenuOpen = !isMenuOpen;
-    mobileMenuButton?.setAttribute('aria-expanded', String(isMenuOpen));
-    mobileMenu?.setAttribute('aria-hidden', String(!isMenuOpen));
-    if (mobileMenu) {
-      mobileMenu.classList.toggle('translate-x-full', !isMenuOpen);
-      mobileMenu.classList.toggle('translate-x-0', isMenuOpen);
-    }
-    document.body.style.overflow = isMenuOpen ? 'hidden' : ''; // Lock scroll
-  };
-
-  mobileMenuButton?.addEventListener('click', toggleMobileMenu);
-
-  // Close menu if a link inside is clicked (handled by onclick on links themselves)
-  // Also close on resize to desktop
-  window.addEventListener('resize', () => {
-    if (window.innerWidth >= 1024 && isMenuOpen) {
-      toggleMobileMenu(); // Force close if desktop breakpoint hit
-    }
-  });
-
-  // Ensure initial state is correct in case of back navigation
-  document.addEventListener('astro:after-swap', () => {
-    if (window.innerWidth >= 1024 && isMenuOpen) {
-      toggleMobileMenu();
-    }
-  });
-</script>

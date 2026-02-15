@@ -1,33 +1,24 @@
 ---
 import { ViewTransitions } from 'astro:transitions';
-import { Image } from 'astro:assets'; // Ensure Image is imported for favicon
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE, SITE_DESCRIPTION, CSLB_LICENSE_NUMBER, CSLB_LICENSE_URL } from '../config';
 
-// Global Styles
-import '@styles/global.css';
-
-// Components
-import Header from '@components/Header.astro';
-import Footer from '@components/Footer.astro';
-
-// Props for SEO and page details
 interface Props {
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
   ogImage?: string;
   canonical?: string;
-  robots?: string; // e.g., 'noindex, nofollow'
 }
 
 const {
-  title,
-  description,
-  ogImage = '/images/social-share-default.jpg', // Default OG image
-  canonical,
-  robots = 'index, follow',
+  title = SITE_TITLE,
+  description = SITE_DESCRIPTION,
+  ogImage = '/images/social-share-default.jpg',
+  canonical: canonicalUrl,
 } = Astro.props;
 
-// Construct canonical URL
-const canonicalURL = canonical ? new URL(canonical, Astro.site) : new URL(Astro.url.pathname, Astro.site);
+const canonicalURL = canonicalUrl ? new URL(canonicalUrl, Astro.site) : new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!DOCTYPE html>
@@ -35,86 +26,67 @@ const canonicalURL = canonical ? new URL(canonical, Astro.site) : new URL(Astro.
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content={robots} />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="robots" content="index, follow" />
 
-    {/* Primary SEO Meta Tags */}
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonicalURL.href} />
+    <link rel="canonical" href={canonicalURL} />
 
-    {/* Open Graph / Social Media Tags */}
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={canonicalURL.href} />
+    <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={new URL(ogImage, Astro.site).href} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
 
-    {/* Twitter Card Tags */}
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content={canonicalURL.href} />
+    <meta name="twitter:url" content={canonicalURL} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={new URL(ogImage, Astro.site).href} />
-    <meta name="twitter:creator" content="@JoeThePainterSD" /> {/* Placeholder */}
 
-    {/* Favicons */}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
 
-    {/* Preload Fonts (example, adjust based on actual fonts used) */}
-    <link rel="preload" href="/fonts/Lora-Bold.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/Inter-SemiBold.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Preload fonts - Lora Bold, Inter Regular, Inter Semibold -->
+    <link rel="preload" href="/fonts/Lora-Bold.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/Inter-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
 
-    {/* View Transitions for smoother navigation */}
     <ViewTransitions />
-
-    {/* Structured Data (JSON-LD) - Organization & WebSite */}
-    <script type="application/ld+json" set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Joe the Painter",
-      "url": Astro.site?.href,
-      "logo": new URL('/images/logo.svg', Astro.site).href,
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "telephone": "+1-760-580-8173",
-        "contactType": "customer service",
-        "email": "joe@joethepainter.com",
-        "areaServed": ["San Diego County", "Central San Diego County", "North San Diego County"]
-      },
-      "slogan": "The Craftsman's Guarantee: Meticulous painting and reliable repairs, personally delivered by a licensed expert with a quarter-century of proven trust.",
-      "sameAs": [
-        "https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=802167"
-        // Add Yelp, Google Business Profile, etc. links once established
-      ]
-    })} />
-    <script type="application/ld+json" set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "url": Astro.site?.href,
-      "name": "Joe the Painter",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": `${Astro.site?.href}/search?q={search_term_string}`,
-        "query-input": "required name=search_term_string"
-      }
-    })} />
-    {/* Structured Data for current WebPage */}
-    <script type="application/ld+json" set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "WebPage",
-      "name": title,
-      "description": description,
-      "url": canonicalURL.href
-    })} />
   </head>
-  <body class="font-body text-text-dark bg-background min-h-screen flex flex-col">
+  <body class="flex flex-col min-h-screen bg-background text-text-dark font-body antialiased">
     <Header />
-    <slot />
+    <main class="flex-grow">
+      <slot />
+    </main>
     <Footer />
+    <script is:inline>
+      // Basic mobile menu toggle logic
+      const mobileMenuButton = document.getElementById('mobile-menu-button');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const mobileMenuCloseButton = document.getElementById('mobile-menu-close-button');
+      const body = document.body;
+
+      if (mobileMenuButton && mobileMenu && mobileMenuCloseButton && body) {
+        function toggleMobileMenu() {
+          const expanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+          mobileMenuButton.setAttribute('aria-expanded', String(!expanded));
+          mobileMenu.classList.toggle('translate-x-full'); // Slides in/out from right
+          body.classList.toggle('overflow-hidden'); // Prevents scrolling body when menu is open
+        }
+
+        mobileMenuButton.addEventListener('click', toggleMobileMenu);
+        mobileMenuCloseButton.addEventListener('click', toggleMobileMenu);
+
+        // Close menu if a link is clicked
+        mobileMenu.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', toggleMobileMenu);
+        });
+      }
+    </script>
   </body>
 </html>

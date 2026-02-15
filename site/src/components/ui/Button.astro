@@ -1,109 +1,57 @@
 ---
-interface Props {
-  href?: string;
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'button'> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
-  color?: 'primary' | 'secondary' | 'accent' | 'white' | 'text-dark'; // For outline/ghost text color
-  type?: 'button' | 'submit' | 'reset';
+  href?: string;
   disabled?: boolean;
-  'aria-label'?: string;
 }
 
 const {
-  href,
   variant = 'primary',
   size = 'md',
-  color, // Used for outline/ghost variants
-  type = 'button',
+  href,
   disabled = false,
-  'aria-label': ariaLabel,
+  class: className,
   ...rest
 } = Astro.props;
 
-const baseClasses = `
-  inline-flex items-center justify-center font-body font-semibold text-center
-  no-underline cursor-pointer border transition-all duration-150 ease-in-out
-  rounded-md focus-visible:ring-2 focus-visible:ring-[#0047AB] focus-visible:ring-offset-2
-  transform
-`;
+const baseClasses =
+  'inline-flex items-center justify-center font-body font-semibold text-center text-decoration-none cursor-pointer border border-transparent transition-all duration-150 ease-in-out rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary';
+
+const variantClasses = {
+  primary:
+    'bg-primary text-surface border-primary hover:bg-[#003B8D] hover:border-[#003B8D] active:bg-[#002A6B] active:border-[#002A6B] shadow-md hover:shadow-lg',
+  secondary:
+    'bg-secondary text-surface border-secondary hover:bg-[#5A616E] hover:border-[#5A616E] active:bg-[#4D535E] active:border-[#4D535E] shadow-md hover:shadow-lg',
+  outline:
+    'bg-transparent text-primary border-primary hover:bg-primary hover:text-surface hover:shadow-md',
+  ghost:
+    'bg-transparent text-primary border-transparent hover:bg-primary/[0.05] active:bg-primary/[0.1]',
+};
 
 const sizeClasses = {
-  sm: 'py-2 px-3 text-sm',
-  md: 'py-3 px-4 text-base',
-  lg: 'py-4 px-6 text-lg',
-}[size];
+  sm: 'px-3 py-2 text-sm',
+  md: 'px-4 py-3 text-base',
+  lg: 'px-6 py-4 text-lg',
+};
 
-let variantClasses = '';
+const disabledClasses = disabled
+  ? 'opacity-60 cursor-not-allowed pointer-events-none'
+  : '';
 
-// Determine the base color for outline/ghost variants if specified
-let effectiveTextColor = 'text-[#0047AB]'; // Default to Primary Blue (#0047AB)
-let effectiveBorderColor = 'border-[#0047AB]'; // Default to Primary Blue Border
-
-if (color === 'white') {
-  effectiveTextColor = 'text-white';
-  effectiveBorderColor = 'border-white';
-} else if (color === 'secondary') {
-  effectiveTextColor = 'text-[#6B7280]'; // Secondary Gray
-  effectiveBorderColor = 'border-[#6B7280]'; // Secondary Gray Border
-} else if (color === 'accent') {
-  effectiveTextColor = 'text-[#E5B80B]'; // Accent Gold
-  effectiveBorderColor = 'border-[#E5B80B]'; // Accent Gold Border
-} else if (color === 'text-dark') {
-  effectiveTextColor = 'text-[#1F2937]'; // Text Dark
-  effectiveBorderColor = 'border-[#1F2937]'; // Text Dark Border
-}
-
-switch (variant) {
-  case 'primary':
-    variantClasses = `
-      bg-[#0047AB] text-white border-[#0047AB]
-      hover:bg-[#003B8D] hover:border-[#003B8D] hover:shadow-sm
-      active:scale-[0.98] active:bg-[#002A6B] active:border-[#002A6B] active:translate-y-[1px]
-      disabled:bg-[#9CA3AF] disabled:border-[#9CA3AF] disabled:text-white disabled:cursor-not-allowed
-    `;
-    break;
-  case 'secondary':
-    variantClasses = `
-      bg-[#6B7280] text-white border-[#6B7280]
-      hover:bg-[#5A616E] hover:border-[#5A616E] hover:shadow-sm
-      active:scale-[0.98] active:bg-[#4D535E] active:border-[#4D535E] active:translate-y-[1px]
-      disabled:bg-[#9CA3AF] disabled:border-[#9CA3AF] disabled:text-white disabled:cursor-not-allowed
-    `;
-    break;
-  case 'outline':
-    const outlineHoverBg = color === 'white' ? 'hover:bg-white/10' : 'hover:bg-[#0047AB]';
-    const outlineHoverText = 'hover:text-white'; // Always white on hover for outline
-    const outlineHoverBorder = color === 'white' ? 'hover:border-white' : 'hover:border-[#0047AB]';
-
-    variantClasses = `
-      bg-transparent ${effectiveTextColor} ${effectiveBorderColor}
-      ${outlineHoverBg} ${outlineHoverText} ${outlineHoverBorder} hover:shadow-sm
-      active:scale-[0.98] active:bg-[#002A6B] active:border-[#002A6B] active:text-white active:translate-y-[1px]
-      disabled:text-[#9CA3AF] disabled:border-[#9CA3AF] disabled:cursor-not-allowed disabled:hover:bg-transparent
-    `;
-    break;
-  case 'ghost':
-    const ghostHoverBg = color === 'white' ? 'hover:bg-white/10' : 'hover:bg-[rgba(0,71,171,0.05)]';
-    const ghostActiveBg = color === 'white' ? 'active:bg-white/20' : 'active:bg-[rgba(0,71,171,0.1)]';
-
-    variantClasses = `
-      bg-transparent ${effectiveTextColor} border-transparent
-      ${ghostHoverBg}
-      active:scale-[0.98] ${ghostActiveBg} active:translate-y-[1px]
-      disabled:text-[#9CA3AF] disabled:cursor-not-allowed disabled:hover:bg-transparent
-    `;
-    break;
-}
-
-const Tag = href ? 'a' : 'button';
+const combinedClasses = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${disabledClasses} ${className || ''}`;
 ---
 
-<Tag
-  class={`${baseClasses} ${sizeClasses} ${variantClasses}`}
-  {...href ? { href } : { type }}
-  aria-label={ariaLabel}
-  disabled={disabled}
-  {...rest}
->
-  <slot />
-</Tag>
+{
+  href ? (
+    <a href={href} class={combinedClasses} {...rest}>
+      <slot />
+    </a>
+  ) : (
+    <button type="button" class={combinedClasses} disabled={disabled} {...rest}>
+      <slot />
+    </button>
+  )
+}
