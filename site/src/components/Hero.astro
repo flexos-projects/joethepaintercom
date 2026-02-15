@@ -1,0 +1,85 @@
+---
+/**
+ * Hero.astro
+ *
+ * The primary visual and textual introduction on the homepage, immediately communicating
+ * Joe's expertise, trustworthiness, and core offering. This section features a
+ * professional image of Joe and his promise, along with key trust signals.
+ *
+ * @component
+ * @requires Button - Reusable button component for CTAs.
+ * @requires Image - Astro's optimized image component for responsive image handling.
+ */
+
+// Type imports
+import type { HTMLAttributes } from 'astro/types';
+
+// Component imports
+import { Image } from 'astro:assets';
+import Button from '@/components/ui/Button.astro';
+
+// Image import (assuming image is in src/assets for optimization)
+import joeHeroImage from '@/assets/images/hero/joe-the-painter-hero.webp';
+
+// Constants for license and phone number as per specifications
+const CSLB_LICENSE = '802167';
+const CSLB_VERIFICATION_URL = `https://www.cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum=${CSLB_LICENSE}`;
+
+// Props interface (no specific props needed as content is static per spec)
+interface Props extends HTMLAttributes<'section'> {}
+
+const { class: className, ...attrs } = Astro.props;
+---
+
+<section
+  class:list={[
+    'relative bg-background text-text overflow-hidden py-spacing-16 md:py-spacing-20 lg:py-spacing-24',
+    className,
+  ]}
+  {...attrs}
+>
+  <div class="container mx-auto px-spacing-4 lg:px-spacing-8 max-w-7xl grid md:grid-cols-2 gap-spacing-12 items-center">
+    <!-- Content Block -->
+    <div class="flex flex-col justify-center text-center md:text-left">
+      <h1 class="font-heading text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-spacing-4 md:mb-spacing-6 text-text">
+        Your Home, My Craft. <span class="text-primary">Done Right Since 2001.</span>
+      </h1>
+      <p class="font-body text-lg md:text-xl text-textMuted leading-relaxed mb-spacing-8 md:mb-spacing-10">
+        Meticulous painting & reliable handy services in San Diego County.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-spacing-4 justify-center md:justify-start">
+        <Button href="/consultation" variant="primary" size="lg" aria-label="Book your free consultation with Joe the Painter">
+          Book Your Free Consultation
+        </Button>
+      </div>
+      <div class="mt-spacing-8 text-sm md:text-base text-textMuted flex flex-col sm:flex-row items-center justify-center md:justify-start gap-spacing-2">
+        <span class="font-medium">Licensed & Insured:</span>
+        <a
+          href={CSLB_VERIFICATION_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-spacing-1 text-primary hover:text-primary-hover transition-colors font-semibold group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-md"
+          aria-label={`Verify CA License Number ${CSLB_LICENSE} on California Contractors State License Board website`}
+        >
+          CA Lic. #<span class="underline group-hover:no-underline">{CSLB_LICENSE}</span>
+          <svg class="w-spacing-4 h-spacing-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Image Block -->
+    <div class="relative w-full h-spacing-80 md:h-spacing-96 lg:h-[500px] rounded-2xl overflow-hidden shadow-xl">
+      <Image
+        src={joeHeroImage}
+        alt="Joe the Painter, a trusted craftsman, smiling confidently with a paint roller in hand, standing in front of a freshly painted wall."
+        widths={[320, 640, 960, 1280, 1920]}
+        sizes="(max-width: 768px) 100vw, 50vw"
+        loading="eager"
+        fetchpriority="high"
+        class="absolute inset-0 w-full h-full object-cover object-center"
+      />
+    </div>
+  </div>
+</section>

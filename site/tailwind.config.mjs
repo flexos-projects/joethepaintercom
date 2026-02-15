@@ -5,153 +5,119 @@ export default {
   content: ['./src/**/*.{astro,html,js,jsx,md,mdx,ts,tsx}'],
   theme: {
     extend: {
-      // --- Colors ---
+      // --- Colors (Aligned with 06-design.md) ---
       colors: {
         primary: {
-          DEFAULT: 'var(--color-primary)', // #0047AB
-          hover: '#003B8D',  // From 06-design.md: Buttons -> Primary -> Hover
-          active: '#002A6B', // From 06-design.md: Buttons -> Primary -> Active
+          DEFAULT: '#0047AB', // Primary Blue
+          hover: '#003B8D',   // Derived from Primary Button Hover state
+          active: '#002A6B',  // Derived from Primary Button Active state
         },
         secondary: {
-          DEFAULT: 'var(--color-secondary)', // #6B7280
-          hover: '#5A616E', // From 06-design.md: Buttons -> Secondary -> Hover
-          active: '#4D535E', // From 06-design.md: Buttons -> Secondary -> Active
+          DEFAULT: '#6B7280', // Secondary Gray
+          hover: '#5A616E',   // Derived from Secondary Button Hover state
+          active: '#4D535E',  // Derived from Secondary Button Active state
         },
         accent: {
-          DEFAULT: 'var(--color-accent)', // #E5B80B
+          DEFAULT: '#E5B80B', // Accent Gold
         },
-        background: 'var(--color-background)', // #F9FAFB
-        surface: 'var(--color-surface)',     // #FFFFFF
-        text: 'var(--color-text)',         // #1F2937
-        textMuted: 'var(--color-text-muted)',  // #6B7280
-        textSubtle: 'var(--color-text-subtle)', // #9CA3AF
-        border: 'var(--color-border)',       // #E5E7EB
-
-        // Semantic Colors
-        success: 'var(--color-success)', // #10B981
-        warning: 'var(--color-warning)', // #F59E0B
-        error: 'var(--color-error)',   // #EF4444
-        info: 'var(--color-info)',     // #3B82F6
-
-        // Explicit white/black for utility
-        white: '#FFFFFF',
-        black: '#000000',
+        background: '#F9FAFB', // Background White
+        surface: '#FFFFFF',    // Surface Light
+        text: '#1F2937',       // Text Dark
+        textMuted: '#6B7280',  // Text Muted
+        textSubtle: '#9CA3AF', // Text Subtle
+        border: '#E5E7EB',     // Border Light
+        success: '#10B981',    // Semantic
+        warning: '#F59E0B',    // Semantic
+        error: '#EF4444',      // Semantic
+        info: '#3B82F6',       // Semantic
       },
 
-      // --- Typography ---
+      // --- Typography (Aligned with 06-design.md) ---
       fontFamily: {
-        heading: ['var(--font-heading)', ...defaultTheme.fontFamily.serif],
-        body: ['var(--font-body)', ...defaultTheme.fontFamily.sans],
-        mono: ['var(--font-mono)', ...defaultTheme.fontFamily.mono],
+        heading: ['"Lora"', ...defaultTheme.fontFamily.serif], // Elegant serif for headings
+        body: ['"Inter"', ...defaultTheme.fontFamily.sans], // Modern sans-serif for body
+        mono: ['"Space Mono"', ...defaultTheme.fontFamily.mono], // For specific data displays
       },
       fontSize: {
-        'xs': ['var(--text-xs)', { lineHeight: 'var(--leading-xs)' }],
-        'sm': ['var(--text-sm)', { lineHeight: 'var(--leading-sm)' }],
-        'base': ['var(--text-base)', { lineHeight: 'var(--leading-base)' }],
-        'lg': ['var(--text-lg)', { lineHeight: 'var(--leading-lg)' }],
-        'xl': ['var(--text-xl)', { lineHeight: 'var(--leading-xl)' }],
-        '2xl': ['var(--text-2xl)', { lineHeight: 'var(--leading-2xl)' }],
-        '3xl': ['var(--text-3xl)', { lineHeight: 'var(--leading-3xl)' }],
-        '4xl': ['var(--text-4xl)', { lineHeight: 'var(--leading-4xl)' }],
-        '5xl': ['var(--text-5xl)', { lineHeight: 'var(--leading-5xl)' }],
-        '6xl': ['var(--text-6xl)', { lineHeight: 'var(--leading-6xl)' }],
+        'xs': ['0.75rem', { lineHeight: '1.5' }], // 12px
+        'sm': ['0.875rem', { lineHeight: '1.5' }], // 14px
+        'base': ['1rem', { lineHeight: '1.6' }], // 16px (default body)
+        'lg': ['1.125rem', { lineHeight: '1.6' }], // 18px
+        'xl': ['1.25rem', { lineHeight: '1.4' }], // 20px
+        '2xl': ['1.5rem', { lineHeight: '1.3' }], // 24px (H4)
+        '3xl': ['1.875rem', { lineHeight: '1.3' }], // 30px (H3)
+        '4xl': ['2.25rem', { lineHeight: '1.2' }], // 36px (H2, Mobile H1)
+        '5xl': ['3rem', { lineHeight: '1.1' }], // 48px (H1)
+        '6xl': ['3.75rem', { lineHeight: '1.1' }], // 60px (Display - Hero large)
       },
       fontWeight: {
-        normal: 'var(--font-weight-normal)',
-        medium: 'var(--font-weight-medium)',
-        semibold: 'var(--font-weight-semibold)',
-        bold: 'var(--font-weight-bold)',
+        normal: '400',
+        medium: '500',
+        semibold: '600',
+        bold: '700',
       },
 
-      // --- Spacing ---
+      // --- Spacing (Aligned with 06-design.md) ---
       spacing: {
-        'px': 'var(--spacing-px)',
-        '0.5': 'var(--spacing-0-5)',
-        '1': 'var(--spacing-1)',
-        '2': 'var(--spacing-2)',
-        '3': 'var(--spacing-3)',
-        '4': 'var(--spacing-4)',
-        '5': 'var(--spacing-5)',
-        '6': 'var(--spacing-6)',
-        '8': 'var(--spacing-8)',
-        '10': 'var(--spacing-10)',
-        '12': 'var(--spacing-12)',
-        '16': 'var(--spacing-16)',
-        '20': 'var(--spacing-20)',
-        '24': 'var(--spacing-24)',
+        'px': '1px',
+        '0.5': '0.125rem', // 2px
+        '1': '0.25rem', // 4px
+        '2': '0.5rem', // 8px
+        '3': '0.75rem', // 12px
+        '4': '1rem', // 16px
+        '5': '1.25rem', // 20px
+        '6': '1.5rem', // 24px
+        '8': '2rem', // 32px
+        '10': '2.5rem', // 40px
+        '12': '3rem', // 48px
+        '16': '4rem', // 64px
+        '20': '5rem', // 80px
+        '24': '6rem', // 96px
+        '80': '20rem', // 320px for h-80
+        '96': '24rem', // 384px for h-96
       },
 
-      // --- Border Radius ---
+      // --- Border Radius (Aligned with 06-design.md) ---
       borderRadius: {
-        'none': 'var(--radius-none)',
-        'sm': 'var(--radius-sm)',
-        'md': 'var(--radius-md)',
-        'lg': 'var(--radius-lg)',
-        'xl': 'var(--radius-xl)',
-        '2xl': 'var(--radius-2xl)',
-        'full': 'var(--radius-full)',
+        'none': '0',
+        'sm': '0.125rem', // 2px
+        'md': '0.375rem', // 6px
+        'lg': '0.5rem', // 8px
+        'xl': '0.75rem', // 12px
+        '2xl': '1rem', // 16px
+        'full': '9999px',
       },
 
-      // --- Shadows ---
+      // --- Shadows (Aligned with 06-design.md) ---
       boxShadow: {
-        'sm': 'var(--shadow-sm)',
-        'md': 'var(--shadow-md)',
-        'lg': 'var(--shadow-lg)',
-        'xl': 'var(--shadow-xl)',
-        'outline': '0 0 0 2px rgba(0, 71, 171, 0.2)', // From 06-design.md: Interaction: Form Field Focus
+        'sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+        'md': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+        'lg': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+        'xl': '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
       },
 
-      // --- Transitions ---
-      transitionProperty: {
-        'height': 'height',
-        'spacing': 'margin, padding',
-        'transform': 'transform',
-        'colors': 'background-color, border-color, color, fill, stroke, opacity, box-shadow, transform',
-        'all': 'all',
+      // --- Transitions (Aligned with 06-design.md) ---
+      transitionDuration: {
+        'fast': '150ms',
+        'normal': '300ms',
+        'slow': '500ms',
       },
       transitionTimingFunction: {
-        'default': 'var(--easing-default)',
-        'in': 'var(--easing-in)',
-        'out': 'var(--easing-out)',
-        'in-out': 'var(--easing-in-out)', // This is the 'default' in tokens.json
-        'bounce': 'var(--easing-bounce)',
-      },
-      transitionDuration: {
-        'fast': 'var(--transition-fast)',
-        'normal': 'var(--transition-normal)',
-        'slow': 'var(--transition-slow)',
+        'default': 'cubic-bezier(0.4, 0, 0.2, 1)',
+        'in': 'cubic-bezier(0.4, 0, 1, 1)',
+        'out': 'cubic-bezier(0, 0, 0.2, 1)',
+        'bounce': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       },
 
-      // --- Keyframes and Animations ---
-      keyframes: {
-        'spin-slow': {
-          '0%': { transform: 'rotate(0deg)' },
-          '100%': { transform: 'rotate(360deg)' },
-        },
-        'fade-in': {
-          '0%': { opacity: '0', transform: 'translateY(10px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-        'slide-in-right': {
-          '0%': { transform: 'translateX(100%)' },
-          '100%': { transform: 'translateX(0)' },
-        },
-        'slide-out-right': {
-          '0%': { transform: 'translateX(0)' },
-          '100%': { transform: 'translateX(100%)' },
-        },
-      },
-      animation: {
-        'spin-slow': 'spin-slow 3s linear infinite',
-        'fade-in': 'fade-in var(--transition-normal) var(--easing-out) forwards',
-        'slide-in-right': 'slide-in-right var(--transition-normal) var(--easing-out) forwards',
-        'slide-out-right': 'slide-out-right var(--transition-normal) var(--easing-in) forwards',
+      // --- Breakpoints (Aligned with 06-design.md) ---
+      screens: {
+        'sm': '640px',
+        'md': '768px',
+        'lg': '1024px',
+        'xl': '1280px',
+        '2xl': '1536px',
       },
     },
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/typography'),
-    require('@tailwindcss/aspect-ratio'),
-  ],
+  plugins: [],
 };
