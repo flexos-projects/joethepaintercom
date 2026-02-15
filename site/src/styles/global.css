@@ -1,208 +1,156 @@
+```css
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Custom font imports */
-@font-face {
-  font-family: 'Lora';
-  src: url('/fonts/Lora-Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Lora';
-  src: url('/fonts/Lora-SemiBold.woff2') format('woff2');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Lora';
-  src: url('/fonts/Lora-Medium.woff2') format('woff2');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Lora';
-  src: url('/fonts/Lora-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
+/* Custom CSS variables based on design tokens */
+:root {
+  --color-primary: #0047AB;
+  --color-secondary: #6B7280;
+  --color-accent: #E5B80B;
+  --color-background: #F9FAFB;
+  --color-surface: #FFFFFF;
+  --color-text: #1F2937;
+  --color-text-muted: #6B7280;
+  --color-border: #E5E7EB;
+  --color-error: #EF4444;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-text-subtle: #9CA3AF;
+  --color-info: #3B82F6;
+
+  --font-family-heading: 'Lora', Georgia, serif;
+  --font-family-body: 'Inter', system-ui, sans-serif;
+  --font-family-mono: 'Space Mono', monospace;
+
+  --border-radius-sm: 0.125rem;
+  --border-radius-md: 0.375rem;
+  --border-radius-lg: 0.5rem;
+  --border-radius-xl: 0.75rem;
+  --border-radius-2xl: 1rem;
+  --border-radius-full: 9999px;
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  /* Transition timings from design tokens */
+  --transition-duration-fast: 150ms;
+  --transition-duration-normal: 300ms;
+  --transition-duration-slow: 500ms;
+  --transition-easing-default: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@font-face {
-  font-family: 'Inter';
-  src: url('/fonts/Inter-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Inter';
-  src: url('/fonts/Inter-Medium.woff2') format('woff2');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Inter';
-  src: url('/fonts/Inter-SemiBold.woff2') format('woff2');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Inter';
-  src: url('/fonts/Inter-Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* Global styles */
-html {
-  scroll-behavior: smooth;
-  @apply text-text-dark antialiased; /* Apply base text color and anti-aliasing */
-}
-
+/* Base body styles */
 body {
-  @apply bg-background; /* Apply global background color */
+  font-family: var(--font-family-body);
+  color: var(--color-text);
+  background-color: var(--color-background);
+  line-height: 1.6;
 }
 
-/* Base text styles */
-p {
-  @apply text-base leading-relaxed mb-4;
-}
-
-a {
-  @apply text-primary hover:underline transition-colors duration-200; /* Default link styling */
-}
-
-/* Ensure headings use the correct font family */
+/* Headings */
 h1, h2, h3, h4, h5, h6 {
-  @apply font-heading text-text-dark;
+  font-family: var(--font-family-heading);
+  color: var(--color-text);
+  line-height: var(--typography-lineHeight-tight); /* Use specific line heights from tokens */
 }
 
-/* Responsive heading scaling based on design system */
 h1 {
-  @apply text-5xl font-bold leading-tight;
+  font-size: var(--typography-fontSize-5xl);
+  font-weight: var(--typography-fontWeight-bold);
+  line-height: var(--typography-lineHeight-5xl);
 }
-@screen md {
-  h1 { @apply text-6xl; }
+@media (max-width: theme('screens.md')) {
+  h1 {
+    font-size: var(--typography-fontSize-4xl);
+    line-height: var(--typography-lineHeight-4xl);
+  }
 }
 
 h2 {
-  @apply text-4xl font-bold leading-tight;
+  font-size: var(--typography-fontSize-4xl);
+  font-weight: var(--typography-fontWeight-bold);
+  line-height: var(--typography-lineHeight-4xl);
 }
-@screen md {
-  h2 { @apply text-5xl; }
+@media (max-width: theme('screens.md')) {
+  h2 {
+    font-size: var(--typography-fontSize-3xl);
+    line-height: var(--typography-lineHeight-3xl);
+  }
 }
 
 h3 {
-  @apply text-3xl font-semibold leading-snug;
+  font-size: var(--typography-fontSize-3xl);
+  font-weight: var(--typography-fontWeight-semibold);
+  line-height: var(--typography-lineHeight-3xl);
 }
-@screen md {
-  h3 { @apply text-4xl; }
+@media (max-width: theme('screens.md')) {
+  h3 {
+    font-size: var(--typography-fontSize-2xl);
+    line-height: var(--typography-lineHeight-2xl);
+  }
 }
 
 h4 {
-  @apply text-2xl font-semibold leading-snug;
+  font-family: var(--font-family-body);
+  font-size: var(--typography-fontSize-2xl);
+  font-weight: var(--typography-fontWeight-semibold);
+  line-height: var(--typography-lineHeight-2xl);
 }
-@screen md {
-  h4 { @apply text-3xl; }
-}
-
-/* Styles for the Prose component, if used (e.g., in blog posts) */
-.prose {
-  @apply max-w-none; /* Override default max-width to allow full container width */
-  color: var(--colors-text); /* Ensure prose uses our text color */
-}
-.prose h1, .prose h2, .prose h3, .prose h4 {
-  color: var(--colors-text); /* Ensure headings within prose use our text color */
-  @apply font-heading; /* Use heading font for prose headings */
-}
-.prose a {
-  @apply text-primary hover:underline;
-}
-.prose ul, .prose ol {
-  @apply list-inside;
-}
-.prose ul {
-  @apply list-disc;
-}
-.prose ol {
-  @apply list-decimal;
-}
-.prose li {
-  @apply mb-2;
-}
-.prose strong {
-  @apply font-semibold text-text-dark;
+@media (max-width: theme('screens.md')) {
+  h4 {
+    font-size: var(--typography-fontSize-xl);
+    line-height: var(--typography-lineHeight-xl);
+  }
 }
 
-/* Custom utility for active navigation links */
-.nav-link.active {
-  @apply text-primary border-b-2 border-primary;
+/* Links */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-duration-fast) ease-in-out;
+}
+a:hover {
+  color: var(--color-primary); /* Keep same for now, or define a hover shade */
+  text-decoration: underline;
 }
 
-.mobile-nav-link.active {
-  @apply text-primary;
+/* Images */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block; /* Removes extra space below images */
 }
 
-/* Custom CSS variables for color palette */
-:root {
-  --colors-primary: #0047AB;
-  --colors-primary-light: #3B82F6; /* Using info blue as a lighter primary variant for focus rings */
-  --colors-primary-dark: #003B8D;
-  --colors-primary-darker: #002A6B; /* Further darker for active states */
-  --colors-primary-rgb: 0, 71, 171; /* For transparent overlays */
-
-  --colors-secondary: #6B7280;
-  --colors-accent: #E5B80B;
-  --colors-accent-dark: #CC9E00;
-  --colors-accent-darker: #997A00; /* Further darker for active states */
-
-  --colors-background: #F9FAFB;
-  --colors-surface: #FFFFFF;
-  --colors-text: #1F2937;
-  --colors-text-muted: #6B7280;
-  --colors-text-subtle: #9CA3AF;
-  --colors-border: #E5E7EB;
-
-  --colors-error: #EF4444;
-  --colors-success: #10B981;
-  --colors-warning: #F59E0B;
-  --colors-info: #3B82F6;
+/* Focus styles for all interactive elements */
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: var(--border-radius-md); /* Apply a subtle border-radius to focus outline */
 }
 
-/* Ensure accessibility for focus-visible ring color */
-.focus-visible\:ring-primary-light {
-  --tw-ring-color: var(--colors-primary-light);
+/* Force specific elements to not have default outline removal if applied by frameworks */
+[role="button"]:focus-visible,
+[role="link"]:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
-/* Utility to hide content visually but keep for screen readers */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
-
-/* Global transitions for hover/focus states */
-* {
-  --tw-transition-duration: 300ms;
-  --tw-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Accessibility: Respect prefers-reduced-motion */
+/* Ensure prefers-reduced-motion applies globally */
 @media (prefers-reduced-motion: reduce) {
+  .motion-safe\:transition-all,
+  .motion-safe\:transition-transform,
+  .motion-safe\:transition-colors {
+    transition: none !important;
+  }
+  .motion-reduce\:transition-none {
+    transition: none !important;
+  }
   * {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
@@ -210,3 +158,19 @@ h4 {
     scroll-behavior: auto !important;
   }
 }
+
+/* Container Utility (example) */
+.container {
+  max-width: theme('screens.xl'); /* 1280px */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: theme('spacing.4'); /* 16px */
+  padding-right: theme('spacing.4'); /* 16px */
+}
+@media (min-width: theme('screens.md')) {
+  .container {
+    padding-left: theme('spacing.8'); /* 32px */
+    padding-right: theme('spacing.8'); /* 32px */
+  }
+}
+```

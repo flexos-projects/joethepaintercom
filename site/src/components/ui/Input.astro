@@ -1,49 +1,117 @@
+```astro
 ---
-interface Props {
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'input' | 'textarea' | 'select'> {
+  label: string;
   id: string;
   name: string;
-  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url';
+  type?: 'text' | 'email' | 'tel' | 'password' | 'number' | 'url';
   placeholder?: string;
-  required?: boolean;
   value?: string;
+  required?: boolean;
   disabled?: boolean;
-  autocomplete?: string;
-  'aria-describedby'?: string;
-  'aria-invalid'?: boolean;
+  readonly?: boolean;
+  error?: string; // Error message to display
+  as?: 'input' | 'textarea' | 'select'; // Allow rendering as textarea or select
+  options?: { value: string; label: string }[]; // For select element
 }
 
 const {
+  label,
   id,
   name,
   type = 'text',
   placeholder,
-  required = false,
   value,
+  required = false,
   disabled = false,
-  autocomplete,
-  'aria-describedby': ariaDescribedby,
-  'aria-invalid': ariaInvalid = false,
-  ...rest
+  readonly = false,
+  error,
+  as = 'input',
+  options,
+  class: className,
+  ...attrs
 } = Astro.props;
+
+const baseClasses = `
+  block w-full px-4 py-3 rounded-md
+  font-body text-base text-text-dark bg-surface
+  border border-border motion-safe:transition-colors motion-reduce:transition-none duration-200
+  placeholder:text-textSubtle
+  focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-0 focus-visible:ring-primary focus-visible:border-primary
+  disabled:bg-background disabled:cursor-not-allowed disabled:text-textSubtle
+  read-only:bg-background read-only:cursor-default
+`;
+
+const errorClasses = error ? 'border-error focus-visible:ring-error' : '';
 ---
 
-<input
-  id={id}
-  name={name}
-  type={type}
-  placeholder={placeholder}
-  required={required}
-  value={value}
-  disabled={disabled}
-  autocomplete={autocomplete}
-  aria-describedby={ariaDescribedby}
-  aria-invalid={ariaInvalid}
-  class:list={[
-    "w-full p-3 border rounded-md text-text-dark bg-surface",
-    "border-border placeholder-text-muted focus:outline-none",
-    "focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-transparent",
-    disabled && "bg-background cursor-not-allowed text-text-subtle",
-    ariaInvalid && "border-error focus-visible:ring-error"
-  ]}
-  {...rest}
-/>
+<div class:list={['w-full', className]} >
+  <label for={id} class="block text-sm font-medium text-text-dark mb-1">
+    {label}
+    {required && <span class="text-error ml-1">*</span>}
+  </label>
+  {as === 'input' && (
+    <input
+      id={id}
+      name={name}
+      type={type}
+      placeholder={placeholder}
+      value={value}
+      required={required}
+      disabled={disabled}
+      readonly={readonly}
+      class:list={[baseClasses, errorClasses]}
+      aria-invalid={!!error}
+      aria-describedby={error ? `${id}-error` : undefined}
+      {...attrs}
+    />
+  )}
+  {as === 'textarea' && (
+    <textarea
+      id={id}
+      name={name}
+      placeholder={placeholder}
+      required={required}
+      disabled={disabled}
+      readonly={readonly}
+      class:list={[baseClasses, errorClasses, 'min-h-[100px]']}
+      aria-invalid={!!error}
+      aria-describedby={error ? `${id}-error` : undefined}
+      {...attrs}
+    >{value}</textarea>
+  )}
+  {as === 'select' && (
+    <div class="relative">
+      <select
+        id={id}
+        name={name}
+        required={required}
+        disabled={disabled}
+        class:list={[baseClasses, errorClasses, 'appearance-none pr-10']}
+        aria-invalid={!!error}
+        aria-describedby={error ? `${id}-error` : undefined}
+        {...attrs}
+      >
+        {placeholder && <option value="" disabled selected>{placeholder}</option>}
+        {options?.map(option => (
+          <option value={option.value} selected={value === option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+      <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text-dark">
+        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </div>
+    </div>
+  )}
+  {error && (
+    <p id={`${id}-error`} class="text-error text-sm mt-1" role="alert">
+      {error}
+    </p>
+  )}
+</div>
+```

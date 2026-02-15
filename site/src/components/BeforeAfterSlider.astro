@@ -1,101 +1,140 @@
+```astro
 ---
+import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
-// The JS import for client-side execution should be in the <script> block.
-// Removed: import { initializeBeforeAfterSlider } from '@/utils/beforeAfterSlider';
+import { v4 as uuidv4 } from 'uuid'; // For unique IDs if multiple sliders on one page
 
 interface Props {
-  beforeImage: { src: string; alt: string; };
-  afterImage: { src: string; alt: string; };
-  width?: number; // Optional, for responsive image generation
-  height?: number; // Optional, for responsive image generation
-  aspectRatio?: string; // e.g., "16/9", "4/3"
+  beforeImage: ImageMetadata;
+  afterImage: ImageMetadata;
+  alt: string;
 }
 
-const { beforeImage, afterImage, width, height, aspectRatio = '16/9' } = Astro.props;
-
-// Generate unique ID for the slider instance if multiple are on a page
-const uniqueId = `before-after-slider-${Math.random().toString(36).substring(2, 9)}`;
+const { beforeImage, afterImage, alt } = Astro.props;
+const sliderId = `before-after-slider-${uuidv4()}`; // Unique ID for each slider
 ---
 
-<div
-  id={uniqueId}
-  class="relative w-full overflow-hidden rounded-lg shadow-md group select-none touch-none"
-  style={`padding-bottom: calc(100% / (${aspectRatio}));`}
-  role="group"
-  aria-label="Before and After Image Comparison Slider"
->
-  <!-- After Image (Full width, static background) -->
+<div class="relative w-full overflow-hidden rounded-lg group" id={sliderId}>
+  <!-- Before Image -->
   <Image
-    src={afterImage.src}
-    alt={afterImage.alt}
-    class="absolute inset-0 w-full h-full object-cover z-10"
-    {width}
-    {height}
+    src={beforeImage}
+    alt={`Before: ${alt}`}
     loading="lazy"
-    decoding="async"
-    densities={[1.5, 2]}
+    class="w-full h-full object-cover absolute top-0 left-0"
   />
 
-  <!-- Before Image (Clipped, foreground) -->
-  <div
-    data-slider-before-image-container
-    class="absolute inset-0 w-1/2 h-full overflow-hidden z-20"
-    style="width: 50%;"
-  >
-    <Image
-      src={beforeImage.src}
-      alt={beforeImage.alt}
-      class="absolute inset-0 w-full h-full object-cover z-20"
-      {width}
-      {height}
-      loading="lazy"
-      decoding="async"
-      densities={[1.5, 2]}
-    />
-  </div>
+  <!-- After Image -->
+  <Image
+    src={afterImage}
+    alt={`After: ${alt}`}
+    loading="lazy"
+    class="w-full h-full object-cover absolute top-0 left-0"
+    style={{ clipPath: 'inset(0 0 0 50%)' }}
+    id={`${sliderId}-after-image`}
+  />
 
-  <!-- Divider Line -->
+  <!-- Slider Handle -->
   <div
-    data-slider-divider
-    class="absolute top-0 bottom-0 left-1/2 w-px bg-border-light z-30 pointer-events-none"
-    style="left: 50%;"
-  ></div>
-
-  <!-- Handle -->
-  <div
-    data-slider-handle
-    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 bg-primary-blue rounded-full shadow-md flex items-center justify-center z-40 cursor-ew-resize transition-colors duration-200
-           hover:bg-primary-blue-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-blue focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-light"
-    style="left: 50%;"
-    tabindex="0"
+    class="absolute top-0 bottom-0 w-2 bg-surface flex items-center justify-center cursor-ew-resize shadow-md
+           motion-safe:transition-all motion-reduce:transition-none duration-100 ease-linear
+           group-hover:w-8 group-focus-within:w-8"
+    style={{ left: 'calc(50% - 1px)' }}
+    id={`${sliderId}-handle`}
     role="slider"
+    aria-valuenow="50"
     aria-valuemin="0"
     aria-valuemax="100"
-    aria-valuenow="50"
-    aria-label="Adjust image comparison"
+    aria-label="Drag to compare before and after images"
+    tabindex="0"
   >
-    <svg
-      class="w-4 h-4 text-surface-light pointer-events-none"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <!-- Two arrows pointing inwards for a horizontal slider handle -->
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5 5-5m2 10l5-5-5-5"></path>
+    <svg class="w-6 h-6 text-primary" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd"></path>
     </svg>
   </div>
 </div>
 
-<script define:vars={{ uniqueId }}>
-  import { initializeBeforeAfterSlider } from '@/utils/beforeAfterSlider';
+<script is:inline>
+  function initializeBeforeAfterSlider(sliderElementId) {
+    const slider = document.getElementById(sliderElementId);
+    if (!slider) return;
 
-  // Wait for the DOM to be fully loaded before initializing the slider
-  document.addEventListener('DOMContentLoaded', () => {
-    const sliderElement = document.getElementById(uniqueId);
-    if (sliderElement) {
-      initializeBeforeAfterSlider(sliderElement);
+    const handle = slider.querySelector(`#${sliderElementId}-handle`);
+    const afterImage = slider.querySelector(`#${sliderElementId}-after-image`);
+    let isDragging = false;
+
+    if (!handle || !afterImage) return;
+
+    function moveHandle(clientX) {
+      const rect = slider.getBoundingClientRect();
+      let x = clientX - rect.left; // X position relative to the slider
+      x = Math.max(0, Math.min(x, rect.width)); // Constrain x within slider bounds
+
+      const percentage = (x / rect.width) * 100;
+      handle.style.left = `${x}px`;
+      afterImage.style.clipPath = `inset(0 0 0 ${x}px)`;
+      handle.setAttribute('aria-valuenow', Math.round(percentage).toString());
     }
+
+    // Mouse events
+    handle.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      isDragging = true;
+      slider.classList.add('cursor-ew-resize');
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      moveHandle(e.clientX);
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        slider.classList.remove('cursor-ew-resize');
+      }
+    });
+
+    // Touch events
+    handle.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      isDragging = true;
+      slider.classList.add('cursor-ew-resize');
+    }, { passive: false });
+
+    document.addEventListener('touchmove', (e) => {
+      if (!isDragging || !e.touches[0]) return;
+      moveHandle(e.touches[0].clientX);
+    }, { passive: false });
+
+    document.addEventListener('touchend', () => {
+      if (isDragging) {
+        isDragging = false;
+        slider.classList.remove('cursor-ew-resize');
+      }
+    });
+
+    // Keyboard navigation for accessibility
+    handle.addEventListener('keydown', (e) => {
+      const step = 5; // Pixels to move per key press
+      const rect = slider.getBoundingClientRect();
+      let currentLeft = parseFloat(handle.style.left) || (rect.width / 2);
+
+      if (e.key === 'ArrowLeft' || e.key === 'Left') {
+        e.preventDefault();
+        moveHandle(rect.left + currentLeft - step);
+      } else if (e.key === 'ArrowRight' || e.key === 'Right') {
+        e.preventDefault();
+        moveHandle(rect.left + currentLeft + step);
+      }
+    });
+
+    // Initial positioning
+    moveHandle(slider.getBoundingClientRect().left + slider.getBoundingClientRect().width / 2);
+  }
+
+  // Initialize all sliders on the page
+  document.querySelectorAll('[id^="before-after-slider-"]').forEach(slider => {
+    initializeBeforeAfterSlider(slider.id);
   });
 </script>
+```

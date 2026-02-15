@@ -1,7 +1,14 @@
+```astro
 ---
-import { Astro } from 'astro/runtime/client'; // Import Astro for current path
+import type { HTMLAttributes } from 'astro/types';
 
-const navLinks = [
+interface Props extends HTMLAttributes<'nav'> {
+  isMobile?: boolean;
+}
+
+const { isMobile = false, ...attrs } = Astro.props;
+
+const navItems = [
   { name: 'Home', href: '/' },
   { name: 'Painting Services', href: '/services/painting' },
   { name: 'Handy Services', href: '/services/handy' },
@@ -10,23 +17,34 @@ const navLinks = [
   { name: 'Contact', href: '/contact' },
 ];
 
-const currentPath = Astro.url.pathname;
+const linkClasses = `
+  font-body font-medium text-text-dark hover:text-primary focus-visible:text-primary
+  motion-safe:transition-colors motion-reduce:transition-none
+`;
+const mobileLinkClasses = `
+  font-heading text-3xl font-bold text-text-dark hover:text-primary focus-visible:text-primary
+  motion-safe:transition-colors motion-reduce:transition-none py-4 w-full text-center
+`;
 ---
 
-<ul role="list" class="flex flex-col lg:flex-row gap-6 lg:gap-8">
-  {navLinks.map((link) => (
+<ul role="list" class:list={[
+  'flex',
+  isMobile ? 'flex-col space-y-4' : 'space-x-6',
+  attrs.class
+]}>
+  {navItems.map((item) => (
     <li>
       <a
-        href={link.href}
+        href={item.href}
         class:list={[
-          'text-text text-lg lg:text-base font-medium lg:font-normal hover:text-primary transition-all-colors-transform',
-          { 'text-primary font-semibold lg:font-medium': currentPath === link.href }
+          isMobile ? mobileLinkClasses : linkClasses,
+          Astro.url.pathname === item.href ? 'text-primary' : '' // Active state
         ]}
-        aria-current={currentPath === link.href ? 'page' : false}
+        aria-current={Astro.url.pathname === item.href ? 'page' : false}
       >
-        {link.name}
+        {item.name}
       </a>
     </li>
   ))}
 </ul>
----
+```
