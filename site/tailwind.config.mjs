@@ -8,130 +8,142 @@ export default {
       // --- Colors ---
       colors: {
         primary: {
-          DEFAULT: '#0047AB', // Primary Blue from 06-design.md
-          hover: '#003B8D', // Explicit hover state from 06-design.md
-          active: '#002A6B', // Explicit active state from 06-design.md
+          DEFAULT: '#0047AB', // Primary Blue
+          light: '#3B82F6', // Lighter variant for accents or hover states, based on info color from design spec
+          dark: '#003B8D', // Darker variant for contrast or backgrounds
         },
         secondary: {
-          DEFAULT: '#6B7280', // Secondary Gray from 06-design.md
-          hover: '#5A616E', // Explicit hover state from 06-design.md
-          active: '#4D535E', // Explicit active state from 06-design.md
+          DEFAULT: '#6B7280', // Secondary Gray
+          light: '#9CA3AF', // Lighter variant for subtle text/borders
+          dark: '#4B5563', // Darker variant for emphasis
         },
         accent: {
-          DEFAULT: '#E5B80B', // Accent Gold from 06-design.md
-          light: '#FFD700', // Brighter variant for highlights from 06-design.md
-          dark: '#B38B00', // Deeper variant for subtle contrast from 06-design.md
+          DEFAULT: '#E5B80B', // Accent Gold
+          light: '#FFD700', // Brighter variant for highlights
+          dark: '#B38B00', // Deeper variant for subtle contrast
         },
-        background: '#F9FAFB', // Background White from 06-design.md
-        surface: '#FFFFFF', // Surface Light from 06-design.md
-        text: '#1F2937', // Text Dark from 06-design.md
-        textMuted: '#6B7280', // Text Muted from 06-design.md
-        textSubtle: '#9CA3AF', // Text Subtle from 06-design.md
-        border: '#E5E7EB', // Border Light from 06-design.md
-        error: '#EF4444', // Error from 06-design.md
-        success: '#10B981', // Success from 06-design.md
-        warning: '#F59E0B', // Warning from 06-design.md
-        info: '#3B82F6', // Info from 06-design.md
-        white: '#FFFFFF', // Explicit white
-        black: '#000000', // Explicit black
+        neutral: {
+          50: '#F9FAFB', // Background White
+          100: '#F3F4F6',
+          200: '#E5E7EB', // Border Light
+          300: '#D1D5DB',
+          400: '#9CA3AF', // Text Subtle
+          500: '#6B7280', // Text Muted
+          600: '#4B5563',
+          700: '#374151',
+          800: '#1F2937', // Text Dark
+          900: '#111827', // Near black for strong contrast text
+        },
+        white: '#FFFFFF', // Surface Light
+        black: '#000000',
+        // Semantic colors
+        success: '#10B981',
+        warning: '#F59E0B',
+        error: '#EF4444',
+        info: '#3B82F6',
       },
 
       // --- Typography ---
       fontFamily: {
-        heading: ['Lora', 'Georgia', 'serif'], // Heading font family from 06-design.md
-        body: ['Inter', 'system-ui', 'sans-serif'], // Body font family from 06-design.md
-        mono: ['Space Mono', 'monospace'], // Mono font family from 06-design.md
+        heading: ['"Lora"', ...defaultTheme.fontFamily.serif],
+        body: ['"Inter"', ...defaultTheme.fontFamily.sans],
+        mono: ['"Space Mono"', ...defaultTheme.fontFamily.mono],
       },
       fontSize: {
-        'xs': 'var(--font-size-xs)',
-        'sm': 'var(--font-size-sm)',
-        'base': 'var(--font-size-base)',
-        'lg': 'var(--font-size-lg)',
-        'xl': 'var(--font-size-xl)',
-        '2xl': 'var(--font-size-2xl)',
-        '3xl': 'var(--font-size-3xl)',
-        '4xl': 'var(--font-size-4xl)',
-        '5xl': 'var(--font-size-5xl)',
-        '6xl': 'var(--font-size-6xl)',
+        'xs': ['0.75rem', { lineHeight: '1rem' }], // 12px
+        'sm': ['0.875rem', { lineHeight: '1.25rem' }], // 14px
+        'base': ['1rem', { lineHeight: '1.5rem' }], // 16px (default body)
+        'lg': ['1.125rem', { lineHeight: '1.75rem' }], // 18px
+        'xl': ['1.25rem', { lineHeight: '1.75rem' }], // 20px
+        '2xl': ['1.5rem', { lineHeight: '2rem' }], // 24px (H4 mobile)
+        '3xl': ['1.875rem', { lineHeight: '2.25rem' }], // 30px (H3 mobile, H4 desktop)
+        '4xl': ['2.25rem', { lineHeight: '2.5rem' }], // 36px (H2 mobile, H3 desktop)
+        '5xl': ['3rem', { lineHeight: '1' }], // 48px (H1 mobile, H2 desktop)
+        '6xl': ['3.75rem', { lineHeight: '1' }], // 60px (Hero H1 desktop)
       },
       fontWeight: {
-        normal: 'var(--font-weight-normal)',
-        medium: 'var(--font-weight-medium)',
-        semibold: 'var(--font-weight-semibold)',
-        bold: 'var(--font-weight-bold)',
-      },
-      lineHeight: {
-        'tight': 'var(--line-height-tight)',
-        'normal': 'var(--line-height-normal)',
-        'relaxed': 'var(--line-height-relaxed)',
-        'xs': 'var(--line-height-xs)',
-        'sm': 'var(--line-height-sm)',
-        'base': 'var(--line-height-base)',
-        'lg': 'var(--line-height-lg)',
-        'xl': 'var(--line-height-xl)',
-        '2xl': 'var(--line-height-2xl)',
-        '3xl': 'var(--line-height-3xl)',
-        '4xl': 'var(--line-height-4xl)',
-        '5xl': 'var(--line-height-5xl)',
-        '6xl': 'var(--line-height-6xl)',
+        normal: '400',
+        medium: '500',
+        semibold: '600',
+        bold: '700',
       },
 
       // --- Spacing (based on 4px grid) ---
       spacing: {
-        'px': 'var(--spacing-px)',
-        '0-5': 'var(--spacing-0-5)',
-        '1': 'var(--spacing-1)',
-        '2': 'var(--spacing-2)',
-        '3': 'var(--spacing-3)',
-        '4': 'var(--spacing-4)',
-        '5': 'var(--spacing-5)',
-        '6': 'var(--spacing-6)',
-        '8': 'var(--spacing-8)',
-        '10': 'var(--spacing-10)',
-        '12': 'var(--spacing-12)',
-        '16': 'var(--spacing-16)',
-        '20': 'var(--spacing-20)',
-        '24': 'var(--spacing-24)',
+        'px': '1px',
+        '0.5': '0.125rem', // 2px
+        '1': '0.25rem', // 4px
+        '2': '0.5rem', // 8px
+        '3': '0.75rem', // 12px
+        '4': '1rem', // 16px
+        '5': '1.25rem', // 20px
+        '6': '1.5rem', // 24px
+        '8': '2rem', // 32px
+        '10': '2.5rem', // 40px
+        '12': '3rem', // 48px
+        '16': '4rem', // 64px
+        '20': '5rem', // 80px
+        '24': '6rem', // 96px
       },
 
       // --- Border Radius ---
       borderRadius: {
-        'none': 'var(--border-radius-none)',
-        'sm': 'var(--border-radius-sm)',
-        'md': 'var(--border-radius-md)',
-        'lg': 'var(--border-radius-lg)',
-        'xl': 'var(--border-radius-xl)',
-        '2xl': 'var(--border-radius-2xl)',
-        'full': 'var(--border-radius-full)',
+        'none': '0',
+        'sm': '0.125rem', // 2px
+        'md': '0.375rem', // 6px
+        'lg': '0.5rem', // 8px
+        'xl': '0.75rem', // 12px
+        '2xl': '1rem', // 16px
+        'full': '9999px',
       },
 
       // --- Shadows ---
       boxShadow: {
-        'sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)', // Shadow sm from 06-design.md
-        'md': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)', // Shadow md from 06-design.md
-        'lg': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)', // Shadow lg from 06-design.md
-        'xl': '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)', // Shadow xl from 06-design.md
-        'none': 'none',
-        'outline': '0 0 0 3px rgba(0, 71, 171, 0.5)', // Custom focus outline using primary blue
+        'sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+        'md': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+        'lg': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+        'xl': '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
       },
 
       // --- Transitions ---
       transitionProperty: {
         'height': 'height',
         'spacing': 'margin, padding',
+        'colors': 'color, background-color, border-color, text-decoration-color, fill, stroke',
+        'opacity': 'opacity',
+        'shadow': 'box-shadow',
+        'transform': 'transform',
       },
       transitionTimingFunction: {
-        'DEFAULT': 'cubic-bezier(0.4, 0, 0.2, 1)', // default easing from tokens.json
-        'ease-in': 'cubic-bezier(0.4, 0, 1, 1)', // ease-in from tokens.json
-        'ease-out': 'cubic-bezier(0, 0, 0.2, 1)', // ease-out from tokens.json
-        'ease-in-out': 'cubic-bezier(0.4, 0, 0.2, 1)', // Re-map to default easing as per 06-design.md
-        'bounce': 'cubic-bezier(0.34, 1.56, 0.64, 1)', // bounce from tokens.json
+        'ease-in-out': 'cubic-bezier(0.4, 0, 0.2, 1)', // Default easing
+        'ease-in': 'cubic-bezier(0.4, 0, 1, 1)',
+        'ease-out': 'cubic-bezier(0, 0, 0.2, 1)',
       },
       transitionDuration: {
-        'DEFAULT': '300ms', // normal duration from tokens.json
-        'fast': '150ms', // fast duration from tokens.json
-        'normal': '300ms', // normal duration from tokens.json
-        'slow': '500ms', // slow duration from tokens.json
+        'DEFAULT': '300ms', // normal
+        '150': '150ms', // fast
+        '500': '500ms', // slow
+      },
+
+      // --- Keyframes and Animations ---
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' }
+        },
+        slideInUp: {
+          '0%': { transform: 'translateY(20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' }
+        },
+        scaleIn: {
+          '0%': { transform: 'scale(0.95)', opacity: '0' },
+          '100%': { transform: 'scale(1)', opacity: '1' }
+        },
+      },
+      animation: {
+        'fade-in': 'fadeIn 300ms ease-out forwards',
+        'slide-in-up': 'slideInUp 500ms ease-out forwards',
+        'scale-in': 'scaleIn 200ms ease-out forwards',
       },
 
       // --- Breakpoints ---

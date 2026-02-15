@@ -44,9 +44,5 @@ export default defineConfig({
     ssr: {
       noExternal: ['path-to-regexp'], // Example for specific external dependencies in SSR
     },
-    // Make public environment variables available client-side
-    env: {
-      PUBLIC_RECAPTCHA_SITE_KEY: process.env.PUBLIC_RECAPTCHA_SITE_KEY,
-    },
   },
 });

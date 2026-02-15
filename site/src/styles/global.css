@@ -1,56 +1,116 @@
-/* src/styles/global.css */
-@import './tokens.css'; /* Import CSS variables */
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Base styles using CSS variables */
+/* --- Custom Font Faces --- */
+
+/* Lora - Headings */
+@font-face {
+  font-family: 'Lora';
+  src: url('/fonts/Lora-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Lora';
+  src: url('/fonts/Lora-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Lora';
+  src: url('/fonts/Lora-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Lora';
+  src: url('/fonts/Lora-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+  font-style: normal;
+}
+
+/* Inter - Body */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Medium.woff2') format('woff2');
+  font-weight: 50-0;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+  font-style: normal;
+}
+
+/* --- Base Styles --- */
 html {
   scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
 }
 
 body {
-  font-family: var(--font-family-body);
-  color: var(--color-text);
-  background-color: var(--color-background);
-  line-height: var(--line-height-normal);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: theme('fontFamily.body');
+  color: theme('colors.neutral.900');
+  background-color: theme('colors.neutral.50');
+  line-height: theme('lineHeight.base');
+  @apply antialiased; /* Smoother font rendering */
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-family-heading);
-  color: var(--color-text);
-  line-height: var(--line-height-tight);
+  font-family: theme('fontFamily.heading');
+  color: theme('colors.neutral.900');
+  line-height: theme('lineHeight.tight');
 }
 
-/* Specific heading sizes and weights from design system */
-h1 { font-size: var(--font-size-5xl); font-weight: var(--font-weight-bold); line-height: var(--line-height-5xl); }
-h2 { font-size: var(--font-size-4xl); font-weight: var(--font-weight-bold); line-height: var(--line-height-4xl); }
-h3 { font-size: var(--font-size-3xl); font-weight: var(--font-weight-semibold); line-height: var(--line-height-3xl); }
-h4 { font-size: var(--font-size-2xl); font-weight: var(--font-weight-semibold); line-height: var(--line-height-2xl); }
-h5 { font-size: var(--font-size-xl); font-weight: var(--font-weight-medium); line-height: var(--line-height-xl); }
-h6 { font-size: var(--font-size-lg); font-weight: var(--font-weight-medium); line-height: var(--line-height-lg); }
-
-/* Responsive typography scaling */
-@media (max-width: 767px) { /* md breakpoint in Tailwind is 768px */
-  h1 { font-size: var(--font-size-4xl); line-height: var(--line-height-4xl); }
-  h2 { font-size: var(--font-size-3xl); line-height: var(--line-height-3xl); }
-  h3 { font-size: var(--font-size-2xl); line-height: var(--line-height-2xl); }
-  h4 { font-size: var(--font-size-xl); line-height: var(--line-height-xl); }
-}
+h1 { @apply text-5xl md:text-6xl font-bold; }
+h2 { @apply text-4xl md:text-5xl font-bold; }
+h3 { @apply text-3xl md:text-4xl font-semibold; }
+h4 { @apply text-2xl md:text-3xl font-semibold; }
 
 a {
-  color: var(--color-primary);
+  @apply text-primary-dark hover:text-primary transition-colors duration-150 ease-in-out;
   text-decoration: none;
 }
-a:hover {
-  text-decoration: underline;
+
+/* Accessibility: Focus state for interactive elements */
+*:focus-visible {
+  @apply outline-none ring-2 ring-primary-light ring-offset-2;
 }
 
-/* Focus styles for accessibility */
-*:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

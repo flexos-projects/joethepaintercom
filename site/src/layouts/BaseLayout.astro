@@ -1,72 +1,75 @@
 ---
-import { ViewTransitions } from 'astro:transitions';
-import Header from '@/components/Header.astro';
-import Footer from '@/components/Footer.astro';
-import AnalyticsScript from '@/components/common/AnalyticsScript.astro';
-import RecaptchaScript from '@/components/common/RecaptchaScript.astro';
+import type { PageMeta } from '@/types/page-meta';
+import { SITE_NAME, SITE_URL } from '@/utils/constants';
 
 interface Props {
-  title: string;
-  description: string;
-  keywords?: string;
-  ogImage?: string;
-  canonical?: string;
+  meta: PageMeta;
 }
 
-const { title, description, keywords, ogImage, canonical } = Astro.props;
-const canonicalURL = canonical ? new URL(canonical, Astro.site) : new URL(Astro.url.pathname, Astro.site);
+const { meta } = Astro.props;
+
+// Construct canonical URL
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || SITE_URL).href;
+
+// Default image for Open Graph and Twitter cards
+const defaultOgImage = new URL('/images/social-share-default.jpg', Astro.site || SITE_URL).href;
+
+// Import global styles
+import '@/styles/global.css';
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href={canonicalURL.href} />
+    <link rel="canonical" href={canonicalURL} />
 
-    <title>{title} | Joe the Painter: Your San Diego Craftsman Since 2001</title>
-    <meta name="description" content={description} />
-    {keywords && <meta name="keywords" content={keywords} />}
+    <!-- Dynamic Page-Specific Meta Tags -->
+    <title>{meta.title} | {SITE_NAME}</title>
+    <meta name="description" content={meta.description} />
+    {meta.keywords && <meta name="keywords" content={meta.keywords} />}
 
     <!-- Open Graph / Social Media Tags -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={canonicalURL.href} />
-    <meta property="og:title" content={title} | Joe the Painter" />
-    <meta property="og:description" content={description} />
-    <meta property="og:image" content={ogImage || new URL('/images/social-share-default.jpg', Astro.site).href} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={`${meta.title} | ${SITE_NAME}`} />
+    <meta property="og:description" content={meta.description} />
+    <meta property="og:image" content={meta.ogImage || defaultOgImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
 
     <!-- Twitter Card Tags -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content={canonicalURL.href} />
-    <meta name="twitter:title" content={title} | Joe the Painter" />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImage || new URL('/images/social-share-default.jpg', Astro.site).href} />
-    <meta name="twitter:creator" content="@JoeThePainterSD" />
+    <meta name="twitter:url" content={canonicalURL} />
+    <meta name="twitter:title" content={`${meta.title} | ${SITE_NAME}`} />
+    <meta name="twitter:description" content={meta.description} />
+    <meta name="twitter:image" content={meta.ogImage || defaultOgImage} />
+    {/* If a Twitter account is created */}
+    {/* <meta name="twitter:creator" content="@JoeThePainterSD" /> */}
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <!-- Font Preloads (Lora and Inter from Google Fonts, self-hosted in public/fonts for production) -->
-    <!-- Assuming fonts are self-hosted in public/fonts/ and defined in global.css -->
-    <link rel="preload" href="/fonts/Lora-Bold.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/Lora-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/Inter-Medium.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/Inter-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/Inter-Bold.woff2" as="font" type="font/woff2" crossorigin>
+    <!-- Preload critical fonts for LCP optimization -->
+    <!-- Lora Bold for primary headings -->
+    <link rel="preload" href="/fonts/Lora-Bold.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Inter Regular for body text -->
+    <link rel="preload" href="/fonts/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Inter Semibold for navigation and CTAs -->
+    <link rel="preload" href="/fonts/Inter-SemiBold.woff2" as="font" type="font/woff2" crossorigin />
 
-    <ViewTransitions />
-    <RecaptchaScript />
-    <AnalyticsScript />
+    {/* Google Analytics - Placeholder, will be added via component for production only */}
+    {/* <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+    </script> */}
   </head>
-  <body class="font-body text-neutral-800 bg-neutral-50 antialiased">
-    <Header />
-    <main id="main-content">
-      <slot />
-    </main>
-    <Footer />
+  <body class="flex flex-col min-h-full">
+    <slot />
   </body>
 </html>
