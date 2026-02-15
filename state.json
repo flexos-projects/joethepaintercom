@@ -1,7 +1,7 @@
 {
   "projectId": "joethepaintercom-kibm3",
-  "status": "running",
-  "phase": "build",
+  "status": "complete",
+  "phase": "complete",
   "progress": {},
   "caches": {},
   "outputs": {
@@ -30,6 +30,15 @@
       "joethepaintercom-kibm3/site/public/.gitkeep"
     ]
   },
-  "errors": [],
-  "startedAt": "2026-02-15T03:07:59.960Z"
+  "errors": [
+    {
+      "phase": "deploy",
+      "task": "deploy-workflow",
+      "error": "Deployment failed but no error logs available",
+      "timestamp": "2026-02-15T04:55:18.189Z",
+      "recovered": false
+    }
+  ],
+  "startedAt": "2026-02-15T03:07:59.960Z",
+  "completedAt": "2026-02-15T04:55:18.189Z"
 }
